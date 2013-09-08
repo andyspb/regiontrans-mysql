@@ -1,0 +1,89 @@
+package Package2;
+
+{$R *.res}
+{$ALIGN 8}
+{$ASSERTIONS ON}
+{$BOOLEVAL OFF}
+{$DEBUGINFO ON}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS ON}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION ON}
+{$OVERFLOWCHECKS OFF}
+{$RANGECHECKS OFF}
+{$REFERENCEINFO ON}
+{$SAFEDIVIDE OFF}
+{$STACKFRAMES OFF}
+{$TYPEDADDRESS OFF}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST OFF}
+{$MINENUMSIZE 1}
+{$IMAGEBASE $400000}
+{$IMPLICITBUILD OFF}
+
+requires
+  rtl,
+  vcl,
+  vclx,
+  dbrtl,
+  vcldb,
+  bdertl;
+
+contains
+  Lebtn in 'LEBtn.pas',
+  Lbdbedit in 'LBDBEDIT.PAS',
+  LblCombo in 'LBLCOMBO.PAS',
+  Lbledit in 'LblEdit.pas',
+  LblEditMoney in 'LblEditMoney.pas',
+  LblEdtDt in 'LblEdtDt.pas',
+  LblEdtTm in 'LBLEDTTM.PAS',
+  Lblint in 'lblint.pas',
+  Lbllist in 'LBLLIST.PAS',
+  LblMemo in 'Lblmemo.pas',
+  Lbsqlcmb in 'LBSQLCMB.PAS',
+  Lbsqlist in 'LBSQLIST.PAS',
+  Lbsqloln in 'Lbsqloln.pas',
+  Ldmenus in 'LDMENUS.pas',
+  SqlOutLn in 'SQLOutLn.pas',
+  Sqlcombo in 'Sqlcombo.pas',
+  Sqlctrls in 'SQLCTRLS.PAS',
+  SqlGrid in 'sqlgrid.pas',
+  Sqllist in 'SQLLIST.PAS',
+  OLEExcel in 'oleexcel.pas',
+  OperType in 'OPERTYPE.PAS',
+  quikview in 'QUIKVIEW.PAS',
+  Blanklst in 'BlankLst.pas',
+  DBPrint in 'DBPrint.pas',
+  Dbstrgrd in 'dbstrgrd.pas',
+  Debugfrm in 'DEBUGFRM.PAS' {DebugForm},
+  EditDate in 'Editdate.pas',
+  EditMoney in 'EditMoney.pas',
+  EditTime in 'EDITTIME.PAS',
+  entersql in 'entersql.pas',
+  GetFilter in 'GetFilter.pas',
+  Guiblank in 'GUIBLANK.PAS',
+  GUIField in 'GUIFIELD.PAS',
+  GUIView in 'GUIView.pas',
+  Inform in 'inform.pas' {InformationForm},
+  scrdGrid in 'SCRDGRID.pas',
+  UserFld in 'USERFLD.PAS',
+  BMPBtn in 'Bmpbtn.pas',
+  Commfunc in 'COMMFUNC.PAS',
+  Commtype in 'COMMTYPE.PAS',
+  ParamEnt in 'ParamEnt.pas',
+  QExport in 'QExport.pas',
+  Tadjform in 'TADJFORM.pas',
+  tMSql in 'TMSQL.pas',
+  toolbar in 'Toolbar.pas',
+  toolbtn in 'TOOLBTN.PAS',
+  ask_ft in 'ask_ft.pas',
+  Filtrnam in 'Filtrnam.pas',
+  Rdlg in 'rdlg.pas' {Rdlg},
+  TEnvirnt in 'TEnvirnt.pas',
+  TSQLCLS in 'tsqlcls.pas',
+  FiltrFrm in 'Filtrfrm.pas';
+
+end.

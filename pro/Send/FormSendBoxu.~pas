@@ -1,0 +1,484 @@
+unit FormSendBoxu;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, BMPBtn,toolbtn,tsqlcls, ToolWin, ComCtrls,Tadjform, SqlGrid,
+  StdCtrls, Buttons,OleServer,DBTables, Word2000, LblEdtDt, Sqlctrls,
+  Lbsqlcmb, ExtCtrls;
+
+type
+  TFormSendBox = class(TadjusTForm)
+    ToolBar1: TToolBar;
+    eCard: TToolbarButton;
+    eDelete: TToolbarButton;
+    eExit: TToolbarButton;
+    SQLGrid1: TSQLGrid;
+    eADD: TToolbarButton;
+    btPrint: TBMPBtn;
+    WordApplication1: TWordApplication;
+    Panel1: TPanel;
+    cbPynkt: TLabelSQLComboBox;
+    cbZak: TLabelSQLComboBox;
+    LabelEditDate1: TLabelEditDate;
+    LabelEditDate2: TLabelEditDate;
+    eFiltr: TToolbarButton;
+    ToolbarButton1: TToolbarButton;
+    procedure eExitClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure eCardClick(Sender: TObject);
+    procedure eADDClick(Sender: TObject);
+    procedure eDeleteClick(Sender: TObject);
+    procedure btPrintClick(Sender: TObject);
+    procedure eFiltrClick(Sender: TObject);
+    procedure ToolbarButton1Click(Sender: TObject);
+    procedure FormKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  FormSendBox: TFormSendBox;
+
+implementation
+
+uses makerepp ,SendStr,FormSendu;
+
+{$R *.dfm}
+
+procedure TFormSendBox.eExitClick(Sender: TObject);
+begin
+close;
+end;
+
+procedure TFormSendBox.FormCreate(Sender: TObject);
+begin
+fsection:='FormSends';
+sqlGrid1.Section:='Sends';
+sqlGrid1.ExecTable('sends');
+//cbZak.SQLComboBox.Sorted:=true;
+//cbPynkt.SQLComboBox.Sorted:=true;
+if (SQLGrid1.Query.Eof) and (SQLGrid1.Query.bof)then
+begin
+eCard.Enabled:=false;
+edelete.Enabled:=false;
+SQLGrid1.visible:=false;
+btPrint.visible:=false;
+end;
+end;
+
+procedure TFormSendBox.eCardClick(Sender: TObject);
+var l:longint;
+begin
+  sqlGrid1.SavePoint('Ident');
+  sql.StartTransaction;
+  FormSend:=TFormSend.Create(Application) ;
+  l:=FormSend.EditRecord(SQLGrid1.Query);
+  FormSend.Free;
+   if l<>0 then
+  begin
+    sql.Commit;
+    sqlGrid1.Exec;
+   if (not SQLGrid1.Query.Eof) or (not SQLGrid1.Query.bof)then
+    begin
+     eCard.Enabled:=true;
+     edelete.Enabled:=true;
+     SQLGrid1.visible:=true;
+    end;
+  end else sql.Rollback;
+end;
+
+procedure TFormSendBox.eADDClick(Sender: TObject);
+var l:longint;
+begin
+  sql.StartTransaction;
+  FormSend:=TFormSend.Create(Application) ;
+  l:=FormSend.AddRecord;
+  FormSend.Free;
+  if l<>0 then
+  begin
+    sql.Commit;
+    sqlGrid1.Exec;
+    sqlGrid1.LoadPoint('Ident',l);
+   if (not SQLGrid1.Query.Eof) or (not SQLGrid1.Query.bof)then
+    begin
+     eCard.Enabled:=true;
+     edelete.Enabled:=true;
+     SQLGrid1.visible:=true;
+    end;
+  end else sql.Rollback;
+end;
+
+procedure TFormSendBox.eDeleteClick(Sender: TObject);
+begin
+ sqlGrid1.SaveNextPoint('Ident');
+ sql.StartTransaction;
+ if sql.Delete('Send','Ident='+
+     IntToStr(sqlGrid1.FieldByName('Ident').asInteger))<>0 then
+     begin
+     Application.MessageBox('Отправка не подлежит удалению!','Ошибка',0);
+     sql.rollback;
+     end else
+     begin
+     if sqlGrid1.FieldByName('InvoiceNumber').asString<>'' then
+     ShowMessage('Отправка просчитана в счет-фактуре № '+
+                  sqlGrid1.FieldByName('InvoiceNumber').asString+'! '+
+                  'Пересчитайте счет-фактуру, после удаления! ');
+    case Application.MessageBox('Удалить!',
+                            'Предупреждение!',MB_YESNO+MB_ICONQUESTION) of
+    IDYES: sql.commit;
+    IDNO: sql.rollback;
+    end
+     end ;
+
+ sqlGrid1.Exec;
+ if (SQLGrid1.Query.Eof) and (SQLGrid1.Query.bof)then
+    begin
+     eCard.Enabled:=false;
+     edelete.Enabled:=false;
+     SQLGrid1.visible:=false;
+    end;
+end;
+
+procedure TFormSendBox.btPrintClick(Sender: TObject);
+var
+ReportMakerWP:TReportMakerWP;
+p,w1,w2,w3,w4: OleVariant;
+s:string;
+Num,mach:string;
+cuttarstring: string;
+f,f1:real;
+i,Nprint, IdSend:integer;
+Typ:integer;
+qPlace:TQuery;
+dateDel: string;
+sendrtf: string;
+clientName:string;
+label T;
+begin
+try
+Typ:=0;
+Typ:=SQLGRID1.Query.FieldByName('ContractType_Ident').AsInteger;
+IdSend:=SQLGRID1.Query.FieldByName('Ident').AsInteger;
+clientName := SQLGRID1.Query.FieldByName('ClientName').AsString;
+clientName := trim(clientName);
+  ReportMakerWP:=TReportMakerWP.Create(Application);
+
+  ReportMakerWP.ClearParam;
+if Typ=2 then
+begin
+  ReportMakerWP.AddParam('1='+SQLGRID1.Query.FieldByName('ClientName').AsString);
+  ReportMakerWP.AddParam('2='+SQLGRID1.Query.FieldByName('ClientSenderName').AsString);
+  ReportMakerWP.AddParam('3='+SQLGRID1.Query.FieldByName('CityName').AsString);
+  ReportMakerWP.AddParam('4='+SQLGRID1.Query.FieldByName('AcceptorName').AsString);
+  ReportMakerWP.AddParam('5='+SQLGRID1.Query.FieldByName('AcceptorAddress').AsString+
+                            ', т. '+SQLGRID1.Query.FieldByName('AcceptorPhone').AsString);
+  ReportMakerWP.AddParam('6='+SQLGRID1.Query.FieldByName('AcceptorRegime').AsString );
+  ReportMakerWP.AddParam('7='+SQLGRID1.Query.FieldByName('NameGoodName').AsString );
+
+   s:='';
+   if  SQLGRID1.Query.FieldByName('TypeGood_Ident').Asinteger=1 then
+   s:=s+', Теплая перевозка' ;
+   if SQLGRID1.Query.FieldByName('TypeGood_Ident1').Asinteger=1 then
+   s:=s+', Хрупкий груз' ;
+   if SQLGRID1.Query.FieldByName('TypeGood_Ident2').Asinteger=1 then
+   s:=s+', Негабаритный груз' ;
+   if s<>'' then delete(s,1,2);
+   cuttarstring:= '';
+   if SQLGRID1.Query.FieldByName('CutTarif').AsInteger <> 0 then
+       begin
+        if SQLGRID1.Query.FieldByName('CutTarif').AsInteger = 1 then cuttarstring:= ' (льготный тариф 3%)';
+        if SQLGRID1.Query.FieldByName('CutTarif').AsInteger = 2 then cuttarstring:= ' (льготный тариф 5%)';
+        if SQLGRID1.Query.FieldByName('CutTarif').AsInteger = 3 then cuttarstring:= ' (льготный тариф 7%)';
+       end;
+  ReportMakerWP.AddParam('8='+s );
+  ReportMakerWP.AddParam('9='+SQLGRID1.Query.FieldByName('RollOutName').Asstring );
+  ReportMakerWP.AddParam('10='+SQLGRID1.Query.FieldByName('PackCount').Asstring  );
+  ReportMakerWP.AddParam('11='+SQLGRID1.Query.FieldByName('Weight').Asstring );
+  ReportMakerWP.AddParam('12='+SQLGRID1.Query.FieldByName('Volume').Asstring  );
+  ReportMakerWP.AddParam('13='+SQLGRID1.Query.FieldByName('CountWeight').Asstring );
+  ReportMakerWP.AddParam('14='+StrTo00(SQLGRID1.Query.FieldByName('Tariff').Asstring));
+   ReportMakerWP.AddParam('35='+cuttarstring );
+  ReportMakerWP.AddParam('15='+StrTo00(SQLGRID1.Query.FieldByName('Fare').Asstring) );
+  ReportMakerWP.AddParam('16='+StrTo00(SQLGRID1.Query.FieldByName('InsuranceSum').Asstring ));
+  ReportMakerWP.AddParam('17='+StrTo00(SQLGRID1.Query.FieldByName('InsuranceValue').Asstring) );
+  ReportMakerWP.AddParam('18='+StrTo00(SQLGRID1.Query.FieldByName('AddServicePrace').Asstring) );
+  ReportMakerWP.AddParam('19='+StrTo00(SQLGRID1.Query.FieldByName('SumCount').Asstring) );
+
+  ReportMakerWP.AddParam('20='+SQLGRID1.Query.FieldByName('PayTypeName').Asstring );
+  s:=SendStr.MoneyToString(SQLGRID1.Query.FieldByName('SumCount').Asstring);
+  ReportMakerWP.AddParam('21='+s );
+  ReportMakerWP.AddParam('22='+SQLGRID1.Query.FieldByName('PeopleFIO').Asstring);
+   s:=SendStr.DataDMstrY(StrToDate(SQLGRID1.Query.FieldByName('Start').Asstring));
+  ReportMakerWP.AddParam('23='+s );
+  Num:=SQLGRID1.Query.FieldByName('Namber').Asstring;
+  ReportMakerWP.AddParam('24='+Num );
+  ReportMakerWP.AddParam('25='+SQLGRID1.Query.FieldByName('Forwarder').Asstring );
+  s:='';
+  if  SQLGRID1.Query.FieldByName('AddServicePack').AsInteger=1 then
+    s:=s+'Упаковка: '+StrTo00(SQLGRID1.Query.FieldByName('PackTarif').Asstring)+' руб';
+  if  SQLGRID1.Query.FieldByName('AddServiceExp').AsInteger=1 then
+  begin
+  f:=StrToFloat(SQLGRID1.Query.FieldByName('ExpTarif').Asstring)*StrToFloat(SQLGRID1.Query.FieldByName('ExpCount').Asstring);
+    if s<>'' then s:=s+', ';
+    s:=s+'Экспедирование: '+StrTo00(FloatToStr(f))+' руб';
+    end;
+  if  SQLGRID1.Query.FieldByName('AddServiceProp').AsInteger=1 then
+  begin
+  f:=StrToFloat(SQLGRID1.Query.FieldByName('PropTarif').Asstring)*StrToFloat(SQLGRID1.Query.FieldByName('PropCount').Asstring);
+    if s<>'' then s:=s+', ';
+    s:=s+'Выдача пропусков: '+StrTo00(FloatToStr(f))+' руб';
+    end;
+  ReportMakerWP.AddParam('26='+s );
+  //---------
+  i:=0;
+  qPlace:=sql.select('SendPack','Count,Send_Ident','Send_Ident='+
+                     IntToStr(SQLGRID1.Query.FieldByName('Ident').AsInteger),'');
+
+  while (not qPlace.eof) do
+  begin
+  i:=i+qPlace.FieldByName('Count').asinteger;
+  qPlace.Next;
+  end;
+  qPlace.free ;
+
+  ReportMakerWP.AddParam('27='+IntToStr(i) );
+  s:='';
+  if SQLGRID1.Query.FieldByName('DateSend').Asstring <> '' then
+    s:=SendStr.DataDMstrY(StrToDate(SQLGRID1.Query.FieldByName('DateSend').Asstring));
+  ReportMakerWP.AddParam('28='+s );
+  s:='';
+  dateDel:= sql.SelectString('Send','DateDelFirst','Ident='+SQLGRID1.Query.FieldByName('ident').Asstring) ;
+  if Datedel<>'' then
+  s:=SendStr.DataDMstrY(StrToDate(dateDel));
+  if s<>'' then
+  ReportMakerWP.AddParam('29='+' Доставка:'+s );
+    if  SQLGRID1.Query.FieldByName('AddServSum').Asstring<>''  then       {AddServStr,Sum}
+  begin
+    ReportMakerWP.AddParam('30='+SQLGRID1.Query.FieldByName('AddServStr').Asstring );
+    ReportMakerWP.AddParam('31='+StrTo00(SQLGRID1.Query.FieldByName('AddServSum').Asstring)+' руб' );
+  end;
+  if sql.SelectInteger('`Send`','TypeGood_Ident3','Ident='+IntToStr(IdSend))=1 then
+    ReportMakerWP.AddParam('32='+'Упаковка груза не соответствует условиям перевозки.'+
+                                 ' Без ответственности за механические повреждения.' )
+  else  ReportMakerWP.AddParam('32='+'' );
+  sendrtf := 'send\sendU.rtf'; //печать для юр лиц
+  if Pos('"', clientName) = 1 then sendrtf := 'send\sendCh.rtf'; //печать для частных лиц "ТЭК"
+
+  if ReportMakerWP.DoMakeReport(systemdir+sendrtf,
+                             systemdir+'send\send.ini', systemdir+'send\out.rtf')<>0 then
+                              begin
+                              ReportMakerWP.Free;
+                              //application.messagebox('Закройте выходной документ в WINWORD!',
+                             // 'Совет!',0);
+                             goto T;
+                              exit
+                              end;;
+Nprint:=4;
+end else if Typ=1 then
+begin
+       ReportMakerWP.AddParam('1='+SQLGRID1.Query.FieldByName('ClientName').AsString);
+       ReportMakerWP.AddParam('2='+SQLGRID1.Query.FieldByName('ClientSenderName').AsString);
+       ReportMakerWP.AddParam('3='+SQLGRID1.Query.FieldByName('CityName').AsString);
+       ReportMakerWP.AddParam('4='+SQLGRID1.Query.FieldByName('AcceptorName').AsString);
+       ReportMakerWP.AddParam('5='+SQLGRID1.Query.FieldByName('AcceptorAddress').AsString+
+                              ', т. '+SQLGRID1.Query.FieldByName('AcceptorPhone').AsString);
+
+       s:=SendStr.DataDMstrY(StrToDate(SQLGRID1.Query.FieldByName('DateSend').Asstring ));
+       ReportMakerWP.AddParam('6='+s );
+       ReportMakerWP.AddParam('7='+SQLGRID1.Query.FieldByName('NameGoodName').AsString);
+       ReportMakerWP.AddParam('8='+'Санкт-Петербург-Главный' );
+       ReportMakerWP.AddParam('9='+SQLGRID1.Query.FieldByName('Contract').AsString );
+       ReportMakerWP.AddParam('10='+SQLGRID1.Query.FieldByName('PackCount').Asstring );
+       ReportMakerWP.AddParam('11='+SQLGRID1.Query.FieldByName('Weight').Asstring);
+       i:=sql.SelectInteger('City','Check','Ident='+
+                            IntToStr(SQLGRID1.Query.FieldByName('City_Ident').AsInteger));
+       f:=0;
+       if i=1 then
+       begin
+       i:=0;
+       qPlace:=sql.select('SendPack','Count,Send_Ident','Send_Ident='+
+                     IntToStr(SQLGRID1.Query.FieldByName('Ident').AsInteger),'');
+
+         while (not qPlace.eof) do
+         begin
+           i:=i+qPlace.FieldByName('Count').asinteger;
+           qPlace.Next;
+         end;
+       qPlace.free ;
+       f:=StrToFloat(sql.SelectString('Constant','PlaceTariff',''));
+       f:=f*i;
+       end else f:=0;
+       if f<>0 then  ReportMakerWP.AddParam('25='+', Наценка за проезд ч/з Москву: '+
+                                            StrTo00(FloatToStr(f))+' руб.')
+        else ReportMakerWP.AddParam('25='+' ');
+       f1:=StrToFloat(SQLGRID1.Query.FieldByName('Fare').Asstring)-StrToFloat(SQLGRID1.Query.FieldByName('CountWeight').Asstring)*StrToFloat(SQLGRID1.Query.FieldByName('Tariff').Asstring)/10-f;
+       s:=STRTo00(FloatToStr(f1));
+
+       ReportMakerWP.AddParam('12='+S );
+       ReportMakerWP.AddParam('13='+SQLGRID1.Query.FieldByName('CountWeight').Asstring );
+       ReportMakerWP.AddParam('14='+StrTo00(SQLGRID1.Query.FieldByName('Tariff').Asstring) );
+       ReportMakerWP.AddParam('15='+StrTo00(SQLGRID1.Query.FieldByName('Fare').Asstring) );
+       ReportMakerWP.AddParam('16='+StrTo00(SQLGRID1.Query.FieldByName('InsuranceSum').Asstring));
+       ReportMakerWP.AddParam('17='+StrTo00(SQLGRID1.Query.FieldByName('InsuranceValue').Asstring) );
+       ReportMakerWP.AddParam('18='+StrTo00(SQLGRID1.Query.FieldByName('AddServicePrace').Asstring) );
+       ReportMakerWP.AddParam('19='+StrTo00(SQLGRID1.Query.FieldByName('SumCount').Asstring) );
+
+       ReportMakerWP.AddParam('20='+SQLGRID1.Query.FieldByName('PayTypeName').Asstring);
+       s:=SendStr.MoneyToString(SQLGRID1.Query.FieldByName('SumCount').Asstring);
+       ReportMakerWP.AddParam('21='+s );
+       ReportMakerWP.AddParam('22='+SQLGRID1.Query.FieldByName('PeopleFIO').Asstring );
+       s:=SendStr.DataDMstrY(StrToDate(SQLGRID1.Query.FieldByName('Start').Asstring));
+       ReportMakerWP.AddParam('23='+s );
+       ReportMakerWP.AddParam('24='+'Северная' );
+        s:='';
+      if  SQLGRID1.Query.FieldByName('AddServicePack').AsInteger=1 then
+         s:=s+'Упаковка: '+StrTo00(SQLGRID1.Query.FieldByName('PackTarif').Asstring)+' руб';
+       if  SQLGRID1.Query.FieldByName('AddServiceExp').AsInteger=1 then
+        begin
+           f:=StrToFloat(SQLGRID1.Query.FieldByName('ExpTarif').Asstring)*StrToFloat(SQLGRID1.Query.FieldByName('ExpCount').Asstring);
+         if s<>'' then s:=s+', ';
+            s:=s+'Экспедирование: '+StrTo00(FloatToStr(f))+' руб';
+        end;
+       if  SQLGRID1.Query.FieldByName('AddServiceProp').AsInteger=1 then
+        begin
+         f:=StrToFloat(SQLGRID1.Query.FieldByName('PropTarif').Asstring)*StrToFloat(SQLGRID1.Query.FieldByName('PropCount').Asstring);
+           if s<>'' then s:=s+', ';
+             s:=s+'Выдача пропусков: '+StrTo00(FloatToStr(f))+' руб';
+        end;
+       ReportMakerWP.AddParam('26='+s );
+ ///--------------------------------------------------------
+        i:=0;
+       qPlace:=sql.select('SendPack','Count,Send_Ident','Send_Ident='+
+                     IntToStr(SQLGRID1.Query.FieldByName('Ident').AsInteger),'');
+
+         while (not qPlace.eof) do
+         begin
+           i:=i+qPlace.FieldByName('Count').asinteger;
+           qPlace.Next;
+         end;
+       qPlace.free ;
+ ////---------------------------------------------------------
+      ReportMakerWP.AddParam('27='+IntToStr(i) );
+  if ReportMakerWP.DoMakeReport(systemdir+'send\sendGd.rtf',
+                             systemdir+'send\send.ini', systemdir+'send\out1.rtf')<>0 then
+                              begin
+                              ReportMakerWP.Free;
+                              //application.messagebox('Закройте выходной документ в WINWORD!',
+                             // 'Совет!',0);
+                             goto T;
+                              exit
+                              end;;
+Nprint:=5;
+end else
+begin
+  Application.MessageBox('Не указан тип перевозки!','Ошибка!',0);
+  exit;
+end;
+  ReportMakerWP.Free;
+
+WordApplication1:=TWordApplication.Create(Application);
+mach:='';
+mach:= trim(WordApplication1.UserName);
+
+if Nprint=4 then
+begin
+W1:=1;
+w2:=sql.SelectString('Printer','NameA4','ComputerName='+sql.MakeStr(mach));
+w3:=sql.SelectString('Printer','ComNameA4','ComputerName='+sql.MakeStr(mach));
+p := systemdir+'send\out.rtf';
+end  else if Nprint=5 then
+         begin
+        w1:=1;
+        w2:=sql.SelectString('Printer','NameA5','ComputerName='+sql.MakeStr(mach));
+        w3:=sql.SelectString('Printer','ComNameA5','ComputerName='+sql.MakeStr(mach));
+        p := systemdir+'send\out1.rtf';
+         end ;
+w4:=WordApplication1.UserName;
+if  (VarToStr(w2)='') or (VarToStr(w3)='')then
+begin
+application.MessageBox('Информация о принтерах не внесена в базу для данной машины'+
+                       ' или в параметрах WinWord не верно указано имя машины!','Ошибка!',0);
+ goto T;
+ exit;
+end;
+if w3<>w4 then   w2:= '\\'+w3+'\'+w2;
+ WordApplication1.Documents.Open(p,
+	EmptyParam,EmptyParam,EmptyParam,
+	EmptyParam,EmptyParam,EmptyParam,
+	EmptyParam,EmptyParam,EmptyParam,
+        EmptyParam,EmptyParam);
+
+WordApplication1.ActivePrinter:=w2;
+WordApplication1.ActiveDocument.PrintOut(
+	EmptyParam,EmptyParam,EmptyParam,
+	EmptyParam, EmptyParam,EmptyParam,
+	EmptyParam,w1,EmptyParam,
+	EmptyParam,EmptyParam,EmptyParam,
+        w2,EmptyParam,EmptyParam,
+        EmptyParam,EmptyParam,EmptyParam);  
+T: WordApplication1.Documents.Close(EmptyParam,EmptyParam,
+        EmptyParam);
+        WordApplication1.WindowState:=2;
+ WordApplication1.Free;
+ except
+WordApplication1.Documents.Close(EmptyParam,EmptyParam,
+        EmptyParam);
+ WordApplication1.Free;
+application.MessageBox('Проверьте все настройки для печати!','Ошибка!',0);
+exit
+end;
+
+end;
+
+procedure TFormSendBox.eFiltrClick(Sender: TObject);
+var str,StrNill:string;
+    Val:integer;
+begin
+try
+  str:='';
+  Val:=cbZak.getData ;
+  if Val<>0 then str:=str+'Client_Ident='+IntToStr(Val);
+  Val:=cbPynkt.GetData;
+  if  (Val<>0) and (str='') then str:=str+'City_Ident='+IntToStr(Val);
+  if  (Val<>0) and (str<>'') then str:=str+' and '+'City_Ident='+IntToStr(Val);
+  if  (str<>'') then StrNill:=' and '
+   else StrNill:='';
+  if  (LabelEditDate1.Text<>'  .  .    ')and (LabelEditDate2.Text<>'  .  .    ') then
+    str:=str+StrNill+'(`Start`>='+
+           sql.MakeStr(FormatDateTime('yyyy-mm-dd',StrToDate(LabelEditDate1.Text)))+
+           ' and '+'`Start`<='+
+           sql.MakeStr(FormatDateTime('yyyy-mm-dd',StrToDate(LabelEditDate2.Text)))+')'
+   else if  (LabelEditDate1.Text<>'  .  .    ')and (LabelEditDate2.Text='  .  .    ')then
+    str:=str+StrNill+'`Start`>='+
+           sql.MakeStr(FormatDateTime('yyyy-mm-dd',StrToDate(LabelEditDate1.Text)))
+
+   else if  (LabelEditDate2.Text<>'  .  .    ')and (LabelEditDate1.Text='  .  .    ')then
+    str:=str+StrNill+'`Start`<='+
+           sql.MakeStr(FormatDateTime('yyyy-mm-dd',StrToDate(LabelEditDate2.Text)));
+
+
+  SqlGrid1.ExecTableCond('Sends',str);
+except
+application.MessageBox('Проверьте правильность составления фильтра!','Ошибка!',0);
+exit
+end;
+end;
+
+procedure TFormSendBox.ToolbarButton1Click(Sender: TObject);
+begin
+    SqlGrid1.ExecTableCond('Sends',''); 
+end;
+
+procedure TFormSendBox.FormKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+if key = VK_Return
+  then eCardClick(Sender)
+end;
+
+end.
