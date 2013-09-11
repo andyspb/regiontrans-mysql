@@ -3,6 +3,7 @@
 #################
 *.exe
 *.dcu
+*.rtf
  
 *.pydevproject
 .project
