@@ -3,4 +3,5 @@ not exists (select distinct Client_ident from account where clients.Ident=accoun
 not exists (select distinct Client_ident from accounttek where clients.Ident=accounttek.Client_ident) and 
 not exists (select distinct Clients_ident from akttek where clients.Ident=akttek.Clients_ident) and
 not exists (select distinct Client_ident from paysheet where clients.Ident=paysheet.Client_ident) and
+not exists (select distinct Clients_Ident from invoice where clients.Ident=invoice.Clients_Ident) and
 not exists (select distinct Client_ident from `order` where clients.Ident=`order`.Client_ident);

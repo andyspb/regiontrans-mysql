@@ -4,6 +4,8 @@
 *.exe
 *.dcu
 *.rtf
+pro/*.exe
+pro/*.dcu
  
 *.pydevproject
 .project
