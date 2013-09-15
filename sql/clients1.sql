@@ -1,0 +1,1 @@
+select distinct Ident from clients as a where not exists (select distinct Client_ident,Client_Ident_sender from send as b where (a.Ident=b.Client_ident or a.Ident=b.Client_Ident_sender )) order by a.ident;
