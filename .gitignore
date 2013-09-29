@@ -1,11 +1,18 @@
 #################
 ## Eclipse
 #################
+*.dcu
+*.~*~
+*.local
+*.identcache
+__history
+*.drc
+*.map
+*.exe
+*.dll
+bin/*
 *.exe
 *.dcu
-*.rtf
-pro/*.exe
-pro/*.dcu
  
 *.pydevproject
 .project
