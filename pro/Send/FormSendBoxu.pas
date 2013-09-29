@@ -56,10 +56,73 @@ close;
 end;
 
 procedure TFormSendBox.FormCreate(Sender: TObject);
+var cond:string;
+str1:TStringList;
 begin
 fsection:='FormSends';
 sqlGrid1.Section:='Sends';
-sqlGrid1.ExecTable('sends');
+//cond := '`send`.`Start` >=' + FormatDateTime('yyyy-mm-dd',IncMonth(Date,-6));
+cond := '`Start` >=' + FormatDateTime('yyyy-mm-dd',IncMonth(Date,-6));
+{str1:=TStringList.Create;
+str1.Add('select distinct `send`.`Ident` AS `Ident`,`send`.`Check` AS `Check`,');
+str1.Add('`send`.`Start` AS `Start`,`send`.`Inspector_Ident` AS `Inspector_Ident`,');
+str1.Add('`inspector`.`PeopleFIO` AS `PeopleFIO`,`send`.`ContractType_Ident` AS `ContractType_Ident`,');
+str1.Add('`contracttype`.`Name` AS `ContracttypeName`,`send`.`Client_Ident` AS `Client_Ident`,');
+str1.Add('`clients`.`Name` AS `ClientName`,`clients`.`Acronym` AS `ClientAcr`,`clients`.`Telephone` AS `ClientPhone`,');
+str1.Add('`clients`.`PersonType_Ident` AS `Persontype_ident`,`send`.`Credit` AS `Credit`,`send`.`Contract` AS `Contract`,');
+str1.Add('`send`.`Client_Ident_Sender` AS `Client_Ident_Sender`,`cl`.`Name` AS `ClientSenderName`,`cl`.`Acronym` AS `ClientSenderAcr`,');
+str1.Add('`cl`.`Telephone` AS `ClientSenderPhone`,`send`.`City_Ident` AS `City_Ident`,`city`.`Name` AS `CityName`,');
+str1.Add('`send`.`DateSend` AS `DateSend`,`send`.`Acceptor_Ident` AS `Acceptor_Ident`,`acceptor`.`Name` AS `AcceptorName`,');
+str1.Add('`acceptor`.`Address` AS `AcceptorAddress`,`acceptor`.`Regime` AS `AcceptorRegime`,`acceptor`.`Phone` AS `AcceptorPhone`,');
+str1.Add('`send`.`Forwarder_Ident` AS `Forwarder_Ident`,`forwarder`.`Name` AS `Forwarder`,`send`.`Rollout_Ident` AS `RollOut_Ident`,');
+str1.Add('`rollout`.`Name` AS `RollOutName`,`send`.`Namegood_Ident` AS `Namegood_Ident`,`namegood`.`Name` AS `NamegoodName`,');
+str1.Add('`send`.`Typegood_Ident` AS `Typegood_Ident`,`send`.`Weight` AS `Weight`,`send`.`Volume` AS `Volume`,');
+str1.Add('`send`.`CountWeight` AS `CountWeight`,`send`.`Tariff` AS `Tariff`,');
+str1.Add('concat(cast(((cast(`send`.`CountWeight` as decimal(10,2)) * cast(`send`.`Tariff` as decimal(10,2))) / 10) as decimal(15,2)),'+sql.MakeStr('руб.')+') AS `MoneyGD`,');
+str1.Add('`send`.`Fare` AS `Fare`,`send`.`PackTarif` AS `PackTarif`,`send`.`AddServiceExp` AS `AddServiceExp`,');
+str1.Add('`send`.`AddServicePack` AS `AddServicePack`,`send`.`AddServiceProp` AS `AddServiceProp`,');
+str1.Add('`send`.`AddServicePrace` AS `AddServicePrace`,`send`.`InsuranceSum` AS `InsuranceSum`,');
+str1.Add('`send`.`InsurancePercent` AS `InsurancePercent`,`send`.`InsuranceValue` AS `InsuranceValue`,');
+str1.Add('`send`.`InsurancePay` AS `InsurancePay`,`send`.`SumCount` AS `SumCount`,`send`.`Typegood_Ident1` AS `Typegood_Ident1`,');
+str1.Add('`send`.`Typegood_Ident2` AS `Typegood_Ident2`,`send`.`Namber` AS `Namber`,`send`.`PayType_Ident` AS `PayType_Ident`,');
+str1.Add('`paytype`.`Name` AS `PayTypeName`,`send`.`NmberOrder` AS `NmberOrder`,`send`.`Invoice_Ident` AS `Invoice_Ident`,');
+str1.Add('`invoice`.`Number` AS `InvoiceNumber`,`invoice`.`Data` AS `InvoiceDate`,`send`.`NumberCountPattern` AS `NumberCountPattern`,');
+str1.Add('`send`.`PayText` AS `PayText`,`send`.`StatusSupp_Ident` AS `StatusSupp_Ident`,`sendtype`.`Name` AS `SendTypeName`,');
+str1.Add('`send`.`DateSupp` AS `DateSupp`,`send`.`Supplier_Ident` AS `Supplier_Ident`,`supplier`.`Name` AS `SupplierName`,');
+str1.Add('`send`.`SuppText` AS `SuppText`,cast(`send`.`PackCount` as char(60) charset utf8) AS `PackCount`,`send`.`ExpCount` AS `ExpCount`,');
+str1.Add('`send`.`PropCount` AS `PropCount`,`send`.`ExpTarif` AS `ExpTarif`,`send`.`PropTarif` AS `PropTarif`,');
+str1.Add('`send`.`Train_Ident` AS `Train_Ident`,`send`.`AddServStr` AS `AddServStr`,`send`.`AddServSum` AS `AddServSum`,');
+str1.Add('`send`.`CutTarif` AS `CutTarif`,`train`.`Number` AS `Number`,`send`.`SumWay` AS `SumWay`,');
+str1.Add('`send`.`NumberWay` AS `NumberWay`,`send`.`SumServ` AS `SumServ`,`send`.`NumberServ` AS `NumberServ`,');
+str1.Add('`send`.`WeightGd` AS `WeightGd`,`send`.`PlaceGd` AS `PlaceGd`,`send`.`NumberPP` AS `NumberPP`,');
+str1.Add('`send`.`PayTypeWay_Ident` AS `PayTypeWay_Ident`,`ptway`.`Name` AS `WayName`,`send`.`PayTypeServ_Ident` AS `PayTypeServ_Ident`,');
+str1.Add('`ptserv`.`Name` AS `ServName`,`send`.`CountInvoice` AS `CountInvoice`,`send`.`PlaceC` AS `PlaceC`,'+sql.MakeStr('+')+' AS `Sel`,');
+str1.Add('`severtrans`.`TP_return`(`send`.`Typegood_Ident`) AS `TP`,`severtrans`.`TP1_return`(`send`.`Typegood_Ident1`) AS `TP1`,');
+str1.Add('`severtrans`.`TP2_return`(`send`.`Typegood_Ident2`) AS `TP2`,concat(`severtrans`.`TP_return`(`send`.`Typegood_Ident`),'+sql.MakeStr('')+ ',');
+str1.Add('`severtrans`.`TP1_return`(`send`.`Typegood_Ident1`),'+sql.MakeStr('')+ ',`severtrans`.`TP2_return`(`send`.`Typegood_Ident2`)) AS `Typegood`,');
+str1.Add('`akttek`.`IDENT` AS `Akttek_Ident`,`akttek`.`Number` AS `AkttekNumber`,');
+str1.Add('`akttek`.`Data` AS `Akttekdata` ');
+str1.Add('from ((((((((((((((((`send` left join `inspector` on((`send`.`Inspector_Ident` = `inspector`.`Ident`))) ');
+str1.Add('left join `contracttype` on((`send`.`ContractType_Ident` = `contracttype`.`Ident`))) ');
+str1.Add('left join `clients` on((`clients`.`Ident` = `send`.`Client_Ident`))) ');
+str1.Add('left join `train` on((`train`.`Ident` = `send`.`Train_Ident`))) ');
+str1.Add('left join `city` on((`send`.`City_Ident` = `city`.`Ident`))) ');
+str1.Add('left join `acceptor` on((`acceptor`.`Ident` = `send`.`Acceptor_Ident`))) ');
+str1.Add('left join `rollout` on((`send`.`Rollout_Ident` = `rollout`.`Ident`))) ');
+str1.Add('left join `namegood` on((`send`.`Namegood_Ident` = `namegood`.`Ident`))) ');
+str1.Add('left join `forwarder` on((`forwarder`.`Ident` = `send`.`Forwarder_Ident`))) ');
+str1.Add('left join `paytype` on((`paytype`.`Ident` = `send`.`PayType_Ident`))) ');
+str1.Add('left join `supplier` on((`send`.`Supplier_Ident` = `supplier`.`Ident`))) ');
+str1.Add('left join `sendtype` on((`send`.`StatusSupp_Ident` = `sendtype`.`Ident`))) ');
+str1.Add('left join `invoice` on((`invoice`.`Ident` = `send`.`Invoice_Ident`))) ');
+str1.Add('left join `paytype` `ptway` on((`ptway`.`Ident` = `send`.`PayTypeWay_Ident`))) ');
+str1.Add('left join `paytype` `ptserv` on((`ptserv`.`Ident` = `send`.`PayTypeServ_Ident`))) ');
+str1.Add('left join ((`send` `s` left join `clients` `cl` on((`cl`.`Ident` = `s`.`Client_Ident_Sender`))) ');
+str1.Add('left join `akttek` on((`akttek`.`IDENT` = `s`.`Akttek_Ident`))) on((`send`.`Ident` = `s`.`Ident`))) ');
+str1.Add(' where '+ cond);
+sqlGrid1.ExecSQL(str1);
+str1.free;   }
+sqlGrid1.ExecTableCond('sends',cond);
 //cbZak.SQLComboBox.Sorted:=true;
 //cbPynkt.SQLComboBox.Sorted:=true;
 if (SQLGrid1.Query.Eof) and (SQLGrid1.Query.bof)then
@@ -420,7 +483,7 @@ WordApplication1.ActiveDocument.PrintOut(
 	EmptyParam,w1,EmptyParam,
 	EmptyParam,EmptyParam,EmptyParam,
         w2,EmptyParam,EmptyParam,
-        EmptyParam,EmptyParam,EmptyParam);  
+        EmptyParam,EmptyParam,EmptyParam);
 T: WordApplication1.Documents.Close(EmptyParam,EmptyParam,
         EmptyParam);
         WordApplication1.WindowState:=2;
@@ -436,8 +499,9 @@ end;
 end;
 
 procedure TFormSendBox.eFiltrClick(Sender: TObject);
-var str,StrNill:string;
+var cond, str,StrNill:string;
     Val:integer;
+    str1:TStringList;
 begin
 try
   str:='';
@@ -460,9 +524,68 @@ try
    else if  (LabelEditDate2.Text<>'  .  .    ')and (LabelEditDate1.Text='  .  .    ')then
     str:=str+StrNill+'`Start`<='+
            sql.MakeStr(FormatDateTime('yyyy-mm-dd',StrToDate(LabelEditDate2.Text)));
-
-
-  SqlGrid1.ExecTableCond('Sends',str);
+//cond := '`send`.`Start` >=' + FormatDateTime('yyyy-mm-dd',IncMonth(Date,-6));
+cond := '`Start` >=' + FormatDateTime('yyyy-mm-dd',IncMonth(Date,-6));
+{str1:=TStringList.Create;
+str1.Add('select distinct `send`.`Ident` AS `Ident`,`send`.`Check` AS `Check`,');
+str1.Add('`send`.`Start` AS `Start`,`send`.`Inspector_Ident` AS `Inspector_Ident`,');
+str1.Add('`inspector`.`PeopleFIO` AS `PeopleFIO`,`send`.`ContractType_Ident` AS `ContractType_Ident`,');
+str1.Add('`contracttype`.`Name` AS `ContracttypeName`,`send`.`Client_Ident` AS `Client_Ident`,');
+str1.Add('`clients`.`Name` AS `ClientName`,`clients`.`Acronym` AS `ClientAcr`,`clients`.`Telephone` AS `ClientPhone`,');
+str1.Add('`clients`.`PersonType_Ident` AS `Persontype_ident`,`send`.`Credit` AS `Credit`,`send`.`Contract` AS `Contract`,');
+str1.Add('`send`.`Client_Ident_Sender` AS `Client_Ident_Sender`,`cl`.`Name` AS `ClientSenderName`,`cl`.`Acronym` AS `ClientSenderAcr`,');
+str1.Add('`cl`.`Telephone` AS `ClientSenderPhone`,`send`.`City_Ident` AS `City_Ident`,`city`.`Name` AS `CityName`,');
+str1.Add('`send`.`DateSend` AS `DateSend`,`send`.`Acceptor_Ident` AS `Acceptor_Ident`,`acceptor`.`Name` AS `AcceptorName`,');
+str1.Add('`acceptor`.`Address` AS `AcceptorAddress`,`acceptor`.`Regime` AS `AcceptorRegime`,`acceptor`.`Phone` AS `AcceptorPhone`,');
+str1.Add('`send`.`Forwarder_Ident` AS `Forwarder_Ident`,`forwarder`.`Name` AS `Forwarder`,`send`.`Rollout_Ident` AS `RollOut_Ident`,');
+str1.Add('`rollout`.`Name` AS `RollOutName`,`send`.`Namegood_Ident` AS `Namegood_Ident`,`namegood`.`Name` AS `NamegoodName`,');
+str1.Add('`send`.`Typegood_Ident` AS `Typegood_Ident`,`send`.`Weight` AS `Weight`,`send`.`Volume` AS `Volume`,');
+str1.Add('`send`.`CountWeight` AS `CountWeight`,`send`.`Tariff` AS `Tariff`,');
+str1.Add('concat(cast(((cast(`send`.`CountWeight` as decimal(10,2)) * cast(`send`.`Tariff` as decimal(10,2))) / 10) as decimal(15,2)),' +sql.MakeStr('руб.')+') AS `MoneyGD`,');
+str1.Add('`send`.`Fare` AS `Fare`,`send`.`PackTarif` AS `PackTarif`,`send`.`AddServiceExp` AS `AddServiceExp`,');
+str1.Add('`send`.`AddServicePack` AS `AddServicePack`,`send`.`AddServiceProp` AS `AddServiceProp`,');
+str1.Add('`send`.`AddServicePrace` AS `AddServicePrace`,`send`.`InsuranceSum` AS `InsuranceSum`,');
+str1.Add('`send`.`InsurancePercent` AS `InsurancePercent`,`send`.`InsuranceValue` AS `InsuranceValue`,');
+str1.Add('`send`.`InsurancePay` AS `InsurancePay`,`send`.`SumCount` AS `SumCount`,`send`.`Typegood_Ident1` AS `Typegood_Ident1`,');
+str1.Add('`send`.`Typegood_Ident2` AS `Typegood_Ident2`,`send`.`Namber` AS `Namber`,`send`.`PayType_Ident` AS `PayType_Ident`,');
+str1.Add('`paytype`.`Name` AS `PayTypeName`,`send`.`NmberOrder` AS `NmberOrder`,`send`.`Invoice_Ident` AS `Invoice_Ident`,');
+str1.Add('`invoice`.`Number` AS `InvoiceNumber`,`invoice`.`Data` AS `InvoiceDate`,`send`.`NumberCountPattern` AS `NumberCountPattern`,');
+str1.Add('`send`.`PayText` AS `PayText`,`send`.`StatusSupp_Ident` AS `StatusSupp_Ident`,`sendtype`.`Name` AS `SendTypeName`,');
+str1.Add('`send`.`DateSupp` AS `DateSupp`,`send`.`Supplier_Ident` AS `Supplier_Ident`,`supplier`.`Name` AS `SupplierName`,');
+str1.Add('`send`.`SuppText` AS `SuppText`,cast(`send`.`PackCount` as char(60) charset utf8) AS `PackCount`,`send`.`ExpCount` AS `ExpCount`,');
+str1.Add('`send`.`PropCount` AS `PropCount`,`send`.`ExpTarif` AS `ExpTarif`,`send`.`PropTarif` AS `PropTarif`,');
+str1.Add('`send`.`Train_Ident` AS `Train_Ident`,`send`.`AddServStr` AS `AddServStr`,`send`.`AddServSum` AS `AddServSum`,');
+str1.Add('`send`.`CutTarif` AS `CutTarif`,`train`.`Number` AS `Number`,`send`.`SumWay` AS `SumWay`,');
+str1.Add('`send`.`NumberWay` AS `NumberWay`,`send`.`SumServ` AS `SumServ`,`send`.`NumberServ` AS `NumberServ`,');
+str1.Add('`send`.`WeightGd` AS `WeightGd`,`send`.`PlaceGd` AS `PlaceGd`,`send`.`NumberPP` AS `NumberPP`,');
+str1.Add('`send`.`PayTypeWay_Ident` AS `PayTypeWay_Ident`,`ptway`.`Name` AS `WayName`,`send`.`PayTypeServ_Ident` AS `PayTypeServ_Ident`,');
+str1.Add('`ptserv`.`Name` AS `ServName`,`send`.`CountInvoice` AS `CountInvoice`,`send`.`PlaceC` AS `PlaceC`,'+sql.MakeStr('+')+' AS `Sel`,');
+str1.Add('`severtrans`.`TP_return`(`send`.`Typegood_Ident`) AS `TP`,`severtrans`.`TP1_return`(`send`.`Typegood_Ident1`) AS `TP1`,');
+str1.Add('`severtrans`.`TP2_return`(`send`.`Typegood_Ident2`) AS `TP2`,concat(`severtrans`.`TP_return`(`send`.`Typegood_Ident`),' +sql.MakeStr('')+',');
+str1.Add('`severtrans`.`TP1_return`(`send`.`Typegood_Ident1`),'+sql.MakeStr('')+ ',`severtrans`.`TP2_return`(`send`.`Typegood_Ident2`)) AS `Typegood`,');
+str1.Add('`akttek`.`IDENT` AS `Akttek_Ident`,`akttek`.`Number` AS `AkttekNumber`,');
+str1.Add('`akttek`.`Data` AS `Akttekdata` ');
+str1.Add('from ((((((((((((((((`send` left join `inspector` on((`send`.`Inspector_Ident` = `inspector`.`Ident`))) ');
+str1.Add('left join `contracttype` on((`send`.`ContractType_Ident` = `contracttype`.`Ident`))) ');
+str1.Add('left join `clients` on((`clients`.`Ident` = `send`.`Client_Ident`))) ');
+str1.Add('left join `train` on((`train`.`Ident` = `send`.`Train_Ident`))) ');
+str1.Add('left join `city` on((`send`.`City_Ident` = `city`.`Ident`))) ');
+str1.Add('left join `acceptor` on((`acceptor`.`Ident` = `send`.`Acceptor_Ident`))) ');
+str1.Add('left join `rollout` on((`send`.`Rollout_Ident` = `rollout`.`Ident`))) ');
+str1.Add('left join `namegood` on((`send`.`Namegood_Ident` = `namegood`.`Ident`))) ');
+str1.Add('left join `forwarder` on((`forwarder`.`Ident` = `send`.`Forwarder_Ident`))) ');
+str1.Add('left join `paytype` on((`paytype`.`Ident` = `send`.`PayType_Ident`))) ');
+str1.Add('left join `supplier` on((`send`.`Supplier_Ident` = `supplier`.`Ident`))) ');
+str1.Add('left join `sendtype` on((`send`.`StatusSupp_Ident` = `sendtype`.`Ident`))) ');
+str1.Add('left join `invoice` on((`invoice`.`Ident` = `send`.`Invoice_Ident`))) ');
+str1.Add('left join `paytype` `ptway` on((`ptway`.`Ident` = `send`.`PayTypeWay_Ident`))) ');
+str1.Add('left join `paytype` `ptserv` on((`ptserv`.`Ident` = `send`.`PayTypeServ_Ident`))) ');
+str1.Add('left join ((`send` `s` left join `clients` `cl` on((`cl`.`Ident` = `s`.`Client_Ident_Sender`))) ');
+str1.Add('left join `akttek` on((`akttek`.`IDENT` = `s`.`Akttek_Ident`))) on((`send`.`Ident` = `s`.`Ident`))) ');
+str1.Add(' where ' + cond + ' and (' + str + ')');
+sqlGrid1.ExecSQL(str1);
+str1.free; }
+SqlGrid1.ExecTableCond('Sends','('+str+')'+ ' and '+ cond);
 except
 application.MessageBox('Проверьте правильность составления фильтра!','Ошибка!',0);
 exit
@@ -470,8 +593,71 @@ end;
 end;
 
 procedure TFormSendBox.ToolbarButton1Click(Sender: TObject);
+var cond: string;
+str1:TStringList;
 begin
-    SqlGrid1.ExecTableCond('Sends',''); 
+    cond := '`Start` >=' + FormatDateTime('yyyy-mm-dd',IncMonth(Date,-6));
+ //   cond := '`send`.`Start` >=' + FormatDateTime('yyyy-mm-dd',IncMonth(Date,-6));
+{str1:=TStringList.Create;
+str1.Add('select distinct `send`.`Ident` AS `Ident`,`send`.`Check` AS `Check`,');
+str1.Add('`send`.`Start` AS `Start`,`send`.`Inspector_Ident` AS `Inspector_Ident`,');
+str1.Add('`inspector`.`PeopleFIO` AS `PeopleFIO`,`send`.`ContractType_Ident` AS `ContractType_Ident`,');
+str1.Add('`contracttype`.`Name` AS `ContracttypeName`,`send`.`Client_Ident` AS `Client_Ident`,');
+str1.Add('`clients`.`Name` AS `ClientName`,`clients`.`Acronym` AS `ClientAcr`,`clients`.`Telephone` AS `ClientPhone`,');
+str1.Add('`clients`.`PersonType_Ident` AS `Persontype_ident`,`send`.`Credit` AS `Credit`,`send`.`Contract` AS `Contract`,');
+str1.Add('`send`.`Client_Ident_Sender` AS `Client_Ident_Sender`,`cl`.`Name` AS `ClientSenderName`,`cl`.`Acronym` AS `ClientSenderAcr`,');
+str1.Add('`cl`.`Telephone` AS `ClientSenderPhone`,`send`.`City_Ident` AS `City_Ident`,`city`.`Name` AS `CityName`,');
+str1.Add('`send`.`DateSend` AS `DateSend`,`send`.`Acceptor_Ident` AS `Acceptor_Ident`,`acceptor`.`Name` AS `AcceptorName`,');
+str1.Add('`acceptor`.`Address` AS `AcceptorAddress`,`acceptor`.`Regime` AS `AcceptorRegime`,`acceptor`.`Phone` AS `AcceptorPhone`,');
+str1.Add('`send`.`Forwarder_Ident` AS `Forwarder_Ident`,`forwarder`.`Name` AS `Forwarder`,`send`.`Rollout_Ident` AS `RollOut_Ident`,');
+str1.Add('`rollout`.`Name` AS `RollOutName`,`send`.`Namegood_Ident` AS `Namegood_Ident`,`namegood`.`Name` AS `NamegoodName`,');
+str1.Add('`send`.`Typegood_Ident` AS `Typegood_Ident`,`send`.`Weight` AS `Weight`,`send`.`Volume` AS `Volume`,');
+str1.Add('`send`.`CountWeight` AS `CountWeight`,`send`.`Tariff` AS `Tariff`,');
+str1.Add('concat(cast(((cast(`send`.`CountWeight` as decimal(10,2)) * cast(`send`.`Tariff` as decimal(10,2))) / 10) as decimal(15,2)),'+sql.MakeStr('руб.')+') AS `MoneyGD`,');
+str1.Add('`send`.`Fare` AS `Fare`,`send`.`PackTarif` AS `PackTarif`,`send`.`AddServiceExp` AS `AddServiceExp`,');
+str1.Add('`send`.`AddServicePack` AS `AddServicePack`,`send`.`AddServiceProp` AS `AddServiceProp`,');
+str1.Add('`send`.`AddServicePrace` AS `AddServicePrace`,`send`.`InsuranceSum` AS `InsuranceSum`,');
+str1.Add('`send`.`InsurancePercent` AS `InsurancePercent`,`send`.`InsuranceValue` AS `InsuranceValue`,');
+str1.Add('`send`.`InsurancePay` AS `InsurancePay`,`send`.`SumCount` AS `SumCount`,`send`.`Typegood_Ident1` AS `Typegood_Ident1`,');
+str1.Add('`send`.`Typegood_Ident2` AS `Typegood_Ident2`,`send`.`Namber` AS `Namber`,`send`.`PayType_Ident` AS `PayType_Ident`,');
+str1.Add('`paytype`.`Name` AS `PayTypeName`,`send`.`NmberOrder` AS `NmberOrder`,`send`.`Invoice_Ident` AS `Invoice_Ident`,');
+str1.Add('`invoice`.`Number` AS `InvoiceNumber`,`invoice`.`Data` AS `InvoiceDate`,`send`.`NumberCountPattern` AS `NumberCountPattern`,');
+str1.Add('`send`.`PayText` AS `PayText`,`send`.`StatusSupp_Ident` AS `StatusSupp_Ident`,`sendtype`.`Name` AS `SendTypeName`,');
+str1.Add('`send`.`DateSupp` AS `DateSupp`,`send`.`Supplier_Ident` AS `Supplier_Ident`,`supplier`.`Name` AS `SupplierName`,');
+str1.Add('`send`.`SuppText` AS `SuppText`,cast(`send`.`PackCount` as char(60) charset utf8) AS `PackCount`,`send`.`ExpCount` AS `ExpCount`,');
+str1.Add('`send`.`PropCount` AS `PropCount`,`send`.`ExpTarif` AS `ExpTarif`,`send`.`PropTarif` AS `PropTarif`,');
+str1.Add('`send`.`Train_Ident` AS `Train_Ident`,`send`.`AddServStr` AS `AddServStr`,`send`.`AddServSum` AS `AddServSum`,');
+str1.Add('`send`.`CutTarif` AS `CutTarif`,`train`.`Number` AS `Number`,`send`.`SumWay` AS `SumWay`,');
+str1.Add('`send`.`NumberWay` AS `NumberWay`,`send`.`SumServ` AS `SumServ`,`send`.`NumberServ` AS `NumberServ`,');
+str1.Add('`send`.`WeightGd` AS `WeightGd`,`send`.`PlaceGd` AS `PlaceGd`,`send`.`NumberPP` AS `NumberPP`,');
+str1.Add('`send`.`PayTypeWay_Ident` AS `PayTypeWay_Ident`,`ptway`.`Name` AS `WayName`,`send`.`PayTypeServ_Ident` AS `PayTypeServ_Ident`,');
+str1.Add('`ptserv`.`Name` AS `ServName`,`send`.`CountInvoice` AS `CountInvoice`,`send`.`PlaceC` AS `PlaceC`,'+sql.MakeStr('+')+' AS `Sel`,');
+str1.Add('`severtrans`.`TP_return`(`send`.`Typegood_Ident`) AS `TP`,`severtrans`.`TP1_return`(`send`.`Typegood_Ident1`) AS `TP1`,');
+str1.Add('`severtrans`.`TP2_return`(`send`.`Typegood_Ident2`) AS `TP2`,concat(`severtrans`.`TP_return`(`send`.`Typegood_Ident`),'+sql.MakeStr('')+ ',');
+str1.Add('`severtrans`.`TP1_return`(`send`.`Typegood_Ident1`),'+sql.MakeStr('')+ ',`severtrans`.`TP2_return`(`send`.`Typegood_Ident2`)) AS `Typegood`,');
+str1.Add('`akttek`.`IDENT` AS `Akttek_Ident`,`akttek`.`Number` AS `AkttekNumber`,');
+str1.Add('`akttek`.`Data` AS `Akttekdata` ');
+str1.Add('from ((((((((((((((((`send` left join `inspector` on((`send`.`Inspector_Ident` = `inspector`.`Ident`))) ');
+str1.Add('left join `contracttype` on((`send`.`ContractType_Ident` = `contracttype`.`Ident`))) ');
+str1.Add('left join `clients` on((`clients`.`Ident` = `send`.`Client_Ident`))) ');
+str1.Add('left join `train` on((`train`.`Ident` = `send`.`Train_Ident`))) ');
+str1.Add('left join `city` on((`send`.`City_Ident` = `city`.`Ident`))) ');
+str1.Add('left join `acceptor` on((`acceptor`.`Ident` = `send`.`Acceptor_Ident`))) ');
+str1.Add('left join `rollout` on((`send`.`Rollout_Ident` = `rollout`.`Ident`))) ');
+str1.Add('left join `namegood` on((`send`.`Namegood_Ident` = `namegood`.`Ident`))) ');
+str1.Add('left join `forwarder` on((`forwarder`.`Ident` = `send`.`Forwarder_Ident`))) ');
+str1.Add('left join `paytype` on((`paytype`.`Ident` = `send`.`PayType_Ident`))) ');
+str1.Add('left join `supplier` on((`send`.`Supplier_Ident` = `supplier`.`Ident`))) ');
+str1.Add('left join `sendtype` on((`send`.`StatusSupp_Ident` = `sendtype`.`Ident`))) ');
+str1.Add('left join `invoice` on((`invoice`.`Ident` = `send`.`Invoice_Ident`))) ');
+str1.Add('left join `paytype` `ptway` on((`ptway`.`Ident` = `send`.`PayTypeWay_Ident`))) ');
+str1.Add('left join `paytype` `ptserv` on((`ptserv`.`Ident` = `send`.`PayTypeServ_Ident`))) ');
+str1.Add('left join ((`send` `s` left join `clients` `cl` on((`cl`.`Ident` = `s`.`Client_Ident_Sender`))) ');
+str1.Add('left join `akttek` on((`akttek`.`IDENT` = `s`.`Akttek_Ident`))) on((`send`.`Ident` = `s`.`Ident`))) ');
+str1.Add(' where '+ cond);
+sqlGrid1.ExecSQL(str1);
+str1.free;}
+   SqlGrid1.ExecTableCond('Sends',cond);
 end;
 
 procedure TFormSendBox.FormKeyDown(Sender: TObject; var Key: Word;

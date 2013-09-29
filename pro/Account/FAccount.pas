@@ -327,6 +327,7 @@ try
   ReportMakerWP.AddParam('17='+s);
   ReportMakerWP.AddParam('18='+q.FieldByName('Telephone').asstring);
   ReportMakerWP.AddParam('19='+q.FieldByName('INN').asstring);
+  ReportMakerWP.AddParam('39='+q.FieldByName('KPP').asstring);
   ReportMakerWP.AddParam('20='+q.FieldByName('CalculatCount').asstring);
   s:=sql.SelectString('Bank','Name','Ident='+IntToStr(q.fieldByName('Bank_Ident').asInteger));
   ReportMakerWP.AddParam('21='+s);
