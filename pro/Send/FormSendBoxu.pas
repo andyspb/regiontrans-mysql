@@ -585,7 +585,9 @@ str1.Add('left join `akttek` on((`akttek`.`IDENT` = `s`.`Akttek_Ident`))) on((`s
 str1.Add(' where ' + cond + ' and (' + str + ')');
 sqlGrid1.ExecSQL(str1);
 str1.free; }
-SqlGrid1.ExecTableCond('Sends','('+str+')'+ ' and '+ cond);
+if trim(str) <> '' then
+    SqlGrid1.ExecTableCond('Sends','('+str+')'+ ' and '+ cond);
+
 except
 application.MessageBox('Проверьте правильность составления фильтра!','Ошибка!',0);
 exit
