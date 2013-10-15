@@ -1,8 +1,8 @@
 object FormSendBox: TFormSendBox
-  Left = 228
-  Top = 120
+  Left = 409
+  Top = 162
   Width = 1070
-  Height = 603
+  Height = 601
   Caption = #1050#1072#1088#1090#1086#1090#1077#1082#1072' '#1086#1090#1087#1088#1072#1074#1086#1082
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -56,9 +56,9 @@ object FormSendBox: TFormSendBox
       ToolBarButton = True
       FileName = 
         'F:\SeverTrans\Icon\IconSelekt_ico'#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0 +
-        #0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0
+        #0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0
     end
-    object eADD: TToolbarButton
+    object eCreate: TToolbarButton
       Left = 100
       Top = 2
       Width = 100
@@ -74,7 +74,7 @@ object FormSendBox: TFormSendBox
       ParentShowHint = False
       ShowHint = True
       TabOrder = 1
-      OnClick = eADDClick
+      OnClick = eCreateClick
       ToolBarButton = True
     end
     object btPrint: TBMPBtn
@@ -140,7 +140,7 @@ object FormSendBox: TFormSendBox
     Left = 0
     Top = 81
     Width = 1054
-    Height = 484
+    Height = 482
     Hint = #1050#1072#1088#1090#1086#1090#1077#1082#1072' '#1086#1090#1087#1088#1072#1074#1086#1082
     ShowPrompt = False
     QueryEnabled = False
@@ -182,10 +182,12 @@ object FormSendBox: TFormSendBox
       ParentColor = False
       NotNull = False
       NewItemFlag = False
+      OnChange = cbUpdateFilterButtons
       Align = alLeft
       ParentShowHint = False
       ShowHint = True
       TabOrder = 1
+      OnExit = cbUpdateFilterButtons
     end
     object cbZak: TLabelSQLComboBox
       Left = 1
@@ -202,10 +204,12 @@ object FormSendBox: TFormSendBox
       ParentColor = False
       NotNull = False
       NewItemFlag = False
+      OnChange = cbUpdateFilterButtons
       Align = alLeft
       ParentShowHint = False
       ShowHint = True
       TabOrder = 0
+      OnExit = cbUpdateFilterButtons
     end
     object LabelEditDate1: TLabelEditDate
       Left = 449
@@ -224,6 +228,7 @@ object FormSendBox: TFormSendBox
       ParentShowHint = False
       ShowHint = True
       TabOrder = 2
+      OnExit = cbUpdateFilterButtons
     end
     object LabelEditDate2: TLabelEditDate
       Left = 578
@@ -242,14 +247,16 @@ object FormSendBox: TFormSendBox
       ParentShowHint = False
       ShowHint = True
       TabOrder = 3
+      OnExit = cbUpdateFilterButtons
     end
-    object eFiltr: TToolbarButton
+    object eFilter: TToolbarButton
       Left = 708
       Top = 18
       Width = 85
       Height = 25
       Hint = #1057#1086#1079#1076#1072#1090#1100' '#1082#1072#1088#1090#1086#1095#1082#1091
       Caption = #1060#1080#1083#1100#1090#1088
+      Enabled = False
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clBlue
       Font.Height = -13
@@ -259,16 +266,17 @@ object FormSendBox: TFormSendBox
       ParentShowHint = False
       ShowHint = True
       TabOrder = 4
-      OnClick = eFiltrClick
+      OnClick = eFilterClick
       ToolBarButton = False
     end
-    object ToolbarButton1: TToolbarButton
+    object FilterDiscard: TToolbarButton
       Left = 796
       Top = 18
       Width = 85
       Height = 25
       Hint = #1057#1086#1079#1076#1072#1090#1100' '#1082#1072#1088#1090#1086#1095#1082#1091
       Caption = #1054#1090#1084#1077#1085#1080#1090#1100
+      Enabled = False
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clBlue
       Font.Height = -13
@@ -278,7 +286,7 @@ object FormSendBox: TFormSendBox
       ParentShowHint = False
       ShowHint = True
       TabOrder = 5
-      OnClick = ToolbarButton1Click
+      OnClick = FilterDiscardClick
       ToolBarButton = False
     end
   end

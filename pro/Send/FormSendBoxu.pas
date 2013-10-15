@@ -15,7 +15,7 @@ type
     eDelete: TToolbarButton;
     eExit: TToolbarButton;
     SQLGrid1: TSQLGrid;
-    eADD: TToolbarButton;
+    eCreate: TToolbarButton;
     btPrint: TBMPBtn;
     WordApplication1: TWordApplication;
     Panel1: TPanel;
@@ -23,18 +23,19 @@ type
     cbZak: TLabelSQLComboBox;
     LabelEditDate1: TLabelEditDate;
     LabelEditDate2: TLabelEditDate;
-    eFiltr: TToolbarButton;
-    ToolbarButton1: TToolbarButton;
+    eFilter: TToolbarButton;
+    FilterDiscard: TToolbarButton;
     procedure eExitClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure eCardClick(Sender: TObject);
-    procedure eADDClick(Sender: TObject);
+    procedure eCreateClick(Sender: TObject);
     procedure eDeleteClick(Sender: TObject);
     procedure btPrintClick(Sender: TObject);
-    procedure eFiltrClick(Sender: TObject);
-    procedure ToolbarButton1Click(Sender: TObject);
+    procedure eFilterClick(Sender: TObject);
+    procedure FilterDiscardClick(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
+    procedure cbUpdateFilterButtons(Sender: TObject);
   private
     { Private declarations }
   public
@@ -155,7 +156,7 @@ begin
   end else sql.Rollback;
 end;
 
-procedure TFormSendBox.eADDClick(Sender: TObject);
+procedure TFormSendBox.eCreateClick(Sender: TObject);
 var l:longint;
 begin
   sql.StartTransaction;
@@ -224,7 +225,7 @@ clientName:string;
 label T;
 begin
 try
-Typ:=0;
+//Typ:=0;
 Typ:=SQLGRID1.Query.FieldByName('ContractType_Ident').AsInteger;
 IdSend:=SQLGRID1.Query.FieldByName('Ident').AsInteger;
 clientName := SQLGRID1.Query.FieldByName('ClientAcr').AsString;
@@ -498,7 +499,7 @@ end;
 
 end;
 
-procedure TFormSendBox.eFiltrClick(Sender: TObject);
+procedure TFormSendBox.eFilterClick(Sender: TObject);
 var cond, str,StrNill:string;
     Val:integer;
     str1:TStringList;
@@ -592,9 +593,12 @@ except
 application.MessageBox('Проверьте правильность составления фильтра!','Ошибка!',0);
 exit
 end;
+
+FilterDiscard.Enabled := true;
+
 end;
 
-procedure TFormSendBox.ToolbarButton1Click(Sender: TObject);
+procedure TFormSendBox.FilterDiscardClick(Sender: TObject);
 var cond: string;
 str1:TStringList;
 begin
@@ -660,13 +664,35 @@ str1.Add(' where '+ cond);
 sqlGrid1.ExecSQL(str1);
 str1.free;}
    SqlGrid1.ExecTableCond('Sends',cond);
+
+FilterDiscard.Enabled := false;
+
 end;
 
 procedure TFormSendBox.FormKeyDown(Sender: TObject; var Key: Word;
-  Shift: TShiftState);
+    Shift: TShiftState);
 begin
 if key = VK_Return
-  then eCardClick(Sender)
+    then eCardClick(Sender)
+end;
+
+procedure TFormSendBox.cbUpdateFilterButtons(Sender: TObject);
+    var customer_str:string;
+        customer_int:integer;
+        dest_str:string;
+        dest_int:integer;
+begin
+  customer_str:='';
+  customer_int:=cbZak.getData ;
+  if (customer_int<>0) then
+        customer_str:=customer_str+'Client_Ident='+IntToStr(customer_int);
+  dest_int:=cbPynkt.GetData;
+  if  (LabelEditDate1.Text<>'  .  .    ') or (LabelEditDate2.Text<>'  .  .    ')
+        or (customer_int<>0) or (dest_int<>0) then
+      eFilter.Enabled := true
+  else
+      eFilter.Enabled := false;
+  FilterDiscard.Enabled :=false;
 end;
 
 end.
