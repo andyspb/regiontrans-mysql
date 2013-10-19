@@ -258,6 +258,12 @@ procedure TFMenu.FormCreate(Sender: TObject);
 var
  Word: variant;
 begin
+// krutogolov
+if EntrySecurity.bAllData then
+begin
+  Caption := 'РегионТранс (База данных за все время)';
+end;
+
 // FMenu.CurrentUser:=sql.SelectInteger('')
 //Запуск MS Word
 try
@@ -266,8 +272,8 @@ except
   try
     Word := CreateOleObject('Word.Application');
     if Word.Visible = False then
-       begin
-         Word.Visible := True;
+    begin
+      Word.Visible := True;
     end;
   except
     ShowMessage('Не могу запустить MS Word. Запустите MS Word вручную.');

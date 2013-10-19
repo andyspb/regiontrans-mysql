@@ -1,0 +1,1 @@
+delete from invoice where `Data` < (select CURDATE()  - interval 1 year );

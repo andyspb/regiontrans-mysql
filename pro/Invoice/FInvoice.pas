@@ -74,11 +74,12 @@ LabelEditDate1.Text:=FormatDateTime('dd.mm.yyyy',now);
 Dat:=LabelEditDate1.Text;
 CheckBox1.Visible:=false;
 btOk.Visible:=false;
-if i<>0 then begin
-             Ident:=i ;
-             cbClient.SetActive(Ident);
-             code:=1;
-             end;
+if i<>0 then
+begin
+  Ident:=i ;
+  cbClient.SetActive(Ident);
+  code:=1;
+end;
 if showModal=mrOk then
 begin
  AddRecord:=1;
@@ -355,35 +356,39 @@ NewN:=1;    //Подоходный налог 18% с 01.01.2004 года
 if NumberChange<>'' then
 if sql.SelectString('Invoice','Number','Number='+sql.MakeStr(NumberChange)+
                       ' and Ident <> '+IntToStr(IdInv))<>'' then
-     begin
-      Application.MessageBox('Счет фактура с таким номером уже заведена,'+
+  begin
+    Application.MessageBox('Счет фактура с таким номером уже заведена,'+
                               'введите другой номер!','Ошибка!',0);
-      eNumber.SetFocus;
-      exit;
-     end;
-erExit(Sender);
-;
-if not erExitTest then begin
-eNumber.SetFocus;
-exit;
+    eNumber.SetFocus;
+    exit;
+  end;
+
+erExit(Sender);;
+
+if not erExitTest then
+begin
+  eNumber.SetFocus;
+  exit;
 end;
 if (Code=0) or (Code=1) then  {создаем новую}
 begin
-test:=false;
-q:=sql.Select('Sends','DateSupp,Ident,CountInvoice','Client_Ident='+IntToStr(Ident)+
+  test:=false;
+  q:=sql.Select('Sends','DateSupp,Ident,CountInvoice','Client_Ident='+IntToStr(Ident)+
              ' and NumberCountPattern is NULL and( (ContractType_Ident=2 and '+
               'DateSupp is not NULL) or (ContractType_Ident=1 and '+
               'DateSupp is not NULL and SumWay is not NULL and '+
               'SumServ is not NULL)) and DateSupp<='+
               sql.MakeStr(FormatDateTime('yyyy-mm-dd',StrToDate(Dat)))+
               ' and CountInvoice is not NULL','DateSupp');
-if q.Eof then begin
-               ShowMessage('У клиента '+sql.Selectstring('Clients','Name','Ident='+
+  if q.Eof then
+  begin
+    ShowMessage('У клиента '+sql.Selectstring('Clients','Name','Ident='+
                             IntToStr(Ident))+
                             ' нет доставленных или отправленных отправок!');
-               exit;
-              end
-  else begin
+    exit;
+  end
+  else
+  begin
 strIdSend:='';
 i:=0;
 while (not q.Eof)  do
@@ -404,7 +409,7 @@ SaveInvoice;
 Print;
 sql.Delete('PrintInvoice','Send_Ident in ('+StrIdSend+')');
 StrIdSend:='';
-i:=0;   
+i:=0;
 end else begin
          if (Pos(',',strIdSend)=1) then
             Delete(strIdSend,1,1);
@@ -460,7 +465,7 @@ begin
     Print;
     sql.Delete('PrintInvoice','Send_Ident in ('+StrIdSend+')');
     StrIdSend:='';
-    i:=0;
+//    i:=0;
 end;
 end else if ((i>21)and (i>0))or test then
     begin
@@ -473,7 +478,7 @@ end else if ((i>21)and (i>0))or test then
      Print;
      sql.Delete('PrintInvoice','Send_Ident in ('+StrIdSend+')');
      StrIdSend:='';
-     i:=0;
+//     i:=0;
     end;
 q.Free;
 end;
@@ -1087,20 +1092,27 @@ begin
    LabelEditDate1.SetFocus;
    exit;
 end;
+
 erExit(Sender);
-;
-if not erExitTest then begin
-eNumber.SetFocus;
-exit;
+
+if not erExitTest then
+begin
+  eNumber.SetFocus;
+  exit;
 end;
+
 if sql.SelectString('Invoice','Number','Number='+sql.MakeStr(NumberChange)+
                       ' and Ident <> '+IntToStr(IdInv))<>'' then
-     begin
-      Application.MessageBox('Счет фактура с таким номером уже заведена,'+
+  begin
+    Application.MessageBox('Счет фактура с таким номером уже заведена,'+
                               'введите другой номер!','Ошибка!',0);
-      eNumber.SetFocus;
-      exit
-     end else  ModalResult:=mrOk;
+    eNumber.SetFocus;
+    exit;
+  end
+  else
+  begin
+    ModalResult:=mrOk;
+  end
 end;
 
 procedure TFormInvoice.N1Click(Sender: TObject);
@@ -1131,7 +1143,7 @@ end;
 
 procedure TFormInvoice.erExit(Sender: TObject);
 var numtest,num1:string;
-    j:      integer;
+//    j:      integer;
     y:Word;
 begin
 numtest:='';
@@ -1141,7 +1153,8 @@ begin
  try  
  numtest:=trim(NumberChange);
  delete(numtest,length(numtest)-2,3);
- j:=StrToInt(numtest);
+// j:=StrToInt(numtest);
+ StrToInt(numtest);
  except
   ShowMessage('Первая часть номера - это число!');
   eNumber.SetFocus;

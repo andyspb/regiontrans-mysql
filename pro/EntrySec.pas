@@ -15,6 +15,7 @@ type
     Label1: TLabel;
     btOk: TBitBtn;
     btCancel: TBitBtn;
+    ChBoxAll: TCheckBox;
     procedure btOKClick(Sender: TObject);
     procedure btCancelClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -24,7 +25,7 @@ type
   private
     { Private declarations }
   public
-    { Public declarations }
+    bAllData: boolean;
   end;
 
 var
@@ -51,11 +52,8 @@ begin
    FMenu.CurrentUser:=q.FieldByName('Ident').AsInteger;
    FMenu.CurrentUserRoles:=q.FieldByName('Roles_Ident').AsInteger;
    FMenu.CurrentUserName:=eShortName.text;
-
+   bAllData := ChBoxAll.Checked;
    ModalResult:=mrOK;
-
-
-
 end;
 
 procedure TEntrySecurity.btCancelClick(Sender: TObject);

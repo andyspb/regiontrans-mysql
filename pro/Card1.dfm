@@ -1,6 +1,6 @@
 object Formcard1: TFormcard1
-  Left = 250
-  Top = 208
+  Left = 526
+  Top = 240
   Width = 696
   Height = 480
   Caption = 'Test'

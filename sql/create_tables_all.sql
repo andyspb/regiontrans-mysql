@@ -1,0 +1,231 @@
+delimiter $$
+
+CREATE TABLE if not exists`send_all` (
+  `Ident` int(11) NOT NULL,
+  `Start` date DEFAULT NULL,
+  `Inspector_Ident` int(11) DEFAULT NULL,
+  `ContractType_Ident` int(11) DEFAULT NULL,
+  `Client_Ident` int(11) DEFAULT NULL,
+  `Credit` varchar(10) DEFAULT NULL,
+  `Contract` varchar(10) DEFAULT NULL,
+  `Client_Ident_Sender` int(11) DEFAULT NULL,
+  `City_Ident` int(11) DEFAULT NULL,
+  `DateSend` date DEFAULT NULL,
+  `Acceptor_Ident` int(11) DEFAULT NULL,
+  `Forwarder_Ident` int(11) DEFAULT NULL,
+  `Rollout_Ident` int(11) DEFAULT NULL,
+  `Namegood_Ident` int(11) DEFAULT NULL,
+  `Typegood_Ident` int(11) DEFAULT NULL,
+  `Weight` int(11) DEFAULT NULL,
+  `Volume` varchar(6) DEFAULT NULL,
+  `CountWeight` varchar(8) DEFAULT NULL,
+  `Tariff` varchar(8) DEFAULT NULL,
+  `Fare` varchar(10) DEFAULT NULL,
+  `PackTarif` varchar(10) DEFAULT NULL,
+  `AddServiceExp` int(11) DEFAULT NULL,
+  `AddServicePack` int(11) DEFAULT NULL,
+  `AddServiceProp` int(11) DEFAULT NULL,
+  `AddServicePrace` varchar(10) DEFAULT NULL,
+  `InsuranceSum` varchar(12) DEFAULT NULL,
+  `InsurancePercent` varchar(6) DEFAULT NULL,
+  `InsuranceValue` varchar(12) DEFAULT NULL,
+  `SumCount` varchar(10) DEFAULT NULL,
+  `Typegood_Ident1` int(11) DEFAULT NULL,
+  `Typegood_Ident2` int(11) DEFAULT NULL,
+  `Namber` varchar(10) DEFAULT NULL,
+  `PayType_Ident` int(11) DEFAULT NULL,
+  `NmberOrder` varchar(8) DEFAULT NULL,
+  `NumberCountPattern` varchar(13) DEFAULT NULL,
+  `PayText` text,
+  `StatusSupp_Ident` int(11) DEFAULT NULL,
+  `DateSupp` date DEFAULT NULL,
+  `Supplier_Ident` int(11) DEFAULT NULL,
+  `SuppText` text,
+  `PackCount` varchar(60) DEFAULT NULL,
+  `ExpCount` varchar(5) DEFAULT NULL,
+  `PropCount` int(11) DEFAULT NULL,
+  `ExpTarif` varchar(10) DEFAULT NULL,
+  `PropTarif` varchar(10) DEFAULT NULL,
+  `Check` int(11) DEFAULT NULL,
+  `Train_Ident` int(11) DEFAULT NULL,
+  `SumWay` varchar(10) DEFAULT NULL,
+  `NumberWay` varchar(10) DEFAULT NULL,
+  `SumServ` varchar(10) DEFAULT NULL,
+  `NumberServ` varchar(10) DEFAULT NULL,
+  `WeightGd` int(11) DEFAULT NULL,
+  `PlaceGd` varchar(60) DEFAULT NULL,
+  `NumberPP` varchar(10) DEFAULT NULL,
+  `CountInvoice` int(11) DEFAULT NULL,
+  `PlaceC` int(11) DEFAULT NULL,
+  `PayTypeServ_Ident` int(11) DEFAULT NULL,
+  `PayTypeWay_Ident` int(11) DEFAULT NULL,
+  `Invoice_Ident` int(11) DEFAULT NULL,
+  `InsurancePay` varchar(10) DEFAULT NULL,
+  `Akttek_Ident` int(11) DEFAULT NULL,
+  `AddServStr` varchar(60) DEFAULT NULL,
+  `AddServSum` varchar(10) DEFAULT NULL,
+  `Typegood_Ident3` int(11) DEFAULT NULL,
+  `PrivilegedTariff` int(11) DEFAULT NULL,
+  `CutTarif` int(11) DEFAULT '0',
+  `DateDelFirst` date DEFAULT NULL,
+  PRIMARY KEY (`Ident`),
+  KEY `Invoice` (`Invoice_Ident`),
+  KEY `AktTek` (`Akttek_Ident`),
+  KEY `acceptor` (`Acceptor_Ident`),
+  KEY `ContractType` (`ContractType_Ident`),
+  KEY `ClientsSender` (`Client_Ident_Sender`),
+  KEY `City` (`City_Ident`),
+  KEY `SendType` (`StatusSupp_Ident`),
+  KEY `Rollout` (`Rollout_Ident`),
+  KEY `Namegood` (`Namegood_Ident`),
+  KEY `PayType` (`PayType_Ident`),
+  KEY `Supplier` (`Supplier_Ident`),
+  KEY `Train` (`Train_Ident`),
+  KEY `Forwarder` (`Forwarder_Ident`),
+  KEY `PayType001` (`PayTypeServ_Ident`),
+  KEY `PayType002` (`PayTypeWay_Ident`),
+  KEY `INSPECTOR` (`Inspector_Ident`),
+  KEY `Clients` (`Client_Ident`),
+  CONSTRAINT `send_all_ibfk_1` FOREIGN KEY (`Acceptor_Ident`) REFERENCES `acceptor` (`Ident`) ON UPDATE CASCADE,
+  CONSTRAINT `send_all_ibfk_10` FOREIGN KEY (`Train_Ident`) REFERENCES `train` (`Ident`) ON UPDATE CASCADE,
+  CONSTRAINT `send_all_ibfk_11` FOREIGN KEY (`Forwarder_Ident`) REFERENCES `forwarder` (`Ident`) ON UPDATE CASCADE,
+  CONSTRAINT `send_all_ibfk_12` FOREIGN KEY (`PayTypeServ_Ident`) REFERENCES `paytype` (`Ident`) ON UPDATE CASCADE,
+  CONSTRAINT `send_all_ibfk_13` FOREIGN KEY (`PayTypeWay_Ident`) REFERENCES `paytype` (`Ident`) ON UPDATE CASCADE,
+  CONSTRAINT `send_all_ibfk_14` FOREIGN KEY (`Inspector_Ident`) REFERENCES `inspector` (`Ident`) ON UPDATE CASCADE,
+  CONSTRAINT `send_all_ibfk_15` FOREIGN KEY (`Client_Ident`) REFERENCES `clients` (`Ident`) ON UPDATE CASCADE,
+  CONSTRAINT `send_all_ibfk_16` FOREIGN KEY (`Invoice_Ident`) REFERENCES `invoice` (`Ident`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `send_all_ibfk_17` FOREIGN KEY (`Akttek_Ident`) REFERENCES `akttek` (`IDENT`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `send_all_ibfk_18` FOREIGN KEY (`Acceptor_Ident`) REFERENCES `acceptor` (`Ident`) ON UPDATE CASCADE,
+  CONSTRAINT `send_all_ibfk_19` FOREIGN KEY (`ContractType_Ident`) REFERENCES `contracttype` (`Ident`) ON UPDATE CASCADE,
+  CONSTRAINT `send_all_ibfk_2` FOREIGN KEY (`ContractType_Ident`) REFERENCES `contracttype` (`Ident`) ON UPDATE CASCADE,
+  CONSTRAINT `send_all_ibfk_20` FOREIGN KEY (`Client_Ident_Sender`) REFERENCES `clients` (`Ident`) ON UPDATE CASCADE,
+  CONSTRAINT `send_all_ibfk_21` FOREIGN KEY (`City_Ident`) REFERENCES `city` (`Ident`) ON UPDATE CASCADE,
+  CONSTRAINT `send_all_ibfk_22` FOREIGN KEY (`StatusSupp_Ident`) REFERENCES `sendtype` (`Ident`) ON UPDATE CASCADE,
+  CONSTRAINT `send_all_ibfk_23` FOREIGN KEY (`Rollout_Ident`) REFERENCES `rollout` (`Ident`) ON UPDATE CASCADE,
+  CONSTRAINT `send_all_ibfk_24` FOREIGN KEY (`Namegood_Ident`) REFERENCES `namegood` (`Ident`) ON UPDATE CASCADE,
+  CONSTRAINT `send_all_ibfk_25` FOREIGN KEY (`PayType_Ident`) REFERENCES `paytype` (`Ident`) ON UPDATE CASCADE,
+  CONSTRAINT `send_all_ibfk_26` FOREIGN KEY (`Supplier_Ident`) REFERENCES `supplier` (`Ident`) ON UPDATE CASCADE,
+  CONSTRAINT `send_all_ibfk_27` FOREIGN KEY (`Train_Ident`) REFERENCES `train` (`Ident`) ON UPDATE CASCADE,
+  CONSTRAINT `send_all_ibfk_28` FOREIGN KEY (`Forwarder_Ident`) REFERENCES `forwarder` (`Ident`) ON UPDATE CASCADE,
+  CONSTRAINT `send_all_ibfk_29` FOREIGN KEY (`PayTypeServ_Ident`) REFERENCES `paytype` (`Ident`) ON UPDATE CASCADE,
+  CONSTRAINT `send_all_ibfk_3` FOREIGN KEY (`Client_Ident_Sender`) REFERENCES `clients` (`Ident`) ON UPDATE CASCADE,
+  CONSTRAINT `send_all_ibfk_30` FOREIGN KEY (`PayTypeWay_Ident`) REFERENCES `paytype` (`Ident`) ON UPDATE CASCADE,
+  CONSTRAINT `send_all_ibfk_31` FOREIGN KEY (`Inspector_Ident`) REFERENCES `inspector` (`Ident`) ON UPDATE CASCADE,
+  CONSTRAINT `send_all_ibfk_32` FOREIGN KEY (`Client_Ident`) REFERENCES `clients` (`Ident`) ON UPDATE CASCADE,
+  CONSTRAINT `send_all_ibfk_4` FOREIGN KEY (`City_Ident`) REFERENCES `city` (`Ident`) ON UPDATE CASCADE,
+  CONSTRAINT `send_all_ibfk_5` FOREIGN KEY (`StatusSupp_Ident`) REFERENCES `sendtype` (`Ident`) ON UPDATE CASCADE,
+  CONSTRAINT `send_all_ibfk_6` FOREIGN KEY (`Rollout_Ident`) REFERENCES `rollout` (`Ident`) ON UPDATE CASCADE,
+  CONSTRAINT `send_all_ibfk_7` FOREIGN KEY (`Namegood_Ident`) REFERENCES `namegood` (`Ident`) ON UPDATE CASCADE,
+  CONSTRAINT `send_all_ibfk_8` FOREIGN KEY (`PayType_Ident`) REFERENCES `paytype` (`Ident`) ON UPDATE CASCADE,
+  CONSTRAINT `send_all_ibfk_9` FOREIGN KEY (`Supplier_Ident`) REFERENCES `supplier` (`Ident`) ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=cp1251$$
+
+delimiter $$
+
+CREATE TABLE if not exists `invoice_all` (
+  `Ident` int(11) NOT NULL,
+  `Number` varchar(13) NOT NULL,
+  `Data` date DEFAULT NULL,
+  `Clients_Ident` int(11) DEFAULT NULL,
+  `Sum` varchar(12) DEFAULT NULL,
+  `NDS` varchar(12) DEFAULT NULL,
+  `Fee` varchar(12) DEFAULT NULL,
+  `ReportReturn` int(11) DEFAULT NULL,
+  `SumGD` varchar(12) DEFAULT NULL,
+  `NDSGD` varchar(12) DEFAULT NULL,
+  `SumAVT` varchar(12) DEFAULT NULL,
+  `NDSAVT` varchar(12) DEFAULT NULL,
+  `SumAG` varchar(12) DEFAULT NULL,
+  `NDSAG` varchar(12) DEFAULT NULL,
+  `SumPak` varchar(12) DEFAULT NULL,
+  `NDSPak` varchar(12) DEFAULT NULL,
+  `SumPakAg` varchar(12) DEFAULT NULL,
+  `NDSPakAg` varchar(12) DEFAULT NULL,
+  `SumSt` varchar(12) DEFAULT NULL,
+  `NDSSt` varchar(12) DEFAULT NULL,
+  `SumStAg` varchar(12) DEFAULT NULL,
+  `NDSStAg` varchar(12) DEFAULT NULL,
+  PRIMARY KEY (`Ident`),
+  KEY `Clients` (`Clients_Ident`),
+  CONSTRAINT `invoice_all_ibfk_1` FOREIGN KEY (`Clients_Ident`) REFERENCES `clients` (`Ident`) ON UPDATE CASCADE,
+  CONSTRAINT `invoice_all_ibfk_2` FOREIGN KEY (`Clients_Ident`) REFERENCES `clients` (`Ident`) ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=cp1251$$
+
+delimiter $$
+CREATE TABLE if not exists `account_all` (
+  `Ident` int(11) NOT NULL,
+  `Client_Ident` int(11) NOT NULL,
+  `Dat` date NOT NULL,
+  `SumNDS` varchar(10) NOT NULL,
+  `Number` varchar(8) NOT NULL,
+  PRIMARY KEY (`Ident`),
+  KEY `Clients` (`Client_Ident`),
+  CONSTRAINT `account_all_ibfk_1` FOREIGN KEY (`Client_Ident`) REFERENCES `clients` (`Ident`) ON UPDATE CASCADE,
+  CONSTRAINT `account_all_ibfk_2` FOREIGN KEY (`Client_Ident`) REFERENCES `clients` (`Ident`) ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=cp1251$$
+
+delimiter $$
+
+CREATE TABLE if not exists`accounttek_all` (
+  `IDENT` int(11) NOT NULL,
+  `Number` varchar(13) DEFAULT NULL,
+  `Dat` date DEFAULT NULL,
+  `Client_Ident` int(11) DEFAULT NULL,
+  `Sum` varchar(12) DEFAULT NULL,
+  PRIMARY KEY (`IDENT`),
+  KEY `Clients` (`Client_Ident`),
+  CONSTRAINT `accounttek_all_ibfk_1` FOREIGN KEY (`Client_Ident`) REFERENCES `clients` (`Ident`),
+  CONSTRAINT `accounttek_all_ibfk_2` FOREIGN KEY (`Client_Ident`) REFERENCES `clients` (`Ident`)
+) ENGINE=InnoDB DEFAULT CHARSET=cp1251$$
+
+delimiter $$
+
+CREATE TABLE if not exists `order_all` (
+  `Ident` int(11) NOT NULL,
+  `Client_Ident` int(11) DEFAULT NULL,
+  `Number` varchar(8) DEFAULT NULL,
+  `Dat` date DEFAULT NULL,
+  `Sum` varchar(10) DEFAULT NULL,
+  `NDS` varchar(8) DEFAULT NULL,
+  `SumNDS` varchar(10) DEFAULT NULL,
+  `NSP` varchar(8) DEFAULT NULL,
+  `DatNow` date DEFAULT NULL,
+  PRIMARY KEY (`Ident`),
+  KEY `Clients` (`Client_Ident`),
+  CONSTRAINT `order_all_ibfk_1` FOREIGN KEY (`Client_Ident`) REFERENCES `clients` (`Ident`) ON UPDATE CASCADE,
+  CONSTRAINT `order_all_ibfk_2` FOREIGN KEY (`Client_Ident`) REFERENCES `clients` (`Ident`) ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=cp1251$$
+
+delimiter $$
+
+CREATE TABLE if not exists `akttek_all` (
+  `IDENT` int(11) NOT NULL,
+  `Number` varchar(13) DEFAULT NULL,
+  `Data` date DEFAULT NULL,
+  `Clients_Ident` int(11) DEFAULT NULL,
+  `Sum` varchar(12) DEFAULT NULL,
+  `ReportReturn` int(11) DEFAULT NULL,
+  PRIMARY KEY (`IDENT`),
+  KEY `Clients` (`Clients_Ident`),
+  CONSTRAINT `akttek_all_ibfk_1` FOREIGN KEY (`Clients_Ident`) REFERENCES `clients` (`Ident`),
+  CONSTRAINT `akttek_all_ibfk_2` FOREIGN KEY (`Clients_Ident`) REFERENCES `clients` (`Ident`)
+) ENGINE=InnoDB DEFAULT CHARSET=cp1251$$
+
+delimiter $$
+
+CREATE TABLE `paysheet_all` (
+  `Ident` int(11) NOT NULL,
+  `Client_Ident` int(11) NOT NULL,
+  `Number` varchar(10) NOT NULL,
+  `Dat` date NOT NULL,
+  `Sum` varchar(11) NOT NULL,
+  PRIMARY KEY (`Ident`),
+  KEY `Clients` (`Client_Ident`),
+  CONSTRAINT `paysheet_all_ibfk_1` FOREIGN KEY (`Client_Ident`) REFERENCES `clients` (`Ident`) ON UPDATE CASCADE,
+  CONSTRAINT `paysheet_all_ibfk_2` FOREIGN KEY (`Client_Ident`) REFERENCES `clients` (`Ident`) ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=cp1251$$
+
+
+
+
+

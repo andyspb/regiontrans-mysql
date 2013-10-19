@@ -6,7 +6,7 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, BMPBtn,toolbtn,tsqlcls, ToolWin, ComCtrls,Tadjform, SqlGrid,
   StdCtrls, Buttons,OleServer,DBTables, Word2000, LblEdtDt, Sqlctrls,
-  Lbsqlcmb, ExtCtrls;
+  Lbsqlcmb, ExtCtrls, EntrySec;
 
 type
   TFormSendBox = class(TadjusTForm)
@@ -60,6 +60,7 @@ procedure TFormSendBox.FormCreate(Sender: TObject);
 var cond:string;
 str1:TStringList;
 begin
+// krutogolov
 fsection:='FormSends';
 sqlGrid1.Section:='Sends';
 //cond := '`send`.`Start` >=' + FormatDateTime('yyyy-mm-dd',IncMonth(Date,-6));
