@@ -25,11 +25,12 @@ type
   private
     { Private declarations }
   public
-    bAllData: boolean;
-  end;
+    { Public declarations }
+    end;
 
 var
   EntrySecurity: TEntrySecurity;
+  bAllData: boolean;
 
 implementation
 
