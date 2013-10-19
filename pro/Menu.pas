@@ -259,7 +259,7 @@ var
  Word: variant;
 begin
 // krutogolov
-if EntrySecurity.bAllData then
+//if EntrySecurity.bAllData then
 begin
   Caption := 'РегионТранс (База данных за все время)';
 end;
