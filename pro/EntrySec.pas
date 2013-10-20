@@ -32,6 +32,30 @@ var
   EntrySecurity: TEntrySecurity;
   bAllData: boolean;
   period: string;
+  // krutogolov
+  // strings for tables
+  account_str: string;
+  accounttek_str: string;
+  akttek_str: string;
+  invoice_str: string;
+  order_str: string;
+  paysheet_str: string;
+  send_str: string;
+  // strings for views
+  accountview_str: string;
+  accounttekview_str: string;
+  akttekview_str: string;
+  invoiceview_str: string;
+  orders_str: string;
+  orderstek_str: string;
+  paysheetview_str: string;
+  sends_str: string;
+  svpayreceipt_str: string;
+  vs1_str: string;
+  vs2_str: string;
+
+
+
 
 implementation
 
@@ -51,14 +75,63 @@ begin
     eShortName.setfocus;
     exit;
     end;
-   FMenu.CurrentUser:=q.FieldByName('Ident').AsInteger;
-   FMenu.CurrentUserRoles:=q.FieldByName('Roles_Ident').AsInteger;
-   FMenu.CurrentUserName:=eShortName.text;
-   bAllData := ChBoxAll.Checked;
-   if (bAllData) then
-     period:='бяе'
+  FMenu.CurrentUser:=q.FieldByName('Ident').AsInteger;
+  FMenu.CurrentUserRoles:=q.FieldByName('Roles_Ident').AsInteger;
+  FMenu.CurrentUserName:=eShortName.text;
+  bAllData := ChBoxAll.Checked;
+  if (bAllData) then
+    // krutogolov
+    // all data
+    begin
+      period:='бяе';
+      // tables
+      account_str:='account_all';
+      accounttek_str:='accounttek_all';
+      akttek_str:='akttek_all';
+      invoice_str:='invoice_all';
+      order_str:='order_all';
+      paysheet_str:='paysheet_all';
+      send_str:='send_all';
+      // strings for views
+      accountview_str:='accountview_all';
+      accounttekview_str:='accounttekview_all';
+      akttekview_str:='akttekview_all';
+      invoiceview_str:='invoiceview_all';
+      orders_str:='orders_all';
+      orderstek_str:='orderstek_all';
+      paysheetview_str:='paysheetview_all';
+      sends_str:='sends_all';
+      svpayreceipt_str:='svpayreceipt_all';
+      vs1_str:='vs1_all';
+      vs2_str:='vs2_all';
+     end
    else
+     // krutogolov
+     // data for the period
+     begin
      period:='цнд';
+      // tables
+      account_str:='account';
+      accounttek_str:='accounttek';
+      akttek_str:='akttek';
+      invoice_str:='invoice';
+      order_str:='order';
+      paysheet_str:='paysheet';
+      send_str:='send';
+      // strings for views
+      accountview_str:='accountview';
+      accounttekview_str:='accounttekview';
+      akttekview_str:='akttekview';
+      invoiceview_str:='invoiceview';
+      orders_str:='orders';
+      orderstek_str:='orderstek';
+      paysheetview_str:='paysheetview';
+      sends_str:='sends';
+      svpayreceipt_str:='svpayreceipt';
+      vs1_str:='vs1';
+      vs2_str:='vs2';
+     end;
+
    ModalResult:=mrOK;
 end;
 

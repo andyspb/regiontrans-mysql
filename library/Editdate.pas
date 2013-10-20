@@ -55,7 +55,9 @@ begin
       end
     end;
   PrevDate:=Text;
-  if Assigned(fOnUserExit) then fOnUserExit(Sender)
+  if Assigned(fOnUserExit) then
+    fOnUserExit(Sender)
+
 end;
 
 end.

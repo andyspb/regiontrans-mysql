@@ -101,7 +101,7 @@ end;
 procedure TDBPrinter.DrawPage(Query:TQuery;oLeft,oTop,oRight,oBottom:integer);
 var r,dx:Real;
     i,Am,x,dy,k:integer;
-    b:boolean;
+//    b:boolean;
     sl:TStringList;
 begin
   Am:=0;

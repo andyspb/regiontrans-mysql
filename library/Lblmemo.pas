@@ -90,12 +90,14 @@ begin
 end;
 
 procedure TLabelMemo.Value(sl:TStringList);
-var i:integer;
+var
     c:string;
 begin
-  if Assigned(fValueEvent) then fValueEvent(self,sl)
+  if Assigned(fValueEvent) then
+    fValueEvent(self,sl)
   else
-    if not Visible then sl.Add('NULL')
+    if not Visible then
+      sl.Add('NULL')
     else
       sql.MultiString(sl,GetTextBuf);
 end;

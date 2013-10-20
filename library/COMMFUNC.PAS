@@ -70,31 +70,31 @@ begin
   if sub='' then exit;
   OpenSkobka:=0;
   for i:=0 to s.count-1 do
-     begin
-       d:=s.Strings[i];
-       repeat
-         k[1]:=pos('(',d);
-         k[2]:=pos(')',d);
-         k[3]:=pos(sub,d);
-         min:=1;
-         for j:=1 to 3 do
-           if ((k[j]<k[min]) or (k[min]=0)) and (k[j]<>0) then min:=j;
-         if k[min]<>0 then
-           begin
-             case min of
-               1: inc(OpenSkobka);
-               2: dec(OpenSkobka);
-               3: if OpenSkobka=0 then
-                    begin
-                      ExtPos:=i;
-                      exit
-                    end
-             end;
-             Delete(d,1,k[min])
-           end
-       until k[min]=0
-     end;
-     i:=0
+    begin
+      d:=s.Strings[i];
+      repeat
+        k[1]:=pos('(',d);
+        k[2]:=pos(')',d);
+        k[3]:=pos(sub,d);
+        min:=1;
+        for j:=1 to 3 do
+          if ((k[j]<k[min]) or (k[min]=0)) and (k[j]<>0) then min:=j;
+        if k[min]<>0 then
+          begin
+            case min of
+              1: inc(OpenSkobka);
+              2: dec(OpenSkobka);
+              3: if OpenSkobka=0 then
+                begin
+                  ExtPos:=i;
+                  exit
+                end
+          end;
+          Delete(d,1,k[min])
+      end
+      until k[min]=0
+    end;
+  i:=0
 end;
 
 end.

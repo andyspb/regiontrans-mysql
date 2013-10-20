@@ -57,7 +57,7 @@ end;
 
 constructor TEnviroment.Create;
 var q:TQuery;
-    i:integer;
+//    i:integer;
     View:TGUIView;
 begin
   CreateOpers;
