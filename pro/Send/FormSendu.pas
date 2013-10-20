@@ -7,7 +7,7 @@ uses
   Dialogs, StdCtrls, Sqlcombo, LblCombo, Lbledit, Lbsqlcmb, Sqlctrls,
   LblEdtDt, ExtCtrls, ComCtrls,Tadjform, Grids, Buttons, BMPBtn, ToolWin,
   LblMemo, Lblint, LblEditMoney,DBTables,SqlGrid,TSQLCLS, DB, DBGrids,
-  OleServer, Word2000, Menus,QPrinters, DateUtils;
+  OleServer, Word2000, Menus,QPrinters, DateUtils, EntrySec;
 
 type
   TFormSend = class(TForm)
@@ -231,8 +231,14 @@ labelInteger2.Edit.BiDiMode:=bdLeftToRight;
 eWieght.Edit.BiDiMode:=bdLeftToRight;
 //cbPynkt.SQLComboBox.Sorted:=true;
 cbPolych.Sorted:=true;
- if FMenu.CurrentUserroles = 1 then eNumberCountPattern.Enabled:=true
- else eNumberCountPattern.Enabled:=false;
+if FMenu.CurrentUserroles = 1 then
+  eNumberCountPattern.Enabled:=true
+else
+  eNumberCountPattern.Enabled:=false;
+
+Caption:='Карточка отправки ( ' + EntrySec.period + ' )';
+if (EntrySec.bAllData) then
+  btOk.Enabled:=False;
 end;
 
 function TFormSend.AddRecord:longint;
@@ -593,7 +599,7 @@ case Application.MessageBox('Пора распечатать акт! Подтвердите печать!',
     IDYES:
     begin
      FormAkt:=TFormAkt.Create(Application) ;
-     l:=FormAkt.AddRecord(Id);
+     FormAkt.AddRecord(Id);
      FormAkt.Free;
     end;
     IDNO:begin
@@ -614,7 +620,7 @@ case Application.MessageBox('Пора распечатать счет фактуру! Подтвердите печать!'
     begin
 
      FormInvoice:=TFormInvoice.Create(Application) ;
-     l:=FormInvoice.AddRecord(cbZak.getdata);
+     FormInvoice.AddRecord(cbZak.getdata);
      FormInvoice.Free;
     end;
     IDNO:begin
@@ -631,7 +637,7 @@ function TFormSend.EditRecord(q:TQuery):longint;
 var str,s:string;
      q1:Tquery;
      I:integer;
-     l:longint;
+     //l:longint;
 label Next1;
 begin
  SendIdent:=q.FieldByName('Ident').asInteger;
@@ -1145,7 +1151,7 @@ case Application.MessageBox('Пора распечатать акт! Подтвердите печать!',
     IDYES:
     begin
      FormAkt:=TFormAkt.Create(Application) ;
-     l:=FormAkt.AddRecord(Id);
+     FormAkt.AddRecord(Id);
      FormAkt.Free;
     end;
     IDNO:begin
@@ -1166,7 +1172,7 @@ case Application.MessageBox('Пора распечатать счет фактуру! Подтвердите печать!'
     IDYES:
     begin
      FormInvoice:=TFormInvoice.Create(Application) ;
-     l:=FormInvoice.AddRecord(cbZak.getdata);
+     FormInvoice.AddRecord(cbZak.getdata);
      FormInvoice.Free;
     end;
     IDNO:begin
@@ -1187,8 +1193,8 @@ var l:longint;
     S2:real;
 Label T1;    
 begin
-S1:=0;
-S2:=0;
+//S1:=0;
+//S2:=0;
 Query1.ApplyUpdates;
 if (trim(eInsuranceSum.Text) = '') or (trim(eInsuranceSum.text) = '0.00')
     or (trim(eInsuranceSum.text) = '0') then
@@ -1198,12 +1204,17 @@ if (trim(eInsuranceSum.Text) = '') or (trim(eInsuranceSum.text) = '0.00')
     eInsuranceSum.setfocus;
     exit;
 end;
-if CheckBox5.Checked then  Query2.ApplyUpdates;
+if CheckBox5.Checked then
+  Query2.ApplyUpdates;
+
 s1:=StrToFloat(trim(eFare.Text));
+
 if cbType.SQLComboBox.GetData=1 then        {проверка для жд перевозок,
                    чтобы сумма заплаченная жд не превышала суммы взятой с клеента}
-S2:=StrToFloat(trim(LblEditMoney4.text))+StrToFloat(trim(LblEditMoney5.text))
-else S2:=0;
+  S2:=StrToFloat(trim(LblEditMoney4.text))+StrToFloat(trim(LblEditMoney5.text))
+else
+  S2:=0;
+
 //--------{криминальный случай: сумма взятая ж/д больше суммы взятой с клиента }
 if S1<S2 then
 begin
@@ -1637,8 +1648,8 @@ begin
  Fare5:=0;
  Fare6:=0;
  Fare7:=0;
- Percent:=0;
- Count:=0;
+ //Percent:=0;
+ //Count:=0;
  FWieght:=0;
  FTariff:=StrToFloat(Tariff);
  {считаем скидку NN%}
@@ -2117,11 +2128,11 @@ i,Nprint:integer;
 label T;
 begin
 try
-Nprint:=0; {указатель на формат печати 4 or 5}
+//Nprint:=0; {указатель на формат печати 4 or 5}
 if NUmber='' then
 begin
-   Application.MessageBox('Отправке не присвоен номер! Сохраните отправку!','',0);
-   exit;
+  Application.MessageBox('Отправке не присвоен номер! Сохраните отправку!','',0);
+  exit;
 end;
 
   ReportMakerWP:=TReportMakerWP.Create(Application);
@@ -2243,13 +2254,14 @@ begin
        ReportMakerWP.AddParam('10='+trim(ePlace.text) );
        ReportMakerWP.AddParam('11='+trim(eWieght.text) );
        i:=sql.SelectInteger('City','Check','Ident='+IntToStr(cbPynkt.GetData));
-       f:=0;
+       // f:=0;
        if i=1 then
        begin
-       i:=0;
-       if trim(ePlac.text)<>'' then i:=StrToInt(trim(ePlac.Text));
-       f:=StrToFloat(sql.SelectString('Constant','PlaceTariff',''));
-       f:=f*i;
+        i:=0;
+        if trim(ePlac.text)<>'' then
+          i:=StrToInt(trim(ePlac.Text));
+        f:=StrToFloat(sql.SelectString('Constant','PlaceTariff',''));
+        f:=f*i;
        end else f:=0;
        if f<>0 then  ReportMakerWP.AddParam('25='+', Наценка за проезд ч/з Москву: '+StrTo00(FloatToStr(f))+' руб.')
         else ReportMakerWP.AddParam('25='+' ');
@@ -2401,20 +2413,20 @@ end;
 
 
 procedure TFormSend.BitBtn7Click(Sender: TObject);
-var l,m:longint;
+var l:longint;
 begin
 if cbOtpr.GetData<>0 then
 begin
-m:=cbOtpr.GetData;
+cbOtpr.GetData;
 Card:=TCard.Create(Application) ;
 l:=Card.EditRecord(cbOtpr.GetData);
 if l<>0 then
-    begin
+  begin
     cbOtpr.Recalc;
     cbOtpr.SetActive(l);
     cbZak.Recalc;
   //  cbOtpr.SetActive(l);
-    end;
+  end;
 Card.Free;
 cbOtprChange(Sender);
 end;
@@ -2724,7 +2736,7 @@ days: integer;
 begin
 if (cbType.GetData=2) then
 begin
-days:=0;
+//days:=0;
 days:=sql.SelectInteger('City','DaysDel','Ident='+IntToStr(cbPynkt.GetData));
   If LabelEditDate2.Text='  .  .    ' then
   LabelEditDate4.Text:=FormatDateTime('dd.mm.yyyy',IncDay(StrToDate(LabelEditDate1.text),days))
@@ -2792,11 +2804,11 @@ if key = VK_Return
 end;
 
 procedure TFormSend.BitBtn9Click(Sender: TObject);
-var l,m:longint;
+var l:longint;
 begin
 if cbZak.GetData<>0 then
 begin
-m:=cbZak.GetData;
+cbZak.GetData;
 Card:=TCard.Create(Application) ;
 l:=Card.EditRecord(cbZak.GetData);
 if l<>0 then
@@ -2817,8 +2829,8 @@ UWFloat: real;
 begin
 if (trim(eWieght.text)<>'') and (trim(eWieght.text)<>'0.00') then
 begin
-UWFloat:=StrToFloat(sql.Selectstring('Constant','UnitVol',''));
- UWFloat:=StrToFloat(trim(eWieght.text))/UWFloat ;
+  UWFloat:=StrToFloat(sql.Selectstring('Constant','UnitVol',''));
+  UWFloat:=StrToFloat(trim(eWieght.text))/UWFloat ;
 // eVolume.Text:=StrTo00(FloatToStr(UWFloat));
 eVolume.Text:=FloatToStr(UWFloat);
 end;

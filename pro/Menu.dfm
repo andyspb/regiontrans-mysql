@@ -1,6 +1,6 @@
 object FMenu: TFMenu
   Left = 369
-  Top = 224
+  Top = 144
   Width = 825
   Height = 60
   HorzScrollBar.Color = clBlue
@@ -11681,7 +11681,7 @@ object FMenu: TFMenu
         OnClick = N4Click
       end
       object N15: TMenuItem
-        Caption = #1054#1058#1055#1056#1040#1042#1050#1048
+        Caption = #1054#1058#1055#1056#1040#1042#1050#1048' (check period)'
         OnClick = N15Click
       end
       object N16: TMenuItem

@@ -174,7 +174,7 @@ end;
 
 procedure TFMenu.N2Click(Sender: TObject);
 begin    {перерегестрация}
- EntrySecurity:=TEntrySecurity.Create(Application);
+EntrySecurity:=TEntrySecurity.Create(Application);
   if EntrySecurity.ShowModal = mrCancel then
     begin
      EntrySecurity.Free;
@@ -183,12 +183,20 @@ begin    {перерегестрация}
        else close
     end
   else
-   EntrySecurity.Free;
- // krutogolov
- if EntrySec.bAllData then
-   Caption := 'РегионТранс ( ДАННЫЕ ЗА ВСЕ ВРЕМЯ )'
- else
-   Caption := 'РегионТранс';
+    EntrySecurity.Free;
+    // krutogolov
+    if EntrySec.bAllData then
+      begin
+        Caption := 'РегионТранс ( ДАННЫЕ ЗА ВСЕ ВРЕМЯ )';
+        Color := clBlue;
+        N15.Caption := 'ОТПРАВКИ ( ' + EntrySec.period +' )'
+      end
+    else
+      begin
+        Caption := 'РегионТранс ( ГОД )';
+        Color := clWindowText;
+        N15.Caption := 'ОТПРАВКИ ( ' + EntrySec.period + ' )'
+      end;
 
  if CurrentUserRoles=1 then
  begin

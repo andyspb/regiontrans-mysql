@@ -31,6 +31,7 @@ type
 var
   EntrySecurity: TEntrySecurity;
   bAllData: boolean;
+  period: string;
 
 implementation
 
@@ -54,6 +55,10 @@ begin
    FMenu.CurrentUserRoles:=q.FieldByName('Roles_Ident').AsInteger;
    FMenu.CurrentUserName:=eShortName.text;
    bAllData := ChBoxAll.Checked;
+   if (bAllData) then
+     period:='бяе'
+   else
+     period:='цнд';
    ModalResult:=mrOK;
 end;
 
