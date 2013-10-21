@@ -207,7 +207,7 @@ end;
 function TQExport.ExportExcel: boolean;
 var
   MSExcel: Variant;
-  i, L, Row, Column: integer;
+  //i, L, Row, Column: integer;
   S: string;
 begin
 

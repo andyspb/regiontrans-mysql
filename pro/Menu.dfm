@@ -1,6 +1,6 @@
 object FMenu: TFMenu
-  Left = 369
-  Top = 144
+  Left = 592
+  Top = 162
   Width = 825
   Height = 60
   HorzScrollBar.Color = clBlue
@@ -11689,27 +11689,27 @@ object FMenu: TFMenu
         OnClick = N16Click
       end
       object N24: TMenuItem
-        Caption = #1055#1056#1048#1061#1054#1044#1053#1067#1045' '#1054#1056#1044#1045#1056#1040
+        Caption = #1055#1056#1048#1061#1054#1044#1053#1067#1045' '#1054#1056#1044#1045#1056#1040' (period)'
         OnClick = N24Click
       end
       object N25: TMenuItem
-        Caption = #1057#1063#1045#1058#1040' '
+        Caption = #1057#1063#1045#1058#1040' (period)'
         OnClick = N25Click
       end
       object N27: TMenuItem
-        Caption = #1057#1063#1045#1058#1040'-'#1060#1040#1050#1058#1059#1056#1067
+        Caption = #1057#1063#1045#1058#1040'-'#1060#1040#1050#1058#1059#1056#1067' (period)'
         OnClick = N27Click
       end
       object N29: TMenuItem
-        Caption = #1054#1055#1051#1040#1058#1040
+        Caption = #1054#1055#1051#1040#1058#1040' (period)'
         OnClick = N29Click
       end
       object N37: TMenuItem
-        Caption = #1040#1050#1058#1067'-'#1058#1069#1050
+        Caption = #1040#1050#1058#1067'-'#1058#1069#1050' (period)'
         OnClick = N37Click
       end
       object N38: TMenuItem
-        Caption = #1057#1063#1045#1058#1040'-'#1058#1069#1050
+        Caption = #1057#1063#1045#1058#1040'-'#1058#1069#1050' (period)'
         OnClick = N38Click
       end
     end

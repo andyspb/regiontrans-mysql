@@ -1,9 +1,9 @@
 object FormInvoice: TFormInvoice
-  Left = 270
-  Top = 175
+  Left = 838
+  Top = 242
   Width = 393
   Height = 304
-  Caption = #1057#1095#1077#1090' '#1092#1072#1082#1090#1091#1088#1072
+  Caption = #1057#1095#1077#1090' '#1092#1072#1082#1090#1091#1088#1072' (period)'
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -11749,7 +11749,7 @@ object FormInvoice: TFormInvoice
     TabOrder = 1
     OnExit = LabelEditDate1Exit
   end
-  object CheckBox1: TCheckBox
+  object cbAktReturn: TCheckBox
     Left = 0
     Top = 178
     Width = 145

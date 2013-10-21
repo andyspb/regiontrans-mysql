@@ -39,9 +39,7 @@ begin
 end;
 
 procedure TEditDate.KillFocus(Sender:TObject);
-var i:boolean;
 begin
-  i:=TRUE;
   Text:=EditText;
     try
       StrToDate(Text)
@@ -50,7 +48,6 @@ begin
         if (Text<>'') and (Text<>'  .  .    ') then
           begin
             Text:=PrevDate;
-            i:=FALSE
           end
       end
     end;

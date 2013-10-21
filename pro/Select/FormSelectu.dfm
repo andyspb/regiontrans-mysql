@@ -1,6 +1,6 @@
 object FormSelect: TFormSelect
-  Left = 639
-  Top = 314
+  Left = 209
+  Top = 232
   Width = 560
   Height = 406
   Caption = #1057#1087#1080#1089#1082#1080

@@ -90,8 +90,6 @@ begin
 end;
 
 procedure TLabelMemo.Value(sl:TStringList);
-var
-    c:string;
 begin
   if Assigned(fValueEvent) then
     fValueEvent(self,sl)

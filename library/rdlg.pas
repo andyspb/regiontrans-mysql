@@ -52,12 +52,41 @@ implementation
     if mdf.Canvas.TextWidth(Msg)+80>mdf.width then mdf.width:=mdf.Canvas.TextWidth(Msg)+80;
     x:=mdf.width div 2-n*wd div 2;
 
-    if mbOk in AButtons then begin mdf.btOk.Left:=x;inc(x,wd); end;
-    if mbYes in AButtons then begin mdf.btYes.Left:=x;inc(x,wd); end;
-    if mbNo in AButtons then begin mdf.btNo.Left:=x;inc(x,wd); end;
-    if mbIgnore in AButtons then begin mdf.btIgnore.Left:=x;inc(x,wd); end;
-    if mbRetry in AButtons then begin mdf.btRetry.Left:=x;inc(x,wd); end;
-    if mbCancel in AButtons then begin mdf.btCancel.Left:=x;inc(x,wd); end;
+    if mbOk in AButtons then
+    begin
+      mdf.btOk.Left:=x;
+      inc(x,wd);
+    end;
+
+    if mbYes in AButtons then
+    begin
+      mdf.btYes.Left:=x;
+      inc(x,wd);
+    end;
+
+    if mbNo in AButtons then
+    begin
+      mdf.btNo.Left:=x;
+      inc(x,wd);
+    end;
+
+    if mbIgnore in AButtons then
+    begin
+      mdf.btIgnore.Left:=x;
+      inc(x,wd);
+    end;
+
+    if mbRetry in AButtons then
+    begin
+      mdf.btRetry.Left:=x;
+      inc(x,wd);
+    end;
+
+    if mbCancel in AButtons then
+    begin
+      mdf.btCancel.Left:=x;
+      inc(x,wd);
+    end;
 
     RusMessageDlg:=mdf.ShowModal;
     mdf.free;

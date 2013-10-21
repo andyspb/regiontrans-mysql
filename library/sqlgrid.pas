@@ -852,7 +852,7 @@ function TSqlGrid.Exec:boolean;
 var
   f : TFieldDescr;
   nORDER_BY,nWHERE,k,j : Integer;
-  sl,t : TStringList;
+  sl : TStringList;
   s,fn : String;
   b:boolean;
 begin

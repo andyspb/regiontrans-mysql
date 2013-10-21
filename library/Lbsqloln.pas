@@ -64,11 +64,12 @@ begin
 end;
 
 procedure TLabelSQLOutline.Value(sl:TStringList);
-var i:integer;
 begin
-  if Assigned(fValueEvent) then fValueEvent(self,sl)
+  if Assigned(fValueEvent) then
+    fValueEvent(self,sl)
   else
-    if (not Visible) or (SQLOutline.GetData=0) then sl.Add('NULL')
+    if (not Visible) or (SQLOutline.GetData=0)
+      then sl.Add('NULL')
     else
       sl.Add(IntToStr(SQLOutline.GetData));
 end;

@@ -185,18 +185,12 @@ EntrySecurity:=TEntrySecurity.Create(Application);
   else
     EntrySecurity.Free;
     // krutogolov
-    if EntrySec.bAllData then
-      begin
-        Caption := 'РегионТранс ( ДАННЫЕ ЗА ВСЕ ВРЕМЯ )';
-        Color := clBlue;
-        N15.Caption := 'ОТПРАВКИ ( ' + EntrySec.period +' )'
-      end
-    else
-      begin
-        Caption := 'РегионТранс ( ГОД )';
-        Color := clWindowText;
-        N15.Caption := 'ОТПРАВКИ ( ' + EntrySec.period + ' )'
-      end;
+    N15.Caption := 'ОТПРАВКИ ( ' + EntrySec.period +' )';
+    N27.Caption := 'СЧЕТ-ФАКТУРЫ ( ' + EntrySec.period +' )';
+    N25.Caption := 'СЧЕТА ( ' + EntrySec.period +' )';
+    N24.Caption := 'ПРИХОДНЫЕ ОРДЕРА ( ' + EntrySec.period +' )';
+    N29.Caption := 'ОПЛАТА ( ' + EntrySec.period +' )';
+    Caption := 'РегионТранс ( Данные за период: ' + EntrySec.period + ' )';
 
  if CurrentUserRoles=1 then
  begin

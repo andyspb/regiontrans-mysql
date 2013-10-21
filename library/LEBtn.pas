@@ -117,7 +117,6 @@ begin
 end;
 
 procedure TLabelEditBMPBtn.WMSize(var Msg:TMessage);
-var w:integer;
 begin
   LabelEdit.Lbl.Height:=-LabelEdit.Lbl.Font.Height+3;
   LabelEdit.Edit.Height:=-LabelEdit.Edit.Font.Height+10;
@@ -188,11 +187,12 @@ begin
 end;
 
 procedure TLabelEditBmpBtn.Value(sl:TStringList);
-var i:integer;
 begin
-  if Assigned(fValueEvent) then fValueEvent(self,sl)
+  if Assigned(fValueEvent) then
+    fValueEvent(self,sl)
   else
-    if Data=0 then sl.Add('NULL')
+    if Data=0 then
+      sl.Add('NULL')
     else
       sl.Add(IntToStr(Data));
 end;
@@ -273,9 +273,9 @@ begin
 end;
 
 procedure TLabelEditBmpBtn.KeyPress(Sender:TObject;var Key:char);
-var i,j:integer;
-    q:TQuery;
-    s:string;
+var
+  q:TQuery;
+  s:string;
 begin
   if (Table<>'') and (ID<>'') and (Info<>'') then
     begin
@@ -288,8 +288,6 @@ begin
           end;
         else
           begin
-            j:=-1;
-            i:=0;
             if Key<>#8 then
               s:=substr+Key
             else

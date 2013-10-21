@@ -350,7 +350,7 @@ end;
 Procedure MemoToStream(q:TQuery;FieldName:string;s:TMemoryStream);
 Var f:TMemoField;
     t:integer;
-    r:string;
+//  r:string;
 begin
   s.Clear;
   f:=TMemoField(q.FieldByName(FieldName));

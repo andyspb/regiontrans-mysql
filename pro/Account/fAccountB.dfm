@@ -1,6 +1,6 @@
 object FormAccountBox: TFormAccountBox
-  Left = 128
-  Top = 67
+  Left = 363
+  Top = 93
   Width = 628
   Height = 357
   Caption = #1057#1095#1077#1090#1072
@@ -11698,7 +11698,7 @@ object FormAccountBox: TFormAccountBox
     ToolBarButton = True
     FileName = 
       'ADD_BMP'#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0 +
-      #0#0#0#0#0#0#0#0#0#0#0
+      #0#0#0#0#0#0#0#0#0#0#0#0#0
   end
   object BEdit: TBMPBtn
     Left = 2
@@ -11721,7 +11721,7 @@ object FormAccountBox: TFormAccountBox
     ToolBarButton = True
     FileName = 
       'EDIT_BMP'#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0 +
-      #0#0#0#0#0#0#0#0#0#0#0#0
+      #0#0#0#0#0#0#0#0#0#0#0#0#0#0
   end
   object BDel: TBMPBtn
     Left = 209
@@ -11744,7 +11744,7 @@ object FormAccountBox: TFormAccountBox
     ToolBarButton = True
     FileName = 
       'DEL_BMP'#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0 +
-      #0#0#0#0#0#0#0#0#0#0#0
+      #0#0#0#0#0#0#0#0#0#0#0#0#0
   end
   object BExit: TBMPBtn
     Left = 312
@@ -11767,6 +11767,6 @@ object FormAccountBox: TFormAccountBox
     ToolBarButton = True
     FileName = 
       'EXIT_BMP'#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0 +
-      #0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0
+      #0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0
   end
 end

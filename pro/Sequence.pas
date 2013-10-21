@@ -56,32 +56,30 @@ begin
    end
   else NVSeq := -1;
 end;
- procedure SetCVSeq(name:String;value:integer);
- var
-     newident:longint;
-     q:tquery;
-     ID: LongInt;
-     s:string;
-     i:integer;
+
+procedure SetCVSeq(name:String;value:integer);
+var
+//  newident:longint;
+  q:tquery;
+  ID: LongInt;
+  s:string;
+  i:integer;
 begin
-  s:=   ' Name='''+ name + '''';
-     q:= sql.select('SEQ','Ident,CurValue',
-            s,'');
-  ID := q.fieldbyname ('Ident').asinteger;
+  s:=' Name='''+ name + '''';
+  q:=sql.select('SEQ','Ident,CurValue', s,'');
+  ID:=q.fieldbyname ('Ident').asinteger;
   i:=1;
-  while ( sql.LockRecord('SEQ',
-          'Ident',intTostr (ID),'') <> 0  )
-          and ( i < 1000 ) do
+  while ( sql.LockRecord('SEQ', 'Ident',intTostr (ID),'') <> 0  )
+    and ( i < 1000 ) do
       i := i + 1;
   if i < 1000 then
-   begin
-
+  begin
     sql.UpdateString('SEQ','curValue='+IntToStr(value),
           sql.CondIntEqu('Ident',ID))  ;
     sql.Commit
-   end
-
+  end
 end;
+
 begin
 
 end.

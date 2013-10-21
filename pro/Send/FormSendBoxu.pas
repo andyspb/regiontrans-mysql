@@ -56,7 +56,7 @@ uses makerepp ,SendStr,FormSendu;
 
 procedure TFormSendBox.eExitClick(Sender: TObject);
 begin
-close;
+  close;
 end;
 
 procedure TFormSendBox.FormCreate(Sender: TObject);
@@ -64,28 +64,25 @@ var cond:string;
 //str1:TStringList;
 begin
 // krutogolov
-fsection:='FormSends';
-sqlGrid1.Section:='Sends';
+  fsection:='FormSends';
+  sqlGrid1.Section:='Sends';
 
-Caption := 'Картотека отправок ( ' + EntrySec.period + ' )';
-
-if EntrySec.bAllData then
-  begin
-    Color := clBlue;
-    send_str:='`send_all`';
-    akttek_str:='`akttek_all`';
-	invoice_Str:='`invoice_all`'
-  end
-else
-  begin
-    Color := clWindowText;
-    send_str:='`send`';
-    akttek_str:='`akttek`';
-	invoice_Str:='`invoice`'
-end;
+  Caption := 'Картотека отправок ( ' + EntrySec.period + ' )';
+  if EntrySec.bAllData then
+    begin
+      send_str:='`send_all`';
+      akttek_str:='`akttek_all`';
+	    invoice_Str:='`invoice_all`'
+    end
+  else
+    begin
+      send_str:='`send`';
+      akttek_str:='`akttek`';
+  	  invoice_Str:='`invoice`'
+    end;
 
 //cond := ''+ send_str + '.`Start` >=' + FormatDateTime('yyyy-mm-dd',IncMonth(Date,-6));
-cond := '`Start` >=' + FormatDateTime('yyyy-mm-dd',IncMonth(Date,-6));
+    cond := '`Start` >=' + FormatDateTime('yyyy-mm-dd',IncMonth(Date,-6));
 {str1:=TStringList.Create;
 str1.Add('select distinct '+ send_str + '.`Ident` AS `Ident`,'+ send_str + '.`Check` AS `Check`,');
 str1.Add(''+ send_str + '.`Start` AS `Start`,'+ send_str + '.`Inspector_Ident` AS `Inspector_Ident`,');
@@ -145,16 +142,16 @@ str1.Add('left join '+ akttek_str + ' on(('+ akttek_str + '.`IDENT` = `s`.`Aktte
 str1.Add(' where '+ cond);
 sqlGrid1.ExecSQL(str1);
 str1.free;   }
-sqlGrid1.ExecTableCond('sends',cond);
+  sqlGrid1.ExecTableCond('sends',cond);
 //cbZak.SQLComboBox.Sorted:=true;
 //cbPynkt.SQLComboBox.Sorted:=true;
-if (SQLGrid1.Query.Eof) and (SQLGrid1.Query.bof)then
-begin
-eCard.Enabled:=false;
-edelete.Enabled:=false;
-SQLGrid1.visible:=false;
-btPrint.visible:=false;
-end;
+  if (SQLGrid1.Query.Eof) and (SQLGrid1.Query.bof)then
+  begin
+    eCard.Enabled:=false;
+    edelete.Enabled:=false;
+    SQLGrid1.visible:=false;
+    btPrint.visible:=false;
+  end;
 end;
 
 procedure TFormSendBox.eCardClick(Sender: TObject);
@@ -165,17 +162,19 @@ begin
   FormSend:=TFormSend.Create(Application) ;
   l:=FormSend.EditRecord(SQLGrid1.Query);
   FormSend.Free;
-   if l<>0 then
+  if l<>0 then
   begin
     sql.Commit;
     sqlGrid1.Exec;
-   if (not SQLGrid1.Query.Eof) or (not SQLGrid1.Query.bof)then
+    if (not SQLGrid1.Query.Eof) or (not SQLGrid1.Query.bof)then
     begin
-     eCard.Enabled:=true;
-     edelete.Enabled:=true;
-     SQLGrid1.visible:=true;
+      eCard.Enabled:=true;
+      edelete.Enabled:=true;
+      SQLGrid1.visible:=true;
     end;
-  end else sql.Rollback;
+  end
+  else
+    sql.Rollback;
 end;
 
 procedure TFormSendBox.eCreateClick(Sender: TObject);
@@ -190,236 +189,252 @@ begin
     sql.Commit;
     sqlGrid1.Exec;
     sqlGrid1.LoadPoint('Ident',l);
-   if (not SQLGrid1.Query.Eof) or (not SQLGrid1.Query.bof)then
+    if (not SQLGrid1.Query.Eof) or (not SQLGrid1.Query.bof)then
     begin
-     eCard.Enabled:=true;
-     edelete.Enabled:=true;
-     SQLGrid1.visible:=true;
+      eCard.Enabled:=true;
+      edelete.Enabled:=true;
+      SQLGrid1.visible:=true;
     end;
-  end else sql.Rollback;
+  end
+  else
+    sql.Rollback;
 end;
 
 procedure TFormSendBox.eDeleteClick(Sender: TObject);
 begin
- sqlGrid1.SaveNextPoint('Ident');
- sql.StartTransaction;
- if sql.Delete('Send','Ident='+
-     IntToStr(sqlGrid1.FieldByName('Ident').asInteger))<>0 then
-     begin
-     Application.MessageBox('Отправка не подлежит удалению!','Ошибка',0);
-     sql.rollback;
-     end else
-     begin
-     if sqlGrid1.FieldByName('InvoiceNumber').asString<>'' then
-     ShowMessage('Отправка просчитана в счет-фактуре № '+
+  sqlGrid1.SaveNextPoint('Ident');
+  sql.StartTransaction;
+  if sql.Delete('Send','Ident='+
+    IntToStr(sqlGrid1.FieldByName('Ident').asInteger))<>0 then
+    begin
+      Application.MessageBox('Отправка не подлежит удалению!','Ошибка',0);
+      sql.rollback;
+      end
+      else
+      begin
+        if sqlGrid1.FieldByName('InvoiceNumber').asString<>'' then
+          ShowMessage('Отправка просчитана в счет-фактуре № '+
                   sqlGrid1.FieldByName('InvoiceNumber').asString+'! '+
                   'Пересчитайте счет-фактуру, после удаления! ');
-    case Application.MessageBox('Удалить!',
+        case Application.MessageBox('Удалить!',
                             'Предупреждение!',MB_YESNO+MB_ICONQUESTION) of
-    IDYES: sql.commit;
-    IDNO: sql.rollback;
-    end
-     end ;
+        IDYES: sql.commit;
+        IDNO: sql.rollback;
+      end
+    end;
 
- sqlGrid1.Exec;
- if (SQLGrid1.Query.Eof) and (SQLGrid1.Query.bof)then
+  sqlGrid1.Exec;
+  if (SQLGrid1.Query.Eof) and (SQLGrid1.Query.bof)then
     begin
-     eCard.Enabled:=false;
-     edelete.Enabled:=false;
-     SQLGrid1.visible:=false;
+      eCard.Enabled:=false;
+      edelete.Enabled:=false;
+      SQLGrid1.visible:=false;
     end;
 end;
 
 procedure TFormSendBox.btPrintClick(Sender: TObject);
 var
-ReportMakerWP:TReportMakerWP;
-p,w1,w2,w3,w4: OleVariant;
-s:string;
-Num,mach:string;
-cuttarstring: string;
-f,f1:real;
-i,Nprint, IdSend:integer;
-Typ:integer;
-qPlace:TQuery;
-dateDel: string;
-sendrtf: string;
-clientName:string;
-label T;
+  ReportMakerWP:TReportMakerWP;
+  p,w1,w2,w3,w4: OleVariant;
+  s:string;
+  Num,mach:string;
+  cuttarstring: string;
+  f,f1:real;
+  i,Nprint, IdSend:integer;
+  Typ:integer;
+  qPlace:TQuery;
+  dateDel: string;
+  sendrtf: string;
+  clientName:string;
+  label T;
 begin
-try
-//Typ:=0;
-Typ:=SQLGRID1.Query.FieldByName('ContractType_Ident').AsInteger;
-IdSend:=SQLGRID1.Query.FieldByName('Ident').AsInteger;
-clientName := SQLGRID1.Query.FieldByName('ClientAcr').AsString;
-clientName := trim(clientName);
+  try
+  //Typ:=0;
+  Typ:=SQLGRID1.Query.FieldByName('ContractType_Ident').AsInteger;
+  IdSend:=SQLGRID1.Query.FieldByName('Ident').AsInteger;
+  clientName := SQLGRID1.Query.FieldByName('ClientAcr').AsString;
+  clientName := trim(clientName);
   ReportMakerWP:=TReportMakerWP.Create(Application);
 
   ReportMakerWP.ClearParam;
-if Typ=2 then
-begin
-  ReportMakerWP.AddParam('1='+SQLGRID1.Query.FieldByName('ClientName').AsString);
-  ReportMakerWP.AddParam('2='+SQLGRID1.Query.FieldByName('ClientSenderName').AsString);
-  ReportMakerWP.AddParam('3='+SQLGRID1.Query.FieldByName('CityName').AsString);
-  ReportMakerWP.AddParam('4='+SQLGRID1.Query.FieldByName('AcceptorName').AsString);
-  ReportMakerWP.AddParam('5='+SQLGRID1.Query.FieldByName('AcceptorAddress').AsString+
+  if Typ=2 then
+  begin
+    ReportMakerWP.AddParam('1='+SQLGRID1.Query.FieldByName('ClientName').AsString);
+    ReportMakerWP.AddParam('2='+SQLGRID1.Query.FieldByName('ClientSenderName').AsString);
+    ReportMakerWP.AddParam('3='+SQLGRID1.Query.FieldByName('CityName').AsString);
+    ReportMakerWP.AddParam('4='+SQLGRID1.Query.FieldByName('AcceptorName').AsString);
+    ReportMakerWP.AddParam('5='+SQLGRID1.Query.FieldByName('AcceptorAddress').AsString+
                             ', т. '+SQLGRID1.Query.FieldByName('AcceptorPhone').AsString);
-  ReportMakerWP.AddParam('6='+SQLGRID1.Query.FieldByName('AcceptorRegime').AsString );
-  ReportMakerWP.AddParam('7='+SQLGRID1.Query.FieldByName('NameGoodName').AsString );
+    ReportMakerWP.AddParam('6='+SQLGRID1.Query.FieldByName('AcceptorRegime').AsString );
+    ReportMakerWP.AddParam('7='+SQLGRID1.Query.FieldByName('NameGoodName').AsString );
 
-   s:='';
-   if  SQLGRID1.Query.FieldByName('TypeGood_Ident').Asinteger=1 then
-   s:=s+', Теплая перевозка' ;
-   if SQLGRID1.Query.FieldByName('TypeGood_Ident1').Asinteger=1 then
-   s:=s+', Хрупкий груз' ;
-   if SQLGRID1.Query.FieldByName('TypeGood_Ident2').Asinteger=1 then
-   s:=s+', Негабаритный груз' ;
-   if s<>'' then delete(s,1,2);
-   cuttarstring:= '';
-   if SQLGRID1.Query.FieldByName('CutTarif').AsInteger <> 0 then
-       begin
+    s:='';
+    if  SQLGRID1.Query.FieldByName('TypeGood_Ident').Asinteger=1 then
+      s:=s+', Теплая перевозка' ;
+    if SQLGRID1.Query.FieldByName('TypeGood_Ident1').Asinteger=1 then
+      s:=s+', Хрупкий груз' ;
+    if SQLGRID1.Query.FieldByName('TypeGood_Ident2').Asinteger=1 then
+      s:=s+', Негабаритный груз' ;
+    if s<>'' then delete(s,1,2);
+      cuttarstring:= '';
+    if SQLGRID1.Query.FieldByName('CutTarif').AsInteger <> 0 then
+      begin
         if SQLGRID1.Query.FieldByName('CutTarif').AsInteger = 1 then cuttarstring:= ' (льготный тариф 3%)';
         if SQLGRID1.Query.FieldByName('CutTarif').AsInteger = 2 then cuttarstring:= ' (льготный тариф 5%)';
         if SQLGRID1.Query.FieldByName('CutTarif').AsInteger = 3 then cuttarstring:= ' (льготный тариф 7%)';
-       end;
-  ReportMakerWP.AddParam('8='+s );
-  ReportMakerWP.AddParam('9='+SQLGRID1.Query.FieldByName('RollOutName').Asstring );
-  ReportMakerWP.AddParam('10='+SQLGRID1.Query.FieldByName('PackCount').Asstring  );
-  ReportMakerWP.AddParam('11='+SQLGRID1.Query.FieldByName('Weight').Asstring );
-  ReportMakerWP.AddParam('12='+SQLGRID1.Query.FieldByName('Volume').Asstring  );
-  ReportMakerWP.AddParam('13='+SQLGRID1.Query.FieldByName('CountWeight').Asstring );
-  ReportMakerWP.AddParam('14='+StrTo00(SQLGRID1.Query.FieldByName('Tariff').Asstring));
-   ReportMakerWP.AddParam('35='+cuttarstring );
-  ReportMakerWP.AddParam('15='+StrTo00(SQLGRID1.Query.FieldByName('Fare').Asstring) );
-  ReportMakerWP.AddParam('16='+StrTo00(SQLGRID1.Query.FieldByName('InsuranceSum').Asstring ));
-  ReportMakerWP.AddParam('17='+StrTo00(SQLGRID1.Query.FieldByName('InsuranceValue').Asstring) );
-  ReportMakerWP.AddParam('18='+StrTo00(SQLGRID1.Query.FieldByName('AddServicePrace').Asstring) );
-  ReportMakerWP.AddParam('19='+StrTo00(SQLGRID1.Query.FieldByName('SumCount').Asstring) );
+      end;
+    ReportMakerWP.AddParam('8='+s );
+    ReportMakerWP.AddParam('9='+SQLGRID1.Query.FieldByName('RollOutName').Asstring );
+    ReportMakerWP.AddParam('10='+SQLGRID1.Query.FieldByName('PackCount').Asstring  );
+    ReportMakerWP.AddParam('11='+SQLGRID1.Query.FieldByName('Weight').Asstring );
+    ReportMakerWP.AddParam('12='+SQLGRID1.Query.FieldByName('Volume').Asstring  );
+    ReportMakerWP.AddParam('13='+SQLGRID1.Query.FieldByName('CountWeight').Asstring );
+    ReportMakerWP.AddParam('14='+StrTo00(SQLGRID1.Query.FieldByName('Tariff').Asstring));
+    ReportMakerWP.AddParam('35='+cuttarstring );
+    ReportMakerWP.AddParam('15='+StrTo00(SQLGRID1.Query.FieldByName('Fare').Asstring) );
+    ReportMakerWP.AddParam('16='+StrTo00(SQLGRID1.Query.FieldByName('InsuranceSum').Asstring ));
+    ReportMakerWP.AddParam('17='+StrTo00(SQLGRID1.Query.FieldByName('InsuranceValue').Asstring) );
+    ReportMakerWP.AddParam('18='+StrTo00(SQLGRID1.Query.FieldByName('AddServicePrace').Asstring) );
+    ReportMakerWP.AddParam('19='+StrTo00(SQLGRID1.Query.FieldByName('SumCount').Asstring) );
 
-  ReportMakerWP.AddParam('20='+SQLGRID1.Query.FieldByName('PayTypeName').Asstring );
-  s:=SendStr.MoneyToString(SQLGRID1.Query.FieldByName('SumCount').Asstring);
-  ReportMakerWP.AddParam('21='+s );
-  ReportMakerWP.AddParam('22='+SQLGRID1.Query.FieldByName('PeopleFIO').Asstring);
-   s:=SendStr.DataDMstrY(StrToDate(SQLGRID1.Query.FieldByName('Start').Asstring));
-  ReportMakerWP.AddParam('23='+s );
-  Num:=SQLGRID1.Query.FieldByName('Namber').Asstring;
-  ReportMakerWP.AddParam('24='+Num );
-  ReportMakerWP.AddParam('25='+SQLGRID1.Query.FieldByName('Forwarder').Asstring );
-  s:='';
-  if  SQLGRID1.Query.FieldByName('AddServicePack').AsInteger=1 then
-    s:=s+'Упаковка: '+StrTo00(SQLGRID1.Query.FieldByName('PackTarif').Asstring)+' руб';
-  if  SQLGRID1.Query.FieldByName('AddServiceExp').AsInteger=1 then
-  begin
-  f:=StrToFloat(SQLGRID1.Query.FieldByName('ExpTarif').Asstring)*StrToFloat(SQLGRID1.Query.FieldByName('ExpCount').Asstring);
-    if s<>'' then s:=s+', ';
-    s:=s+'Экспедирование: '+StrTo00(FloatToStr(f))+' руб';
+    ReportMakerWP.AddParam('20='+SQLGRID1.Query.FieldByName('PayTypeName').Asstring );
+    s:=SendStr.MoneyToString(SQLGRID1.Query.FieldByName('SumCount').Asstring);
+    ReportMakerWP.AddParam('21='+s );
+    ReportMakerWP.AddParam('22='+SQLGRID1.Query.FieldByName('PeopleFIO').Asstring);
+    s:=SendStr.DataDMstrY(StrToDate(SQLGRID1.Query.FieldByName('Start').Asstring));
+    ReportMakerWP.AddParam('23='+s );
+    Num:=SQLGRID1.Query.FieldByName('Namber').Asstring;
+    ReportMakerWP.AddParam('24='+Num );
+    ReportMakerWP.AddParam('25='+SQLGRID1.Query.FieldByName('Forwarder').Asstring );
+    s:='';
+    if  SQLGRID1.Query.FieldByName('AddServicePack').AsInteger=1 then
+      s:=s+'Упаковка: '+StrTo00(SQLGRID1.Query.FieldByName('PackTarif').Asstring)+' руб';
+    if  SQLGRID1.Query.FieldByName('AddServiceExp').AsInteger=1 then
+    begin
+      f:=StrToFloat(SQLGRID1.Query.FieldByName('ExpTarif').Asstring)*StrToFloat(SQLGRID1.Query.FieldByName('ExpCount').Asstring);
+      if s<>'' then
+        s:=s+', ';
+      s:=s+'Экспедирование: '+StrTo00(FloatToStr(f))+' руб';
     end;
-  if  SQLGRID1.Query.FieldByName('AddServiceProp').AsInteger=1 then
-  begin
-  f:=StrToFloat(SQLGRID1.Query.FieldByName('PropTarif').Asstring)*StrToFloat(SQLGRID1.Query.FieldByName('PropCount').Asstring);
-    if s<>'' then s:=s+', ';
-    s:=s+'Выдача пропусков: '+StrTo00(FloatToStr(f))+' руб';
+    if  SQLGRID1.Query.FieldByName('AddServiceProp').AsInteger=1 then
+    begin
+      f:=StrToFloat(SQLGRID1.Query.FieldByName('PropTarif').Asstring)*StrToFloat(SQLGRID1.Query.FieldByName('PropCount').Asstring);
+      if s<>'' then
+        s:=s+', ';
+      s:=s+'Выдача пропусков: '+StrTo00(FloatToStr(f))+' руб';
     end;
-  ReportMakerWP.AddParam('26='+s );
-  //---------
-  i:=0;
-  qPlace:=sql.select('SendPack','Count,Send_Ident','Send_Ident='+
+    ReportMakerWP.AddParam('26='+s );
+    //---------
+    i:=0;
+    qPlace:=sql.select('SendPack','Count,Send_Ident','Send_Ident='+
                      IntToStr(SQLGRID1.Query.FieldByName('Ident').AsInteger),'');
 
-  while (not qPlace.eof) do
-  begin
-  i:=i+qPlace.FieldByName('Count').asinteger;
-  qPlace.Next;
-  end;
-  qPlace.free ;
+    while (not qPlace.eof) do
+    begin
+      i:=i+qPlace.FieldByName('Count').asinteger;
+      qPlace.Next;
+    end;
+    qPlace.free ;
 
-  ReportMakerWP.AddParam('27='+IntToStr(i) );
-  s:='';
-  if SQLGRID1.Query.FieldByName('DateSend').Asstring <> '' then
-    s:=SendStr.DataDMstrY(StrToDate(SQLGRID1.Query.FieldByName('DateSend').Asstring));
-  ReportMakerWP.AddParam('28='+s );
-  s:='';
-  dateDel:= sql.SelectString('Send','DateDelFirst','Ident='+SQLGRID1.Query.FieldByName('ident').Asstring) ;
-  if Datedel<>'' then
-  s:=SendStr.DataDMstrY(StrToDate(dateDel));
-  if s<>'' then
-  ReportMakerWP.AddParam('29='+' Доставка:'+s );
+    ReportMakerWP.AddParam('27='+IntToStr(i) );
+    s:='';
+    if SQLGRID1.Query.FieldByName('DateSend').Asstring <> '' then
+      s:=SendStr.DataDMstrY(StrToDate(SQLGRID1.Query.FieldByName('DateSend').Asstring));
+    ReportMakerWP.AddParam('28='+s );
+    s:='';
+    dateDel:= sql.SelectString('Send','DateDelFirst','Ident='+SQLGRID1.Query.FieldByName('ident').Asstring) ;
+    if Datedel<>'' then
+      s:=SendStr.DataDMstrY(StrToDate(dateDel));
+    if s<>'' then
+      ReportMakerWP.AddParam('29='+' Доставка:'+s );
     if  SQLGRID1.Query.FieldByName('AddServSum').Asstring<>''  then       {AddServStr,Sum}
-  begin
-    ReportMakerWP.AddParam('30='+SQLGRID1.Query.FieldByName('AddServStr').Asstring );
-    ReportMakerWP.AddParam('31='+StrTo00(SQLGRID1.Query.FieldByName('AddServSum').Asstring)+' руб' );
-  end;
-  if sql.SelectInteger(''+ send_str + '','TypeGood_Ident3','Ident='+IntToStr(IdSend))=1 then
-    ReportMakerWP.AddParam('32='+'Упаковка груза не соответствует условиям перевозки.'+
+    begin
+      ReportMakerWP.AddParam('30='+SQLGRID1.Query.FieldByName('AddServStr').Asstring );
+      ReportMakerWP.AddParam('31='+StrTo00(SQLGRID1.Query.FieldByName('AddServSum').Asstring)+' руб' );
+    end;
+    if sql.SelectInteger(''+ send_str + '','TypeGood_Ident3','Ident='+IntToStr(IdSend))=1 then
+      ReportMakerWP.AddParam('32='+'Упаковка груза не соответствует условиям перевозки.'+
                                  ' Без ответственности за механические повреждения.' )
-  else  ReportMakerWP.AddParam('32='+'' );
-  sendrtf := 'send\sendU.rtf'; //печать для юр лиц
-  if Pos('"', clientName) = 1 then sendrtf := 'send\sendCh.rtf'; //печать для частных лиц "ТЭК"
+    else
+      ReportMakerWP.AddParam('32='+'' );
 
-  if ReportMakerWP.DoMakeReport(systemdir+sendrtf,
+    sendrtf := 'send\sendU.rtf'; //печать для юр лиц
+    if Pos('"', clientName) = 1 then
+      sendrtf := 'send\sendCh.rtf'; //печать для частных лиц "ТЭК"
+
+    if ReportMakerWP.DoMakeReport(systemdir+sendrtf,
                              systemdir+'send\send.ini', systemdir+'send\out.rtf')<>0 then
-                              begin
-                              ReportMakerWP.Free;
-                              //application.messagebox('Закройте выходной документ в WINWORD!',
-                             // 'Совет!',0);
-                             goto T;
-                              exit
-                              end;;
-Nprint:=4;
-end else if Typ=1 then
-begin
-       ReportMakerWP.AddParam('1='+SQLGRID1.Query.FieldByName('ClientName').AsString);
-       ReportMakerWP.AddParam('2='+SQLGRID1.Query.FieldByName('ClientSenderName').AsString);
-       ReportMakerWP.AddParam('3='+SQLGRID1.Query.FieldByName('CityName').AsString);
-       ReportMakerWP.AddParam('4='+SQLGRID1.Query.FieldByName('AcceptorName').AsString);
-       ReportMakerWP.AddParam('5='+SQLGRID1.Query.FieldByName('AcceptorAddress').AsString+
+    begin
+      ReportMakerWP.Free;
+      //application.messagebox('Закройте выходной документ в WINWORD!',
+      // 'Совет!',0);
+      goto T;
+      exit
+    end;
+    Nprint:=4;
+  end
+  else
+    if Typ=1 then
+    begin
+      ReportMakerWP.AddParam('1='+SQLGRID1.Query.FieldByName('ClientName').AsString);
+      ReportMakerWP.AddParam('2='+SQLGRID1.Query.FieldByName('ClientSenderName').AsString);
+      ReportMakerWP.AddParam('3='+SQLGRID1.Query.FieldByName('CityName').AsString);
+      ReportMakerWP.AddParam('4='+SQLGRID1.Query.FieldByName('AcceptorName').AsString);
+      ReportMakerWP.AddParam('5='+SQLGRID1.Query.FieldByName('AcceptorAddress').AsString+
                               ', т. '+SQLGRID1.Query.FieldByName('AcceptorPhone').AsString);
 
-       s:=SendStr.DataDMstrY(StrToDate(SQLGRID1.Query.FieldByName('DateSend').Asstring ));
-       ReportMakerWP.AddParam('6='+s );
-       ReportMakerWP.AddParam('7='+SQLGRID1.Query.FieldByName('NameGoodName').AsString);
-       ReportMakerWP.AddParam('8='+'Санкт-Петербург-Главный' );
-       ReportMakerWP.AddParam('9='+SQLGRID1.Query.FieldByName('Contract').AsString );
-       ReportMakerWP.AddParam('10='+SQLGRID1.Query.FieldByName('PackCount').Asstring );
-       ReportMakerWP.AddParam('11='+SQLGRID1.Query.FieldByName('Weight').Asstring);
-       i:=sql.SelectInteger('City','Check','Ident='+
+      s:=SendStr.DataDMstrY(StrToDate(SQLGRID1.Query.FieldByName('DateSend').Asstring ));
+      ReportMakerWP.AddParam('6='+s );
+      ReportMakerWP.AddParam('7='+SQLGRID1.Query.FieldByName('NameGoodName').AsString);
+      ReportMakerWP.AddParam('8='+'Санкт-Петербург-Главный' );
+      ReportMakerWP.AddParam('9='+SQLGRID1.Query.FieldByName('Contract').AsString );
+      ReportMakerWP.AddParam('10='+SQLGRID1.Query.FieldByName('PackCount').Asstring );
+      ReportMakerWP.AddParam('11='+SQLGRID1.Query.FieldByName('Weight').Asstring);
+      i:=sql.SelectInteger('City','Check','Ident='+
                             IntToStr(SQLGRID1.Query.FieldByName('City_Ident').AsInteger));
-       //f:=0;
-       if i=1 then
-       begin
-       i:=0;
-       qPlace:=sql.select('SendPack','Count,Send_Ident','Send_Ident='+
+      //f:=0;
+      if i=1 then
+      begin
+        i:=0;
+        qPlace:=sql.select('SendPack','Count,Send_Ident','Send_Ident='+
                      IntToStr(SQLGRID1.Query.FieldByName('Ident').AsInteger),'');
 
-         while (not qPlace.eof) do
-         begin
-           i:=i+qPlace.FieldByName('Count').asinteger;
-           qPlace.Next;
-         end;
-       qPlace.free ;
-       f:=StrToFloat(sql.SelectString('Constant','PlaceTariff',''));
-       f:=f*i;
-       end else f:=0;
-       if f<>0 then  ReportMakerWP.AddParam('25='+', Наценка за проезд ч/з Москву: '+
+        while (not qPlace.eof) do
+        begin
+          i:=i+qPlace.FieldByName('Count').asinteger;
+          qPlace.Next;
+        end;
+        qPlace.free ;
+        f:=StrToFloat(sql.SelectString('Constant','PlaceTariff',''));
+        f:=f*i;
+      end
+      else
+        f:=0;
+
+      if f<>0 then
+        ReportMakerWP.AddParam('25='+', Наценка за проезд ч/з Москву: '+
                                             StrTo00(FloatToStr(f))+' руб.')
-        else ReportMakerWP.AddParam('25='+' ');
-       f1:=StrToFloat(SQLGRID1.Query.FieldByName('Fare').Asstring)-StrToFloat(SQLGRID1.Query.FieldByName('CountWeight').Asstring)*StrToFloat(SQLGRID1.Query.FieldByName('Tariff').Asstring)/10-f;
-       s:=STRTo00(FloatToStr(f1));
+      else
+        ReportMakerWP.AddParam('25='+' ');
 
-       ReportMakerWP.AddParam('12='+S );
-       ReportMakerWP.AddParam('13='+SQLGRID1.Query.FieldByName('CountWeight').Asstring );
-       ReportMakerWP.AddParam('14='+StrTo00(SQLGRID1.Query.FieldByName('Tariff').Asstring) );
-       ReportMakerWP.AddParam('15='+StrTo00(SQLGRID1.Query.FieldByName('Fare').Asstring) );
-       ReportMakerWP.AddParam('16='+StrTo00(SQLGRID1.Query.FieldByName('InsuranceSum').Asstring));
-       ReportMakerWP.AddParam('17='+StrTo00(SQLGRID1.Query.FieldByName('InsuranceValue').Asstring) );
-       ReportMakerWP.AddParam('18='+StrTo00(SQLGRID1.Query.FieldByName('AddServicePrace').Asstring) );
-       ReportMakerWP.AddParam('19='+StrTo00(SQLGRID1.Query.FieldByName('SumCount').Asstring) );
+      f1:=StrToFloat(SQLGRID1.Query.FieldByName('Fare').Asstring)-StrToFloat(SQLGRID1.Query.FieldByName('CountWeight').Asstring)*StrToFloat(SQLGRID1.Query.FieldByName('Tariff').Asstring)/10-f;
+      s:=STRTo00(FloatToStr(f1));
 
-       ReportMakerWP.AddParam('20='+SQLGRID1.Query.FieldByName('PayTypeName').Asstring);
-       s:=SendStr.MoneyToString(SQLGRID1.Query.FieldByName('SumCount').Asstring);
-       ReportMakerWP.AddParam('21='+s );
-       ReportMakerWP.AddParam('22='+SQLGRID1.Query.FieldByName('PeopleFIO').Asstring );
-       s:=SendStr.DataDMstrY(StrToDate(SQLGRID1.Query.FieldByName('Start').Asstring));
-       ReportMakerWP.AddParam('23='+s );
+      ReportMakerWP.AddParam('12='+S );
+      ReportMakerWP.AddParam('13='+SQLGRID1.Query.FieldByName('CountWeight').Asstring );
+      ReportMakerWP.AddParam('14='+StrTo00(SQLGRID1.Query.FieldByName('Tariff').Asstring) );
+      ReportMakerWP.AddParam('15='+StrTo00(SQLGRID1.Query.FieldByName('Fare').Asstring) );
+      ReportMakerWP.AddParam('16='+StrTo00(SQLGRID1.Query.FieldByName('InsuranceSum').Asstring));
+      ReportMakerWP.AddParam('17='+StrTo00(SQLGRID1.Query.FieldByName('InsuranceValue').Asstring) );
+      ReportMakerWP.AddParam('18='+StrTo00(SQLGRID1.Query.FieldByName('AddServicePrace').Asstring) );
+      ReportMakerWP.AddParam('19='+StrTo00(SQLGRID1.Query.FieldByName('SumCount').Asstring) );
+
+      ReportMakerWP.AddParam('20='+SQLGRID1.Query.FieldByName('PayTypeName').Asstring);
+      s:=SendStr.MoneyToString(SQLGRID1.Query.FieldByName('SumCount').Asstring);
+      ReportMakerWP.AddParam('21='+s );
+      ReportMakerWP.AddParam('22='+SQLGRID1.Query.FieldByName('PeopleFIO').Asstring );
+      s:=SendStr.DataDMstrY(StrToDate(SQLGRID1.Query.FieldByName('Start').Asstring));
+      ReportMakerWP.AddParam('23='+s );
        ReportMakerWP.AddParam('24='+'Северная' );
         s:='';
       if  SQLGRID1.Query.FieldByName('AddServicePack').AsInteger=1 then

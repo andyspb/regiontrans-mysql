@@ -5,8 +5,8 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, LblEdtDt, Sqlctrls, Lbsqlcmb, StdCtrls, Buttons, BMPBtn,
-  ComCtrls,DB,TSQLCLS,DBTables,Tadjform, SqlGrid, OleServer,
-  Word2000, Menus, Lbledit,DateUtils,QDialogs;
+  ComCtrls, DB, TSQLCLS, DBTables, Tadjform, SqlGrid, OleServer,
+  Word2000, Menus, Lbledit, DateUtils, QDialogs, EntrySec;
 
 type
   TFormInvoice = class(TForm)
@@ -16,7 +16,7 @@ type
     cbClient: TLabelSQLComboBox;
     LabelEditDate1: TLabelEditDate;
     WordApplication1: TWordApplication;
-    CheckBox1: TCheckBox;
+    cbAktReturn: TCheckBox;
     btOk: TBMPBtn;
     PopupMenu1: TPopupMenu;
     N1: TMenuItem;
@@ -64,26 +64,28 @@ Uses makerepp ,SendStr,Invoice, Menu;
 
 Function TFormInvoice.AddRecord(i:longint):longint;
 begin
-NumberChange:='';
-code:=0;
-Ident:=0;
-Number:='';
-LabelEditDate1.enabled:=true;
-cbClient.enabled:=true;
-LabelEditDate1.Text:=FormatDateTime('dd.mm.yyyy',now);
-Dat:=LabelEditDate1.Text;
-CheckBox1.Visible:=false;
-btOk.Visible:=false;
-if i<>0 then
-begin
-  Ident:=i ;
-  cbClient.SetActive(Ident);
-  code:=1;
-end;
-if showModal=mrOk then
-begin
- AddRecord:=1;
-end else AddRecord:=0;
+  NumberChange:='';
+  code:=0;
+  Ident:=0;
+  Number:='';
+  LabelEditDate1.enabled:=true;
+  cbClient.enabled:=true;
+  LabelEditDate1.Text:=FormatDateTime('dd.mm.yyyy',now);
+  Dat:=LabelEditDate1.Text;
+  cbAktReturn.Visible:=false;
+  btOk.Visible:=false;
+  if i<>0 then
+  begin
+    Ident:=i ;
+    cbClient.SetActive(Ident);
+    code:=1;
+  end;
+  if showModal=mrOk then
+  begin
+    AddRecord:=1;
+  end
+  else
+    AddRecord:=0;
 end;
 
 Function TFormInvoice.EditRecord(Iden:longInt):longint;
@@ -118,9 +120,9 @@ LabelEditDate1.text:=FormatDateTime('dd.mm.yyyy',StrToDate(q.FieldByName('Data')
 NEWN:=1;
 Dat:=FormatDateTime('dd.mm.yyyy',StrToDate(q.FieldByName('Data').AsString));
 cbClient.SetValue(q);
-CheckBox1.Visible:=true;
-if q.FieldByName('ReportReturn').AsInteger=1 then CheckBox1.checked:=true
-else CheckBox1.checked:=false;
+cbAktReturn.Visible:=true;
+if q.FieldByName('ReportReturn').AsInteger=1 then cbAktReturn.checked:=true
+else cbAktReturn.checked:=false;
 //LabelEditDate1.enabled:=false;
 //cbClient.enabled:=false;
 btOk.Visible:=true;
@@ -272,7 +274,7 @@ q:=sql.Select('PrintInvoice','Sum,SumNDS,NDS','Send_Ident in ('+StrIdSend+')',''
  //----------------
 
 
- if CheckBox1.Checked then s:='ReportReturn='+IntToStr(1)
+ if cbAktReturn.Checked then s:='ReportReturn='+IntToStr(1)
   else s:='ReportReturn='+IntToStr(0);
  if Dat<>'  .  .    '  then
     s:=s+', Data = '+sql.MakeStr(FormatDateTime('yyyy-mm-dd',StrToDate(Dat)))
@@ -1117,17 +1119,31 @@ end;
 
 procedure TFormInvoice.N1Click(Sender: TObject);
 begin
-if   CheckBox1.Checked then
-    CheckBox1.Checked:=False
-    else CheckBox1.Checked:=true;
+if cbAktReturn.Checked then
+  cbAktReturn.Checked:=False
+else
+  cbAktReturn.Checked:=true;
 end;
 
 procedure TFormInvoice.FormCreate(Sender: TObject);
 begin
 //cbClient.SQLComboBox.Sorted:=true;
+// krutogolov
+Caption := 'Счет фактура ( ' + EntrySec.period+ ' )';
+if EntrySec.bAllData then
+begin
+  cbAktReturn.Enabled := False;
+end
+else
+  cbAktReturn.Enabled := True;
+begin
+end
+
 end;
 
-procedure TFormInvoice.FormKeyDown(Sender: TObject; var Key: Word;
+procedure TFormInvoice.FormKeyDown(Sender: TObject;
+var
+  Key: Word;
   Shift: TShiftState);
 begin
 if key = VK_Return
@@ -1137,46 +1153,48 @@ end;
 procedure TFormInvoice.eNumberChange(Sender: TObject);
 begin
 if  eNumber.Text<>'' then
-NumberChange:=trim(eNumber.Text)
-else NumberChange:='';
+  NumberChange:=trim(eNumber.Text)
+else
+  NumberChange:='';
 end;
 
 procedure TFormInvoice.erExit(Sender: TObject);
-var numtest,num1:string;
+var
+  numtest: string;
+  num1: string;
 //    j:      integer;
-    y:Word;
+  y:Word;
 begin
-numtest:='';
-erExitTest:=true;
-if NumberChange<>'' then
-begin
- try  
- numtest:=trim(NumberChange);
- delete(numtest,length(numtest)-2,3);
-// j:=StrToInt(numtest);
- StrToInt(numtest);
- except
-  ShowMessage('Первая часть номера - это число!');
-  eNumber.SetFocus;
-  erExitTest:=false;
-  exit;
- end;
- if LabelEditDate1.text<>'  .  .    ' then
- begin
- y:=YearOf(StrToDate(LabelEditDate1.text));
- numtest:=IntToStr(y);
- delete(numtest,1,2);
- numtest:='/'+numtest;
- num1:=Trim(NumberChange);
- delete(num1,1,Length(num1)-3);
- if  numtest<>num1 then
- begin
-  ShowMessage('Вторая часть номера - это "/" и две последние цифры от года,'+
+  numtest:='';
+  erExitTest:=true;
+  if NumberChange<>'' then
+  begin
+    try
+      numtest:=trim(NumberChange);
+      delete(numtest,length(numtest)-2,3);
+      // j:=StrToInt(numtest);
+      StrToInt(numtest);
+    except
+      ShowMessage('Первая часть номера - это число!');
+      eNumber.SetFocus;
+      erExitTest:=false;
+      exit;
+    end;
+  if LabelEditDate1.text<>'  .  .    ' then
+  begin
+    y:=YearOf(StrToDate(LabelEditDate1.text));
+    numtest:=IntToStr(y);
+    delete(numtest,1,2);
+    numtest:='/'+numtest;
+    num1:=Trim(NumberChange);
+    delete(num1,1,Length(num1)-3);
+  if  numtest<>num1 then
+  begin
+    ShowMessage('Вторая часть номера - это "/" и две последние цифры от года,'+
                ' на дату формирования счет-фактуры!');
-  erExitTest:=false;
-  eNumber.SetFocus;
-  exit;
-
+    erExitTest:=false;
+    eNumber.SetFocus;
+    exit;
  end;
  end;
 end;

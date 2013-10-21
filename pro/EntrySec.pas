@@ -64,8 +64,10 @@ uses    Menu;
 {$R *.DFM}
 
 procedure TEntrySecurity.btOKClick(Sender: TObject);
-var q:TQuery;
-str:string;
+var
+  q: TQuery;
+  str: string;
+  sql_str: TStringList;
 begin
   str:='(ShortName='''+eShortName.text +''') and (Password='''+ePassword.text+''')';
   q:=sql.select('Inspector','Ident,Roles_Ident',str ,  '' );
@@ -83,7 +85,7 @@ begin
     // krutogolov
     // all data
     begin
-      period:='бяе';
+      period:='бяе бпелъ';
       // tables
       account_str:='account_all';
       accounttek_str:='accounttek_all';
@@ -130,7 +132,14 @@ begin
       svpayreceipt_str:='svpayreceipt';
       vs1_str:='vs1';
       vs2_str:='vs2';
+
      end;
+
+   sql_str:=TStringList.Create;
+   sql_str.Add('call  `update_tables_all`;');
+   sql.ExecSQL(sql_str);
+   //sql.Free;
+   //sql_str.free;
 
    ModalResult:=mrOK;
 end;

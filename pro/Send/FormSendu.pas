@@ -227,18 +227,24 @@ ClientCardu, FormAcceptoru, FCity,Invoice, FInvoice, FormCalc, FAKT;
 
 procedure TFormSend.FormCreate(Sender: TObject);
 begin
-labelInteger2.Edit.BiDiMode:=bdLeftToRight;
-eWieght.Edit.BiDiMode:=bdLeftToRight;
+  labelInteger2.Edit.BiDiMode:=bdLeftToRight;
+  eWieght.Edit.BiDiMode:=bdLeftToRight;
 //cbPynkt.SQLComboBox.Sorted:=true;
-cbPolych.Sorted:=true;
-if FMenu.CurrentUserroles = 1 then
-  eNumberCountPattern.Enabled:=true
-else
-  eNumberCountPattern.Enabled:=false;
+  cbPolych.Sorted:=true;
+  if FMenu.CurrentUserroles = 1 then
+    eNumberCountPattern.Enabled:=true
+  else
+    eNumberCountPattern.Enabled:=false;
 
-Caption:='Карточка отправки ( ' + EntrySec.period + ' )';
-if (EntrySec.bAllData) then
-  btOk.Enabled:=False;
+  Caption:='Карточка отправки ( ' + EntrySec.period + ' )';
+  if (EntrySec.bAllData) then
+  begin
+    btOk.Enabled:=False;
+  end
+  else
+  begin
+    btOk.Enabled:=True;
+  end
 end;
 
 function TFormSend.AddRecord:longint;
@@ -2783,11 +2789,11 @@ begin
   TEs:=false;
   FormVCalc:=TFormVCalc.Create(Application) ;
   V:='';
-  FormVCalc.AddRecord(TEs,V); 
+  FormVCalc.AddRecord(TEs,V);
   if V<>'' then
-  eVolume.Text:=V;
+    eVolume.Text:=V;
   if TEs then CheckBox3.Checked:=TEs;
-  FormVCalc.Free;
+    FormVCalc.Free;
 end;
 
 procedure TFormSend.FormKeyDown(Sender: TObject; var Key: Word;

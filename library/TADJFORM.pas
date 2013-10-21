@@ -20,7 +20,7 @@ Type TAdjustForm=class(TForm)
       private
         bt :TBmpBtn; { Temporary button }
         HintFlag:boolean;
-        fButton,fEdit,fLbl,fGrid,fGridTitle,fTree:TFont;
+        fEdit,fLbl,fGrid,fGridTitle,fTree:TFont;
         ResizeFlag:boolean;
         OldOnActivate:TNotifyEvent;
         OldOnDeactivate:TNotifyEvent;
@@ -394,40 +394,41 @@ end;
 
 
 procedure TAdjustForm.ControlChange(var c:TComponent);
-var i:integer;
-    f:TFont;
-    cc:TComponent;
+var
+  i:integer;
+// f:TFont;
+  cc:TComponent;
 begin
   if c is TPanel then
-    begin
-      ParentColor:=FALSE;
-      ParentFont:=FALSE;
-    end
+  begin
+    ParentColor:=FALSE;
+    ParentFont:=FALSE;
+  end
   else
   if c is TBmpBtn then
     with c as TBmpBtn do
-     if not((hint='') and (caption='')) then
-    begin
+      if not((hint='') and (caption='')) then
+      begin
       ParentColor:=FALSE;
       ParentFont:=FALSE;
       if ToolBarButton then
+      begin
+        parent:=ToolBar;
+        ParentColor:=FALSE;
+        Left:=tcnt*(bt.Width+1)+4;
+        Top:=2;
+        Font:=bt.Font;
+        Height:=bt.Height;
+        Width:=bt.Width;
+        if not ToolBarCaptionPresent then    { }
         begin
-          parent:=ToolBar;
-          ParentColor:=FALSE;
-
-          Left:=tcnt*(bt.Width+1)+4;
-          Top:=2;
-          Font:=bt.Font;
-          Height:=bt.Height;
-          Width:=bt.Width;
-          if not ToolBarCaptionPresent then                         { }
-          begin
-            Caption:='';
-            Style:=bsNew
-          end
-          else Style:=bsAutoDetect;
-          inc(tcnt)
+          Caption:='';
+          Style:=bsNew
         end
+        else
+          Style:=bsAutoDetect;
+        inc(tcnt)
+      end
       else
         Font:=bt.Font;
     end;
@@ -520,9 +521,6 @@ begin
 end;
 
 destructor TAdjustForm.Destroy;
-Var
-  i,btN,GridN,LabelEditN :Integer;
-  ww:longint;
 begin
   if FormsIni<>nil then
   begin
@@ -703,9 +701,8 @@ begin
 end;
 
 function TAdjustForm.SelectFrom(DBName,Table,Conditions:string):integer;
-var i:integer;
-    fl:boolean;
-    q:TQuery;
+var
+  q:TQuery;
 begin
   q:=sql.Select(Table,'',Conditions,'');
   try

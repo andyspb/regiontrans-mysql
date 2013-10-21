@@ -159,64 +159,72 @@ end;
 end;
 
 procedure TFormOrderBox.btPrintClick(Sender: TObject);
-var l:longint;
-q: TQuery;
-label Next1;
+var
+//  l:longint;
+  q: TQuery;
+  label Next1;
 begin
-if LabelEditDate1.text='  .  .    '  then
-begin
+  if LabelEditDate1.text='  .  .    '  then
+  begin
     Application.MessageBox('Введите дату составления!','Ошибка!',0);
     exit
-end;
+  end;
 
-if  cbClient.GetData=0 then
-begin
-   Application.MessageBox('Выберите заказчика!','Ошибка!',0);
-   cbClient.SetFocus;
-   exit;
-end;
-if Enabl=true then
-begin
-case Application.MessageBox('Если оплачивается сейчас то нажмите да!',
+  if  cbClient.GetData=0 then
+  begin
+    Application.MessageBox('Выберите заказчика!','Ошибка!',0);
+    cbClient.SetFocus;
+    exit;
+  end;
+
+  if Enabl=true then
+  begin
+    case Application.MessageBox('Если оплачивается сейчас то нажмите да!',
                             'Предупреждение',MB_YESNO+MB_ICONQUESTION) of
     IDYES:
     begin
-    if  trim(Number) = '' then
-    begin
-      Application.MessageBox('Введите номер приходника в формате NNN/YY!','Ошибка!',0);
-      eNumber.SetFocus;
-      exit;
-    end;
-     q:=sql.select('`OrdersTek`','Number','`Number`='+sql.MakeStr(Number),'');
+      if  trim(Number) = '' then
+      begin
+        Application.MessageBox('Введите номер приходника в формате NNN/YY!','Ошибка!',0);
+        eNumber.SetFocus;
+        exit;
+      end;
+
+      q:=sql.select('`OrdersTek`','Number','`Number`='+sql.MakeStr(Number),'');
+
       if (not q.Eof) then
       begin
         Application.MessageBox('Приходник с таким номером уже существует, введите другой!','Ошибка!',0);
         eNumber.SetFocus;
         exit;
       end
-       else ModalResult:=mrOk;
+      else
+        ModalResult:=mrOk;
     end;
     IDNO:Print;
-end;
-end else  ModalResult:=mrOk;
-if Invoice.InvoiceTest(cbClient.getdata,Now) then
-begin
-case Application.MessageBox('Пора распечатать счет фактуру! Подтвердите печать!',
-                            'Сообщение',MB_YESNO+MB_ICONQUESTION) of
-    IDYES:
-    begin
-
-     FormInvoice:=TFormInvoice.Create(Application) ;
-     l:=FormInvoice.AddRecord(cbClient.getdata);
-     FormInvoice.Free;
-
     end;
-    IDNO:begin
-         goto next1 ;
-         exit
-         end;
-end;
-end;
+  end
+  else
+    ModalResult:=mrOk;
+  if Invoice.InvoiceTest(cbClient.getdata,Now) then
+  begin
+    case Application.MessageBox('Пора распечатать счет фактуру! Подтвердите печать!',
+                            'Сообщение',MB_YESNO+MB_ICONQUESTION) of
+      IDYES:
+      begin
+        FormInvoice:=TFormInvoice.Create(Application) ;
+        FormInvoice.AddRecord(cbClient.getdata);
+        FormInvoice.Free;
+      end;
+
+      IDNO:
+      begin
+        goto next1 ;
+        exit
+      end;
+    end;
+  end;
+
 Next1:
 end;
 
@@ -259,38 +267,41 @@ end;
 end;
 
 procedure TFormOrderBox.eSumNDSChange(Sender: TObject);
-var Sum:real;
-    N:real;
+var
+  Sum:real;
+  N:real;
 begin
-if LabelEditDate1.text='  .  .    '  then
-begin
+  if LabelEditDate1.text='  .  .    '  then
+  begin
     Application.MessageBox('Введите дату составления!','Ошибка!',0);
     exit
-end;
+  end;
 
-if (eSumNDS.text<>'') then
-begin
- if eNSP.Visible then
+  if (eSumNDS.text<>'') then
   begin
-   N:=1.05;
-    eNSP.Text:=StrTo00(FloatToStr(StrToFloat(eSumNDS.text)*(N-1)));
+    if eNSP.Visible then
+    begin
+      N:=1.05;
+      eNSP.Text:=StrTo00(FloatToStr(StrToFloat(eSumNDS.text)*(N-1)));
+    end
+    else
+    begin
+      //N:=1;
+      eNSP.Text:='';
+    end;
+    Sum:=(StrToFloat(eSumNDS.text));
+    eNDS.text:=StrTo00(FloatTOStr((Sum)*18/118));
+    eSum.text:=StrTo00(FloatTOStr(Sum-StrToFloat(eNDS.text)));
+    eSumNDS.text:=StrTo00(eSumNDS.text);
   end
-   else begin
-        N:=1;
-        eNSP.Text:='';
-        end;
-  Sum:=(StrToFloat(eSumNDS.text));
-  eNDS.text:=StrTo00(FloatTOStr((Sum)*18/118));
-  eSum.text:=StrTo00(FloatTOStr(Sum-StrToFloat(eNDS.text)));
-  eSumNDS.text:=StrTo00(eSumNDS.text);
-
-end
- else begin
-          eNDS.text:='0.00';
-          eSum.text:='0.00';
-          eSumNDS.text:='0.00';
-          if eNSP.Visible then  eNSP.Text:='0.00';
-       end;
+  else
+  begin
+    eNDS.text:='0.00';
+    eSum.text:='0.00';
+    eSumNDS.text:='0.00';
+    if eNSP.Visible then
+      eNSP.Text:='0.00';
+  end;
 end;
 
 Function TFormOrderBox.Num:string;
