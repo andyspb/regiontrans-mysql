@@ -1,6 +1,6 @@
 object FormPaysheetBox: TFormPaysheetBox
-  Left = 173
-  Top = 125
+  Left = 613
+  Top = 183
   Width = 702
   Height = 409
   Caption = #1055#1083#1072#1090#1077#1078#1082#1080
@@ -11698,7 +11698,7 @@ object FormPaysheetBox: TFormPaysheetBox
     ToolBarButton = True
     FileName = 
       'ADD_BMP'#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0 +
-      #0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0
+      #0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0
   end
   object BEdit: TBMPBtn
     Left = 2
@@ -11721,7 +11721,7 @@ object FormPaysheetBox: TFormPaysheetBox
     ToolBarButton = True
     FileName = 
       'EDIT_BMP'#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0 +
-      #0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0
+      #0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0
   end
   object BDel: TBMPBtn
     Left = 209
@@ -11744,7 +11744,7 @@ object FormPaysheetBox: TFormPaysheetBox
     ToolBarButton = True
     FileName = 
       'DEL_BMP'#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0 +
-      #0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0
+      #0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0
   end
   object BExit: TBMPBtn
     Left = 312
@@ -11767,6 +11767,6 @@ object FormPaysheetBox: TFormPaysheetBox
     ToolBarButton = True
     FileName = 
       'EXIT_BMP'#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0 +
-      #0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0
+      #0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0
   end
 end

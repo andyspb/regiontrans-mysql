@@ -148,7 +148,7 @@ AS `City_Ident`,`s`.`Ident` AS `Ident`,`s`.`Weight`
 AS `Weight`,`s`.`CountWeight` AS `CountWeight`,`s`.`Invoice_Ident` AS `send_Inv_ident`,cast(`s`.`Fare` as decimal(10,2)) 
 AS `Fare`,cast(`s`.`AddServicePrace` as decimal(10,2)) 
 AS `AddServicePrace`,cast(`s`.`InsuranceValue` as decimal(10,2)) AS `InsuranceValue`,cast(`s`.`PackTarif` as decimal(10,2)) AS `PackTarif`,cast(`s`.`SumCount` 
-as decimal(10,2)) AS `SumCount`,`i`.`Ident` AS `Invoice_Ident`,`i`.`Data` AS `Invoice_Data` from (`sends_all` `s` left join `invoice` `i` on((`s`.`Invoice_Ident` = `i`.`Ident`)))$$
+as decimal(10,2)) AS `SumCount`,`i`.`Ident` AS `Invoice_Ident`,`i`.`Data` AS `Invoice_Data` from (`sends_all` `s` left join `invoice_all` `i` on((`s`.`Invoice_Ident` = `i`.`Ident`)))$$
 
 
 

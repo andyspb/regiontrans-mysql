@@ -1,6 +1,6 @@
 object FormPaySheet: TFormPaySheet
-  Left = 199
-  Top = 142
+  Left = 1109
+  Top = 230
   Width = 344
   Height = 270
   Caption = #1055#1083#1072#1090#1077#1078#1082#1080

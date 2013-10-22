@@ -1,1 +1,0 @@
-delete from send where `start` < (select CURDATE()  - interval 1 year );
