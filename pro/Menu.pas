@@ -190,6 +190,8 @@ EntrySecurity:=TEntrySecurity.Create(Application);
     N25.Caption := 'СЧЕТА ( ' + EntrySec.period +' )';
     N24.Caption := 'ПРИХОДНЫЕ ОРДЕРА ( ' + EntrySec.period +' )';
     N29.Caption := 'ОПЛАТА ( ' + EntrySec.period +' )';
+    N37.Caption := 'АКТЫ-ТЭК ( ' + EntrySec.period +' )';
+    N38.Caption := 'СЧЕТА-ТЭК ( ' + EntrySec.period +' )';
     Caption := 'РегионТранс ( Данные за период: ' + EntrySec.period + ' )';
 
  if CurrentUserRoles=1 then
