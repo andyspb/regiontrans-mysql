@@ -593,16 +593,16 @@ end;
 
 procedure TFMenu.N43Click(Sender: TObject);      {обновление сервера}
 var
-  str1:TStringList;
+  sql_str:TStringList;
 begin
-  str1:=TStringList.Create;
-  str1.Add(' ALTER TABLE send CHANGE COLUMN InsuranceSum ');
-  str1.Add(' InsuranceSum VARCHAR(12) NULL DEFAULT NULL, ');
-  str1.Add(' CHANGE COLUMN InsuranceValue InsuranceValue ');
-  str1.Add(' VARCHAR(12) NULL DEFAULT NULL ');
-  if sql.ExecSQL(str1) = 0 then
+  sql_str:=TStringList.Create;
+  sql_str.Add(' ALTER TABLE send CHANGE COLUMN InsuranceSum ');
+  sql_str.Add(' InsuranceSum VARCHAR(12) NULL DEFAULT NULL, ');
+  sql_str.Add(' CHANGE COLUMN InsuranceValue InsuranceValue ');
+  sql_str.Add(' VARCHAR(12) NULL DEFAULT NULL ');
+  if sql.ExecSQL(sql_str) = 0 then
      Application.MessageBox('Обновление сервера завершено!','',0);
-  str1.free;
+  sql_str.free;
 
 end;
 

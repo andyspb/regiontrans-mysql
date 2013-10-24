@@ -60,7 +60,8 @@ begin
 end;
 
 procedure TFormSendBox.FormCreate(Sender: TObject);
-var cond:string;
+var
+  cond:string;
 //str1:TStringList;
 begin
 // krutogolov
@@ -72,7 +73,9 @@ begin
     begin
       send_str:='`send_all`';
       akttek_str:='`akttek_all`';
-	    invoice_Str:='`invoice_all`'
+	    invoice_Str:='`invoice_all`';
+      eCreate.Enabled:=False;
+      eDelete.Enabled:=False;
     end
   else
     begin
@@ -201,8 +204,14 @@ begin
 end;
 
 procedure TFormSendBox.eDeleteClick(Sender: TObject);
+var
+  sql_str: TStringList;
+  temp_str: string;
+  ident_str: string;
+  table_str: string;
 begin
   sqlGrid1.SaveNextPoint('Ident');
+  ident_str:=sqlGrid1.FieldByName('Ident').AsString;
   sql.StartTransaction;
   if sql.Delete('Send','Ident='+
     IntToStr(sqlGrid1.FieldByName('Ident').asInteger))<>0 then
@@ -218,8 +227,23 @@ begin
                   'Пересчитайте счет-фактуру, после удаления! ');
         case Application.MessageBox('Удалить!',
                             'Предупреждение!',MB_YESNO+MB_ICONQUESTION) of
-        IDYES: sql.commit;
-        IDNO: sql.rollback;
+        IDYES:
+          begin
+            sql.commit;
+            // krutogolov
+            // delete from all as well
+            if not EntrySec.bAllData then
+            begin
+              sql_str:=TStringList.Create;
+              table_str:='`send_all`';
+              temp_str:='delete from ' + table_str + ' where `Ident` = ' + ident_str;
+              sql_str.Add(temp_str);
+              sql.ExecSQL(sql_str);
+              sql_str.free;
+            end;
+          end;
+        IDNO:
+          sql.rollback;
       end
     end;
 
@@ -508,10 +532,10 @@ application.MessageBox('Информация о принтерах не внесена в базу для данной маши
  exit;
 end;
 if w3<>w4 then   w2:= '\\'+w3+'\'+w2;
- WordApplication1.Documents.Open(p,
-	EmptyParam,EmptyParam,EmptyParam,
-	EmptyParam,EmptyParam,EmptyParam,
-	EmptyParam,EmptyParam,EmptyParam,
+  WordApplication1.Documents.Open(p,
+	  EmptyParam,EmptyParam,EmptyParam,
+	  EmptyParam,EmptyParam,EmptyParam,
+	  EmptyParam,EmptyParam,EmptyParam,
         EmptyParam,EmptyParam);
 
 WordApplication1.ActivePrinter:=w2;
@@ -709,15 +733,16 @@ end;
 procedure TFormSendBox.FormKeyDown(Sender: TObject; var Key: Word;
     Shift: TShiftState);
 begin
-if key = VK_Return
-    then eCardClick(Sender)
+if key = VK_Return then
+  eCardClick(Sender)
 end;
 
 procedure TFormSendBox.cbUpdateFilterButtons(Sender: TObject);
-    var customer_str:string;
-        customer_int:integer;
-        //dest_str:string;
-        dest_int:integer;
+var
+  customer_str:string;
+  customer_int:integer;
+  //dest_str:string;
+  dest_int:integer;
 begin
   customer_str:='';
   customer_int:=cbZak.getData ;
