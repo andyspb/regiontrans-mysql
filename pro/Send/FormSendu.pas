@@ -202,21 +202,21 @@ type
   private
     { Private declarations }
   public
-  function AddRecord:longint;
-  function EditRecord(q:TQuery):longint;
-  function CountWieght(Wieght,Volume:string):string;
-  function CountWieghtGD(Wieght:string):string;
-  function Fare(Tariff,CountWieght:string):string;
-  function addService:string;
-  Function Numbercalc:string;
     { Public declarations }
+    function AddRecord:longint;
+    function EditRecord(q:TQuery):longint;
+    function CountWieght(Wieght,Volume:string):string;
+    function CountWieghtGD(Wieght:string):string;
+    function Fare(Tariff,CountWieght:string):string;
+    function addService:string;
+    Function Numbercalc:string;
   end;
 
 var
   FormSend: TFormSend;
   SendIdent: longint;
-  Number:string;
-  DateTest:string;
+  Number: string;
+  DateTest: string;
 
 implementation
 
@@ -248,301 +248,365 @@ begin
 end;
 
 function TFormSend.AddRecord:longint;
-var str,s:string;
-    l:longInt;
-    q:TQUEry;
-    I:integer;
+var str, s: string;
+    l: longInt;
+    q: TQUEry;
+    I: integer;
 label Next1;
 begin
- Number:='';
- LabelEditDate1.text:=FormatDateTime('dd.mm.yyyy',now);
- LabelEdit1.text:=sql.selectstring('Inspector','PeopleFIO','Ident='+
+  Number:='';
+  LabelEditDate1.text:=FormatDateTime('dd.mm.yyyy',now);
+  LabelEdit1.text:=sql.selectstring('Inspector','PeopleFIO','Ident='+
                                    IntToStr(FMenu.CurrentUser));
 
- cbForwarder.Where:='Clients_Ident is Null';
- cbForwarder.SQLComboBox.Recalc;
+  cbForwarder.Where:='Clients_Ident is Null';
+  cbForwarder.SQLComboBox.Recalc;
 
- cbType.SetActive(2);
- cbSendType.SetActive(1);
- cbPayType.SetActive(1);
- cbTypeServ.SetActive(1);
- cbTypeWay.SetActive(1);
- cbZak.Where:='PersonType_Ident=1';
- cbZak.Recalc;
+  cbType.SetActive(2);
+  cbSendType.SetActive(1);
+  cbPayType.SetActive(1);
+  cbTypeServ.SetActive(1);
+  cbTypeWay.SetActive(1);
+  cbZak.Where:='PersonType_Ident=1';
+  cbZak.Recalc;
 
- Query1.Close;
- Query1.DatabaseName:=sql.DataBaseName;
- Query1.SQL.Clear;
- Query1.SQL.Add('select * from SendPack where Send_Ident is NULL');
- Query1.ExecSQL;
- query1.Open;
+  Query1.Close;
+  Query1.DatabaseName:=sql.DataBaseName;
+  Query1.SQL.Clear;
+  Query1.SQL.Add('select * from SendPack where Send_Ident is NULL');
+  Query1.ExecSQL;
+  query1.Open;
 
- Query2.Close;
- Query2.DatabaseName:=sql.DataBaseName;
- Query2.SQL.Clear;
- Query2.SQL.Add('select * from SendPackTariff where Send_Ident is NULL');
- Query2.ExecSQL;
- query2.Open;
+  Query2.Close;
+  Query2.DatabaseName:=sql.DataBaseName;
+  Query2.SQL.Clear;
+  Query2.SQL.Add('select * from SendPackTariff where Send_Ident is NULL');
+  Query2.ExecSQL;
+  query2.Open;
 
-DBGrid2.Columns.Items[0].PickList.clear;
-DBGrid1.Columns.Items[0].PickList.clear;
-q:=sql.Select('PackTariff','Name','','Name');
+  DBGrid2.Columns.Items[0].PickList.clear;
+  DBGrid1.Columns.Items[0].PickList.clear;
+  q := sql.Select('PackTariff','Name','','Name');
 //eNumberCountPattern.Enabled:=false;
 
+  while not q.Eof do
+  begin
+    s:=q.FieldByName('Name').AsString;
+    DBGrid2.Columns.Items[0].PickList.add(s) ;
+    q.Next;
+  end;
+  q:=sql.Select('PackType','Name','','Name');
+  while not q.Eof do
+  begin
+    s:=q.FieldByName('Name').AsString;
+    DBGrid1.Columns.Items[0].PickList.add(s) ;
+    q.Next;
+  end;
+  q.Free;
 
-while not q.Eof do
-begin
-   s:=q.FieldByName('Name').AsString;
-   DBGrid2.Columns.Items[0].PickList.add(s) ;
-   q.Next;
-end;
-q:=sql.Select('PackType','Name','','Name');
-while not q.Eof do
-begin
-   s:=q.FieldByName('Name').AsString;
-   DBGrid1.Columns.Items[0].PickList.add(s) ;
-   q.Next;
-end;
-q.Free;  
+  if ShowModal=mrOk then
+  begin
+    l:=sql.FindNextInteger('Ident','Send','',MaxLongint);
 
- if ShowModal=mrOk then
- begin
-   l:=sql.FindNextInteger('Ident','Send','',MaxLongint);
-
-   str:=IntToStr(l)+','+IntToStr(RadioGroup1.ItemIndex)+
+    str:=IntToStr(l)+','+IntToStr(RadioGroup1.ItemIndex)+
          ','+sql.MakeStr(FormatDateTime('yyyy-mm-dd',StrToDate(LabelEditDate1.text)))+
          ','+IntToStr(FMenu.CurrentUser);
 
-   if cbType.SqlComboBox.GetData=0 then
-    str:=str+','+'NULL'
-    else str:=str+','+IntToStr(cbType.SqlComboBox.GetData);
+    if cbType.SqlComboBox.GetData=0 then
+      str:=str+','+'NULL'
+    else
+      str:=str+','+IntToStr(cbType.SqlComboBox.GetData);
 
-   if cbZak.GetData=0 then
-    str:=str+','+'NULL'
-    else str:=str+','+IntToStr(cbZak.GetData);
+    if cbZak.GetData=0 then
+      str:=str+','+'NULL'
+    else
+      str:=str+','+IntToStr(cbZak.GetData);
 
-   if cbOtpr.GetData=0 then
-    str:=str+','+'NULL'
-    else str:=str+','+IntToStr(cbOtpr.GetData);
+    if cbOtpr.GetData=0 then
+      str:=str+','+'NULL'
+    else
+      str:=str+','+IntToStr(cbOtpr.GetData);
 
-   if cbPynkt.SqlComboBox.GetData=0 then
-    str:=str+','+'NULL'
-    else str:=str+','+IntToStr(cbPynkt.SqlComboBox.GetData);
+    if cbPynkt.SqlComboBox.GetData=0 then
+      str:=str+','+'NULL'
+    else
+      str:=str+','+IntToStr(cbPynkt.SqlComboBox.GetData);
 
-  if LabelEditDate2.text<>'  .  .    ' then
-   str:=str+','+sql.MakeStr(FormatDateTime('yyyy-mm-dd',StrToDate(LabelEditDate2.text)))
-     else str:=str+',NULL';
-     
-   if cbPolych.GetData=0 then
-    str:=str+','+'NULL'
-    else str:=str+','+IntToStr(cbPolych.GetData);
+    if LabelEditDate2.text<>'  .  .    ' then
+      str:=str+','+sql.MakeStr(FormatDateTime('yyyy-mm-dd',StrToDate(LabelEditDate2.text)))
+    else
+      str:=str+',NULL';
 
-   if cbForwarder.SQLComboBox.GetData=0 then
-    str:=str+','+'NULL'
-    else str:=str+','+IntToStr(cbForwarder.SQLComboBox.GetData);
+    if cbPolych.GetData=0 then
+      str:=str+','+'NULL'
+    else
+      str:=str+','+IntToStr(cbPolych.GetData);
 
-   if LabelSqlComboBox1.SqlComboBox.GetData=0 then
-    str:=str+','+'NULL'
-    else str:=str+','+IntToStr(LabelSqlComboBox1.SqlComboBox.GetData);
+    if cbForwarder.SQLComboBox.GetData=0 then
+      str:=str+','+'NULL'
+    else
+      str:=str+','+IntToStr(cbForwarder.SQLComboBox.GetData);
 
-   if cbGryz.SqlComboBox.GetData=0 then
-    str:=str+','+'NULL'
-    else str:=str+','+IntToStr(cbGryz.SqlComboBox.GetData);
+    if LabelSqlComboBox1.SqlComboBox.GetData=0 then
+      str:=str+','+'NULL'
+    else
+      str:=str+','+IntToStr(LabelSqlComboBox1.SqlComboBox.GetData);
 
-   if CheckBox1.Checked then
-   str:=str+','+IntToStr(1)
-     else str:=str+','+IntToStr(0);
+    if cbGryz.SqlComboBox.GetData=0 then
+      str:=str+','+'NULL'
+    else
+      str:=str+','+IntToStr(cbGryz.SqlComboBox.GetData);
 
-   if CheckBox2.Checked then
-   str:=str+','+IntToStr(1)
-     else str:=str+','+IntToStr(0);
+    if CheckBox1.Checked then
+      str:=str+','+IntToStr(1)
+    else
+      str:=str+','+IntToStr(0);
 
-   if CheckBox3.Checked then
-   str:=str+','+IntToStr(1)
-     else str:=str+','+IntToStr(0);
+    if CheckBox2.Checked then
+      str:=str+','+IntToStr(1)
+    else
+      str:=str+','+IntToStr(0);
 
-   if CheckBox7.Checked then
-   str:=str+','+IntToStr(1)
-     else str:=str+','+IntToStr(0);
+    if CheckBox3.Checked then
+      str:=str+','+IntToStr(1)
+    else
+      str:=str+','+IntToStr(0);
 
-   if CheckBox8.Checked then
-   str:=str+','+IntToStr(1)
-     else str:=str+','+IntToStr(0);
+    if CheckBox7.Checked then
+      str:=str+','+IntToStr(1)
+    else
+      str:=str+','+IntToStr(0);
 
-   if trim(eWieght.text)<>'' then
-   str:=str+','+trim(eWieght.text)
-    else  str:=str+','+'NULL';
+    if CheckBox8.Checked then
+      str:=str+','+IntToStr(1)
+    else
+      str:=str+','+IntToStr(0);
 
-   if trim(eVolume.text)<>'' then
-   str:=str+','+sql.MakeStr(trim(eVolume.text))
-    else  str:=str+','+'NULL';
+    if trim(eWieght.text)<>'' then
+      str:=str+','+trim(eWieght.text)
+    else
+      str:=str+','+'NULL';
 
-   if trim(eCountWieght.text)<>'' then
-   str:=str+','+trim(eCountWieght.text)
-    else  str:=str+','+'NULL';
+    if trim(eVolume.text)<>'' then
+      str:=str+','+sql.MakeStr(trim(eVolume.text))
+    else
+      str:=str+','+'NULL';
 
-   if trim(eTariff.text)<>'' then
-   str:=str+','+sql.MakeStr(trim(eTariff.text))
-    else str:=str+','+'NULL';
+    if trim(eCountWieght.text)<>'' then
+      str:=str+','+trim(eCountWieght.text)
+    else
+      str:=str+','+'NULL';
 
-   if trim(eFare.text)<>'' then
-   str:=str+','+sql.MakeStr(trim(eFare.text) )      {провозная плата}
-    else str:=str+','+'NULL';
+    if trim(eTariff.text)<>'' then
+      str:=str+','+sql.MakeStr(trim(eTariff.text))
+    else
+      str:=str+','+'NULL';
 
-   if CheckBox4.Checked then              {экспедирование}
-   begin
-   str:=str+','+IntToStr(1);
-   str:=str+','+SQL.MakeStr(trim(LBLEditMoney1.Text));
-   str:=str+','+sql.Makestr(trim(eExpCount.text));
-   end
-     else
-          str:=str+','+IntToStr(0)+',NULL,NULL';
+    if trim(eFare.text)<>'' then
+      str:=str+','+sql.MakeStr(trim(eFare.text) )      {провозная плата}
+    else
+      str:=str+','+'NULL';
 
-   if CheckBox5.Checked then     {упаковка}
-   begin
-   str:=str+','+IntToStr(1) ;
-   str:=str+','+sql.MakeStr(trim(LBLEditMoney3.Text));
+    if CheckBox4.Checked then              {экспедирование}
+    begin
+      str:=str+','+IntToStr(1);
+      str:=str+','+SQL.MakeStr(trim(LBLEditMoney1.Text));
+      str:=str+','+sql.Makestr(trim(eExpCount.text));
+    end
+    else
+      str:=str+','+IntToStr(0)+',NULL,NULL';
 
-   end
-     else str:=str+','+IntToStr(0)+','+sql.MakeStr('0.00');
+    if CheckBox5.Checked then     {упаковка}
+    begin
+      str:=str+','+IntToStr(1) ;
+      str:=str+','+sql.MakeStr(trim(LBLEditMoney3.Text));
+    end
+    else
+      str:=str+','+IntToStr(0)+','+sql.MakeStr('0.00');
 
-   if trim(ePlace.text)<>'' then
-   str:=str+','+sql.MakeStr(trim(ePlace.text))
-   else str:=str+',NULL';
+    if trim(ePlace.text)<>'' then
+      str:=str+','+sql.MakeStr(trim(ePlace.text))
+    else
+      str:=str+',NULL';
 
-   if CheckBox6.Checked then
-   begin                            {пропуска}
-   str:=str+','+IntToStr(1) ;
-   str:=str+','+sql.MakeStr(trim(LBLEditMoney2.Text));
-   str:=str+','+trim(LabelInteger2.text);
-   end
-     else str:=str+','+IntToStr(0)+',NULL,NULL';
+    if CheckBox6.Checked then
+    begin                            {пропуска}
+      str:=str+','+IntToStr(1) ;
+      str:=str+','+sql.MakeStr(trim(LBLEditMoney2.Text));
+      str:=str+','+trim(LabelInteger2.text);
+    end
+    else
+      str:=str+','+IntToStr(0)+',NULL,NULL';
 
-   if trim(LabelEdit14.Text)<> '' then           {AddServStr}
-    str:=str+','+sql.MakeStr(trim(LabelEdit14.text))
-   else str:=str+',NULL';
+    if trim(LabelEdit14.Text)<> '' then           {AddServStr}
+      str:=str+','+sql.MakeStr(trim(LabelEdit14.text))
+    else str:=str+',NULL';
 
-   if trim(LBLEditMoney6.Text)<> '0.00' then           {AddServSum}
-    str:=str+','+sql.MakeStr(trim(LBLEditMoney6.text))
-   else str:=str+',NULL';
+    if trim(LBLEditMoney6.Text)<> '0.00' then           {AddServSum}
+      str:=str+','+sql.MakeStr(trim(LBLEditMoney6.text))
+    else
+      str:=str+',NULL';
 
-   if trim(eAddServicePrace.text)<>'' then
-   str:=str+','+sql.MakeStr(trim(eAddServicePrace.text))
-    else str:=str+','+'NULL';
+    if trim(eAddServicePrace.text)<>'' then
+      str:=str+','+sql.MakeStr(trim(eAddServicePrace.text))
+    else
+      str:=str+','+'NULL';
 
-   if trim(eInsuranceSum.text)<>'' then
-   str:=str+','+sql.MakeStr(trim(eInsuranceSum.text))
-     else str:=str+','+'Null';
+    if trim(eInsuranceSum.text)<>'' then
+      str:=str+','+sql.MakeStr(trim(eInsuranceSum.text))
+    else
+      str:=str+','+'Null';
 
-   if trim(eInsurancePercent.text)<>'' then
-   str:=str+','+sql.MakeStr(trim(eInsurancePercent.text))
-     else str:=str+','+'Null';
+    if trim(eInsurancePercent.text)<>'' then
+      str:=str+','+sql.MakeStr(trim(eInsurancePercent.text))
+    else
+      str:=str+','+'Null';
 
-   if trim(eInsuranceValue.text)<>'' then
-   str:=str+','+sql.MakeStr(trim(eInsuranceValue.text))
-     else str:=str+','+'0.00';
+    if trim(eInsuranceValue.text)<>'' then
+      str:=str+','+sql.MakeStr(trim(eInsuranceValue.text))
+    else
+      str:=str+','+'0.00';
 
-  if trim(eSumCount.text)<>'' then
-   str:=str+','+sql.MakeStr(trim(eSumCount.text))
-     else str:=str+','+'Null';
+    if trim(eSumCount.text)<>'' then
+      str:=str+','+sql.MakeStr(trim(eSumCount.text))
+    else
+      str:=str+','+'Null';
  ///------------
 
- if cbPayType.SQLComboBox.GetData<>0 then
-  str:=str+','+intToStr(cbPayType.SQLComboBox.GetData)
-   else str:=str+','+'NULL';
+    if cbPayType.SQLComboBox.GetData<>0 then
+      str:=str+','+intToStr(cbPayType.SQLComboBox.GetData)
+    else str:=str+','+'NULL';
 
- if trim(eNmberOrder.text)<>'' then
-  str:=str+','+sql.MakeStr(trim(eNmberOrder.text) )
-   else str:=str+','+'NULL';
+    if trim(eNmberOrder.text)<>'' then
+      str:=str+','+sql.MakeStr(trim(eNmberOrder.text) )
+    else
+      str:=str+','+'NULL';
 
- if trim(eNumberCountPattern.text)<>'' then
-  str:=str+','+sql.MakeStr(trim(eNumberCountPattern.text))
-   else str:=str+','+'NULL';
+    if trim(eNumberCountPattern.text)<>'' then
+      str:=str+','+sql.MakeStr(trim(eNumberCountPattern.text))
+    else
+      str:=str+','+'NULL';
 
- if trim(labelMemo1.Memo.Text)<>'' then
-   str:=str+','''+trim(labelMemo1.Memo.text)+''''
-    else  str:=str+','+'NULL';
+    if trim(labelMemo1.Memo.Text)<>'' then
+      str:=str+','''+trim(labelMemo1.Memo.text)+''''
+    else
+      str:=str+','+'NULL';
 
  ///--------------------
 
 
-  if cbSendType.SQLComboBox.GetData<>0 then
-  str:=str+','+intToStr(cbSendType.SQLComboBox.GetData)
-   else str:=str+','+'NULL';
+    if cbSendType.SQLComboBox.GetData<>0 then
+      str:=str+','+intToStr(cbSendType.SQLComboBox.GetData)
+    else
+      str:=str+','+'NULL';
 
-  if LabelEditDate3.text<>'  .  .    ' then
-  str:=str+','+sql.MakeStr(FormatDateTime('yyyy-mm-dd',StrToDaTE(LabelEditDate3.text)))
-   else str:=str+','+'NULL';
+    if LabelEditDate3.text<>'  .  .    ' then
+      str:=str+','+sql.MakeStr(FormatDateTime('yyyy-mm-dd',StrToDaTE(LabelEditDate3.text)))
+    else
+      str:=str+','+'NULL';
 
-  if cbSupplier.SQLComboBox.GetData<>0 then
-  str:=str+','+intToStr(cbSupplier.SQLComboBox.GetData)
-   else str:=str+','+'NULL';
+    if cbSupplier.SQLComboBox.GetData<>0 then
+      str:=str+','+intToStr(cbSupplier.SQLComboBox.GetData)
+    else
+      str:=str+','+'NULL';
 
- if trim(labelMemo2.Memo.Text)<>'' then
-   str:=str+','''+trim(labelMemo2.Memo.text)+''''
-    else  str:=str+','+'NULL';
+    if trim(labelMemo2.Memo.Text)<>'' then
+      str:=str+','''+trim(labelMemo2.Memo.text)+''''
+    else
+      str:=str+','+'NULL';
   ///--------------------
- str:=str+','+sql.MakeStr(trim(Number));
+    str:=str+','+sql.MakeStr(trim(Number));
 
- if trim(LabelEdit6.text)=''   then
-    str:=str+','+'NULL'
-    else str:=str+','+sql.MakeStr(trim(LabelEdit6.text));
+    if trim(LabelEdit6.text)=''   then
+      str:=str+','+'NULL'
+    else
+      str:=str+','+sql.MakeStr(trim(LabelEdit6.text));
 
-   if trim(LabelEdit5.text)=''   then
-    str:=str+','+'NULL'
-    else str:=str+','+sql.MakeStr(trim(LabelEdit5.text));
+    if trim(LabelEdit5.text)=''   then
+      str:=str+','+'NULL'
+    else
+      str:=str+','+sql.MakeStr(trim(LabelEdit5.text));
+
 //----------
- if cbNTrain.GetData=0 then
-   str:=str+','+'NULL'
-   else str:=str+','+IntToStr(cbNTrain.GetData);
+    if cbNTrain.GetData=0 then
+      str:=str+','+'NULL'
+    else
+      str:=str+','+IntToStr(cbNTrain.GetData);
+
 //--------
- if trim(LBLEditMoney4.text)='' then
-   str:=str+','+'NULL'
-   else str:=str+','+sql.MakeStr(trim(LBLEditMoney4.text));
- if trim(LabelEdit9.text)='' then
-   str:=str+','+'NULL'
-   else str:=str+','+sql.MakeStr(trim(LabelEdit9.text));
- if trim(LBLEditMoney5.text)='' then
-   str:=str+','+'NULL'
-   else str:=str+','+sql.MakeStr(trim(LBLEditMoney5.text));
- if trim(LabelEdit11.text)='' then
-   str:=str+','+'NULL'
-   else str:=str+','+sql.MakeStr(trim(LabelEdit11.text));
- if trim(LabelEdit12.text)='' then
-   str:=str+','+'NULL'
-   else str:=str+','+sql.MakeStr(trim(LabelEdit12.text));
- if trim(LabelInteger1.text)='' then
-   str:=str+','+'NULL'
-   else str:=str+','+trim(LabelInteger1.text);
- if trim(LabelEdit13.text)='' then
-   str:=str+','+'NULL'
-   else str:=str+','+sql.MakeStr(trim(LabelEdit13.text));
+    if trim(LBLEditMoney4.text)='' then
+      str:=str+','+'NULL'
+    else
+      str:=str+','+sql.MakeStr(trim(LBLEditMoney4.text));
+
+    if trim(LabelEdit9.text)='' then
+      str:=str+','+'NULL'
+    else
+      str:=str+','+sql.MakeStr(trim(LabelEdit9.text));
+
+    if trim(LBLEditMoney5.text)='' then
+      str:=str+','+'NULL'
+    else
+      str:=str+','+sql.MakeStr(trim(LBLEditMoney5.text));
+
+    if trim(LabelEdit11.text)='' then
+      str:=str+','+'NULL'
+    else
+      str:=str+','+sql.MakeStr(trim(LabelEdit11.text));
+
+    if trim(LabelEdit12.text)='' then
+      str:=str+','+'NULL'
+    else
+      str:=str+','+sql.MakeStr(trim(LabelEdit12.text));
+
+    if trim(LabelInteger1.text)='' then
+      str:=str+','+'NULL'
+    else
+      str:=str+','+trim(LabelInteger1.text);
+
+    if trim(LabelEdit13.text)='' then
+      str:=str+','+'NULL'
+    else
+      str:=str+','+sql.MakeStr(trim(LabelEdit13.text));
 //----------------------------------------------------------------------------------
-I:=0;
- if  (trim(eFare.text)<>'') and (trim(eFare.text)<>'0.00')then
- begin
-     if cbType.GetData=1 then I:=I+3;
-     if cbType.GetData=2 then I:=I+2;
- end;
- if (checkBox5.checked) and (trim(LBLEditMoney3.text)<>'')and (trim(LBLEditMoney3.text)<>'0.00')
-  then    I:=I+2;
- if (trim(eInsuranceValue.text)<>'') and(trim(eInsuranceValue.text)<>'0.00')
-  then I:=I+2;
- if I<>0 then I:=I+1;
- if I=0 then
-   str:=str+','+'0'
-   else str:=str+','+IntToStr(I);
+    I:=0;
+    if  (trim(eFare.text)<>'') and (trim(eFare.text)<>'0.00')then
+    begin
+      if cbType.GetData=1 then
+        I:=I+3;
+      if cbType.GetData=2 then
+        I:=I+2;
+    end;
+
+    if (checkBox5.checked) and (trim(LBLEditMoney3.text)<>'')and (trim(LBLEditMoney3.text)<>'0.00') then
+      I:=I+2;
+
+    if (trim(eInsuranceValue.text)<>'') and(trim(eInsuranceValue.text)<>'0.00') then
+      I:=I+2;
+
+    if I<>0 then
+      I:=I+1;
+
+    if I=0 then
+      str:=str+','+'0'
+    else
+      str:=str+','+IntToStr(I);
+
 //------------
-if trim(ePlac.text)='' then
- str:=str+','+'NULL'
- else str:=str+','+trim(ePlac.Text);
+    if trim(ePlac.text)='' then
+      str:=str+','+'NULL'
+    else
+      str:=str+','+trim(ePlac.Text);
 //---------------------------------------------------------------
-  if cbTypeServ.GetData<>0 then
-    str:=str+','+IntToStr(cbTypeServ.GetData)
-    else str:=str+','+'NULL';
-  if cbTypeWay.GetData<>0 then
-    str:=str+','+IntToStr(cbTypeWay.GetData)
-    else str:=str+','+'NULL';
+    if cbTypeServ.GetData<>0 then
+      str:=str+','+IntToStr(cbTypeServ.GetData)
+    else
+      str:=str+','+'NULL';
+
+    if cbTypeWay.GetData<>0 then
+      str:=str+','+IntToStr(cbTypeWay.GetData)
+    else
+      str:=str+','+'NULL';
 //-------------------------------------
 {CutTariff}
 if trim(ePercent.text)='' then
@@ -1344,108 +1408,112 @@ end;
 
 procedure TFormSend.btCanselClick(Sender: TObject);
 begin
-case Application.MessageBox('Все внесенные изменения не будут сохранены!',
+  case Application.MessageBox('Все внесенные изменения не будут сохранены!',
                             'Предупреждение!',MB_YESNO+MB_ICONQUESTION) of
-    IDYES: ModalResult:=mrCancel;
-    IDNO:exit;
-end;
+  IDYES: ModalResult:=mrCancel;
+  IDNO:exit;
+  end;
 end;
 
 procedure TFormSend.cbZakChange(Sender: TObject);
 begin
 if cbZak.getData<>0 then
 begin
-LabelEdit2.Visible:=true;
-LabelEdit2.enabled:=false;
-{выставляем скидку}
-if sql.SelectString('Clients','SalePersent','Ident='+intToStr(cbZak.GetData))<>''
-   then ePercent.text := trim(sql.SelectString('Clients','SalePersent','Ident='+intToStr(cbZak.GetData)));
-If (sql.SelectInteger('ClientsTek','Ident','Ident='+intToStr(cbZak.GetData))<> 0)
+  LabelEdit2.Visible:=true;
+  LabelEdit2.enabled:=false;
+  {выставляем скидку}
+  if sql.SelectString('Clients','SalePersent','Ident='+intToStr(cbZak.GetData))<>'' then
+    ePercent.text := trim(sql.SelectString('Clients','SalePersent','Ident='+intToStr(cbZak.GetData)));
+  If (sql.SelectInteger('ClientsTek','Ident','Ident='+intToStr(cbZak.GetData))<> 0)
     and (trim(ePercent.text) = '0' ) then
-   ePercent.text := '5';
+    ePercent.text := '5';
 
-if  (cbOtpr.GetData=0) or (cbOtpr.GetData=-1) then
-begin
-cbOtpr.SetActive(cbZak.getData);
-LabelEdit2.Text:=sql.SelectString('Clients','Telephone',
+  if  (cbOtpr.GetData=0) or (cbOtpr.GetData=-1) then
+  begin
+    cbOtpr.SetActive(cbZak.getData);
+    LabelEdit2.Text:=sql.SelectString('Clients','Telephone',
                                   'Ident='+intToStr(cbZak.GetData)) ;
-end;
-cbForwarder.Where:='Clients_Ident='+IntToStr(cbZak.GetData);
-cbForwarder.SQLComboBox.Recalc;
-cbForwarder.SetActive(sql.SelectInteger('Clients','Forwarder_Ident','Ident='+
+  end;
+  cbForwarder.Where:='Clients_Ident='+IntToStr(cbZak.GetData);
+  cbForwarder.SQLComboBox.Recalc;
+  cbForwarder.SetActive(sql.SelectInteger('Clients','Forwarder_Ident','Ident='+
                                         IntToStr(cbZak.GetData)));
-LabelEdit4.Visible:=true;
-LabelEdit6.Visible:=true;
-LabelEdit5.Visible:=true;
-LabelEdit4.enabled:=false;
-LabelEdit6.enabled:=false;
-LabelEdit5.enabled:=false;
-LabelEdit5.Text:=SendStr.StrTo00(SendStr.Credit(cbZak.GetData));
-LabelEdit4.Text:=sql.SelectString('Clients','Telephone',
+  LabelEdit4.Visible:=true;
+  LabelEdit6.Visible:=true;
+  LabelEdit5.Visible:=true;
+  LabelEdit4.enabled:=false;
+  LabelEdit6.enabled:=false;
+  LabelEdit5.enabled:=false;
+  LabelEdit5.Text:=SendStr.StrTo00(SendStr.Credit(cbZak.GetData));
+  LabelEdit4.Text:=sql.SelectString('Clients','Telephone',
                                   'Ident='+intToStr(cbZak.GetData)) ;
-if sql.SelectInteger('Clients','NameGood_Ident',
+  if sql.SelectInteger('Clients','NameGood_Ident',
                      'Ident='+intToStr(cbZak.GetData))<>0 then
-cbGryz.SetActive(sql.SelectInteger('Clients','NameGood_Ident',
+    cbGryz.SetActive(sql.SelectInteger('Clients','NameGood_Ident',
                                    'Ident='+intToStr(cbZak.GetData)));
-if cbType.getdata=0 then
-   begin
-     Application.MessageBox('Выберите тип перевозки!','Ошибка',0) ;
-     cbType.SetFocus;
-     exit;
-   end else
-      begin
+  if cbType.getdata=0 then
+  begin
+    Application.MessageBox('Выберите тип перевозки!','Ошибка',0) ;
+    cbType.SetFocus;
+    exit;
+  end
+  else
+    begin
       LabelEdit6.Text:=sql.SelectString('Contract','Number',
                                         'Clients_Ident='+IntToStr(cbZak.GetData)+
                                         ' and ContractType_Ident='+IntToStr(cbType.getdata));
-      end
-end else
-   begin
-   if  (cbOtpr.GetData=0) or (cbOtpr.GetData=-1) then
-   begin
-     cbOtpr.SetActive(0);
-     LabelEdit2.Visible:=false;
-   end;  
-     LabelEdit4.Visible:=false;
-     LabelEdit6.Visible:=false;
-     LabelEdit5.Visible:=false;
-     cbForwarder.Where:='Clients_Ident is NULL';
-     cbForwarder.SQLComboBox.Recalc;
-   end;
+    end
+  end
+  else
+  begin
+    if  (cbOtpr.GetData=0) or (cbOtpr.GetData=-1) then
+    begin
+      cbOtpr.SetActive(0);
+      LabelEdit2.Visible:=false;
+    end;
+    LabelEdit4.Visible:=false;
+    LabelEdit6.Visible:=false;
+    LabelEdit5.Visible:=false;
+    cbForwarder.Where:='Clients_Ident is NULL';
+    cbForwarder.SQLComboBox.Recalc;
+  end;
 end;
 
 procedure TFormSend.cbOtprChange(Sender: TObject);
 begin
-if cbOtpr.getData<>0 then
-begin
-  LabelEdit2.visible:=true;
-  LabelEdit2.Text:=sql.SelectString('Clients','Telephone',
+  if cbOtpr.getData<>0 then
+  begin
+    LabelEdit2.visible:=true;
+    LabelEdit2.Text:=sql.SelectString('Clients','Telephone',
                                   'Ident='+intToStr(cbOtpr.GetData)) ;
-end else
-    begin
-       LabelEdit2.visible:=false;
-    end;
+  end
+  else
+  begin
+    LabelEdit2.visible:=false;
+  end;
 
 end;
 
 procedure TFormSend.cbPolychChange(Sender: TObject);
 begin
-if cbPolych.GetData<>0 then
-begin
-labelEdit3.Visible:=true;
-labelEdit7.Visible:=true;
-labelEdit8.Visible:=true;
-labelEdit3.Text:=sql.SelectString('acceptor','Phone',
+  if cbPolych.GetData<>0 then
+  begin
+    labelEdit3.Visible:=true;
+    labelEdit7.Visible:=true;
+    labelEdit8.Visible:=true;
+    labelEdit3.Text:=sql.SelectString('acceptor','Phone',
                                   'Ident='+IntToStr(cbPolych.GetData));
-labelEdit7.Text:=sql.SelectString('acceptor','Address',
+    labelEdit7.Text:=sql.SelectString('acceptor','Address',
                                   'Ident='+IntToStr(cbPolych.GetData));
-labelEdit8.Text:=sql.SelectString('acceptor','Regime',
+    labelEdit8.Text:=sql.SelectString('acceptor','Regime',
                                   'Ident='+IntToStr(cbPolych.GetData));
-end else
-    begin
-      labelEdit3.Visible:=false;
-      labelEdit7.Visible:=false;
-      labelEdit8.Visible:=false;
-    end;
+  end
+  else
+  begin
+    labelEdit3.Visible:=false;
+    labelEdit7.Visible:=false;
+    labelEdit8.Visible:=false;
+  end;
 end;
 
 procedure TFormSend.cbPynktChange(Sender: TObject);
