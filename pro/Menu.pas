@@ -587,8 +587,7 @@ end;
 
 procedure TFMenu.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
-
-        Application.MessageBox('Приложение будет закрыто','Предупреждение!');
+  Application.MessageBox('Приложение будет закрыто','Предупреждение!');
 end;
 
 procedure TFMenu.N43Click(Sender: TObject);      {обновление сервера}

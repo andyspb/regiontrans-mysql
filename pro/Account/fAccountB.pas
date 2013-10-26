@@ -145,7 +145,6 @@ begin
     other_table_str:='`Account_all`';
   end;
 
-
   if sql.Delete(table_str,'Ident='+IntToStr(ident))=0 then
   begin
     case Application.MessageBox('Удалить!',
@@ -155,6 +154,7 @@ begin
       begin
         sql.Commit;
         SQLGrid1.ExecTable(accountvew_str);
+        SQLGrid1RowChange(Sender);
         del_thread := TDeleteThread.Create(True, other_table_str, ident_str);
         del_thread.Resume();
       end;

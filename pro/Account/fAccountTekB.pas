@@ -124,11 +124,27 @@ end;
 
 procedure TFormAccountTekBox.BDelClick(Sender: TObject);
 var
-  Id:longint;
+  ident: longint;
+  ident_str: string;
+  table_str: string;
+  other_table_str: string;
+  del_thread: TDeleteThread;
 begin
   sql.StartTransaction;
-  Id:=SQLGrid1.Query.FieldByName('Ident').AsInteger;
+  ident:=SQLGrid1.Query.FieldByName('Ident').AsInteger;
   SQLGrid1.saveNextPoint('Ident');
+  ident_str := IntToStr(ident);
+  if EntrySec.bAllData then
+  begin
+    table_str:='`AccountTek_all`';
+    other_table_str:='`AccountTek`';
+  end
+  else
+  begin
+    table_str:='`AccountTek`';
+    other_table_str:='`AccountTek_all`';
+  end;
+
   if sql.Delete('`AccountTek`','Ident='+IntToStr(Id))=0 then
   begin
     case Application.MessageBox('Удалить!',
@@ -138,7 +154,9 @@ begin
         sql.Commit;
         SQLGrid1.ExecTable(accounttekvew_str);
         SQLGrid1RowChange(Sender);
-      end;
+        del_thread := TDeleteThread.Create(True, other_table_str, ident_str);
+        del_thread.Resume();
+    end;
       IDNO:
       begin
         sql.rollback;

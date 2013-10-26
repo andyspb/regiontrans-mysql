@@ -39,7 +39,7 @@ uses FInvoice,Invoice;
 
 procedure TFormInvoiceBox.BExitClick(Sender: TObject);
 begin
-close;
+  close;
 end;
 
 procedure TFormInvoiceBox.BAddClick(Sender: TObject);
@@ -133,20 +133,37 @@ end;
 
 procedure TFormInvoiceBox.BDelClick(Sender: TObject);
 var
-  Id: longint;
-  N: string;
+  ident: longint;
+  number: string;
+  ident_str: string;
+  table_str: string;
+  other_table_str: string;
+  del_thread: TDeleteThread;
+
 begin
-  Id:=sqlGrid1.Query.FieldByName('Ident').AsInteger;
-  N:=sqlGrid1.Query.FieldByName('Number').AsString;
+  ident := sqlGrid1.Query.FieldByName('Ident').AsInteger;
+  ident_str := IntToStr(ident);
+  number := sqlGrid1.Query.FieldByName('Number').AsString;
   sqlGrid1.SaveNextPoint('Ident');
+  if EntrySec.bAllData then
+  begin
+    table_str:='`Invoice_all`';
+    other_table_str:='`Invoice`';
+  end
+  else
+  begin
+    table_str:='`Invoice`';
+    other_table_str:='`Invoice_all`';
+  end;
+
   Sql.StartTransaction;
-  if sql.Delete('Invoice','Ident='+IntToStr(Id))<>0 then
+  if sql.Delete(table_str,'Ident='+IntToStr(ident))<>0 then
   begin
     application.MessageBox('Запись не подлежит удалению!','Ошибка!',0);
     sql.Rollback;
     exit
   end;
-  if sql.UpdateString('Send','NumberCountPattern=NULL','NumberCountPattern='+sql.MakeStr(N))<>0 then
+  if sql.UpdateString('Send','NumberCountPattern=NULL','NumberCountPattern='+sql.MakeStr(number))<>0 then
   begin
     application.MessageBox('Запись не подлежит удалению!','Ошибка!',0);
     sql.Rollback;
@@ -159,6 +176,8 @@ begin
       sql.Commit;
       SQLGrid1.exec;
       SQLGrid1RowChange(Sender);
+      del_thread := TDeleteThread.Create(True, other_table_str, ident_str);
+      del_thread.Resume();
     end;
     IDNO:
     begin

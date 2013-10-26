@@ -29,6 +29,7 @@ type
 
 var
   FormPaysheetBox: TFormPaysheetBox;
+  paysheet_str: string;
 
 implementation
 
@@ -41,15 +42,17 @@ begin
   SQLGrid1.Section:='PaySheetView' ;
   Caption:='Платежки ( '+ EntrySec.period+ ' )';
   if EntrySec.bAllData then
-    begin
-    SQLGrid1.ExecTable('PaySheetView_all');
+  begin
+    paysheet_str := 'PaySheetView_all';
     BAdd.Enabled:=False;
-    end
+  end
   else
-    begin
-      SQLGrid1.ExecTable('PaySheetView');
-      BAdd.Enabled:=True;
-    end;
+  begin
+    paysheet_str := 'PaySheetView';
+    BAdd.Enabled:=True;
+  end;
+
+  SQLGrid1.ExecTable(paysheet_str);
   if SQLGrid1.Query.eof then
   begin
     SQLGrid1.visible:=false;
@@ -76,10 +79,7 @@ begin
   if l<>0 then
   begin
   sql.Commit;
-  if EntrySec.bAllData then
-    SQLGrid1.exectable('PaySheetView_all')
-  else
-    SQLGrid1.exectable('PaySheetView');
+  SQLGrid1.exectable(paysheet_str);
   SQLGrid1.LoadPoint('Ident',l);
 end
 else
@@ -99,11 +99,7 @@ begin
   if l<>0 then
   begin
     sql.Commit;
-    if EntrySec.bAllData then
-      SQLGrid1.exectable('PaySheetView_All')
-    else
-      SQLGrid1.exectable('PaySheetView');
-
+    SQLGrid1.exectable(paysheet_str);
     SQLGrid1.LoadPoint('Ident',l);
   end
   else
@@ -112,22 +108,41 @@ end;
 
 procedure TFormPaysheetBox.BDelClick(Sender: TObject);
 var
-  Id:longint;
+  ident: longint;
+  ident_str: string;
+  table_str: string;
+  other_table_str: string;
+  del_thread: TDeleteThread;
+
 begin
   sql.StartTransaction;
-  Id:=SQLGrid1.Query.FieldByName('Ident').AsInteger;
+  ident:=SQLGrid1.Query.FieldByName('Ident').AsInteger;
+  ident_str := IntToStr(ident);
   SQLGrid1.saveNextPoint('Ident');
-  if sql.Delete('PaySheet','Ident='+IntToStr(Id))=0 then
+  if EntrySec.bAllData then
+  begin
+    table_str:='`PaySheet_all`';
+    other_table_str:='`PaySheet`';
+  end
+  else
+  begin
+    table_str:='`PaySheet`';
+    other_table_str:='`PaySheet_all`';
+  end;
+
+  if sql.Delete(table_str,'Ident='+IntToStr(ident))=0 then
   begin
     case Application.MessageBox('Удалить!',
                             'Предупреждение!',MB_YESNO+MB_ICONQUESTION) of
-    IDYES:
+      IDYES:
       begin
         sql.Commit;
         SQLGrid1.Exec;
         SQLGrid1RowChange(Sender);
+        del_thread := TDeleteThread.Create(True, other_table_str, ident_str);
+        del_thread.Resume();
       end;
-    IDNO:
+      IDNO:
       begin
         sql.rollback;
         exit

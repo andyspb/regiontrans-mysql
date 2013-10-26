@@ -73,14 +73,31 @@ end;
 
 procedure TFormAktBox.BDelClick(Sender: TObject);
 var
-  Id:longint;
-  N:string;
+  ident: longint;
+  number: string;
+  ident_str: string;
+  table_str: string;
+  other_table_str: string;
+  del_thread: TDeleteThread;
+
 begin
-  Id:=sqlGrid1.Query.FieldByName('Ident').AsInteger;
-  N:=sqlGrid1.Query.FieldByName('Number').AsString;
+  ident:=sqlGrid1.Query.FieldByName('Ident').AsInteger;
+  number:=sqlGrid1.Query.FieldByName('Number').AsString;
+  ident_str := IntToStr(ident);
   sqlGrid1.SaveNextPoint('Ident');
+  if EntrySec.bAllData then
+  begin
+    table_str:='`AktTek_all`';
+    other_table_str:='`AktTek`';
+  end
+  else
+  begin
+    table_str:='`AktTek`';
+    other_table_str:='`AktTek_all`';
+  end;
+
   Sql.StartTransaction;
-  if sql.Delete('AktTek','Ident='+IntToStr(Id))<>0 then
+  if sql.Delete(table_str,'Ident='+IntToStr(ident))<>0 then
   begin
     application.MessageBox('Запись не подлежит удалению!','Ошибка!',0);
     sql.Rollback;
@@ -94,6 +111,8 @@ begin
       sql.Commit;
       SQLGrid1.exec;
       SQLGrid1RowChange(Sender);
+      del_thread := TDeleteThread.Create(True, other_table_str, ident_str);
+      del_thread.Resume();
     end;
     IDNO:
     begin
