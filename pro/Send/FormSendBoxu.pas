@@ -205,10 +205,8 @@ end;
 
 procedure TFormSendBox.eDeleteClick(Sender: TObject);
 var
-  sql_str: TStringList;
-  temp_str: string;
   ident_str: string;
-  table_str: string;
+  del_thread: TDeleteThread;
 begin
   sqlGrid1.SaveNextPoint('Ident');
   ident_str:=sqlGrid1.FieldByName('Ident').AsString;
@@ -234,12 +232,8 @@ begin
             // delete from all as well
             if not EntrySec.bAllData then
             begin
-              sql_str:=TStringList.Create;
-              table_str:='`send_all`';
-              temp_str:='delete from ' + table_str + ' where `Ident` = ' + ident_str;
-              sql_str.Add(temp_str);
-              sql.ExecSQL(sql_str);
-              sql_str.free;
+              del_thread := TDeleteThread.Create(True, '`send_all`', ident_str);
+              del_thread.Resume();
             end;
           end;
         IDNO:

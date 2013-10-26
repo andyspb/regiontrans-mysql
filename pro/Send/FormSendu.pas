@@ -1517,265 +1517,293 @@ begin
 end;
 
 procedure TFormSend.cbPynktChange(Sender: TObject);
-var Day:string;
-    q:TQuery;
-    Dis:string;
-
+var
+  day: string;
+  query: TQuery;
+  distance: string;
 begin
-if cbPynkt.getdata<>0 then
-begin
-cbPolych.Visible:=true;
-eTariff.Visible:=true;
-
-cbPolych.Where:='City_Ident='+intToStr(cbPynkt.SQLComboBox.GetData);
-cbPolych.Recalc;
-if cbType.getdata=2 then    {автомобил}
+  if cbPynkt.getdata<>0 then
   begin
-  day:=sql.SelectString('City','Sending','Ident='+IntToStr(cbPynkt.GetData));
-  if (day<>'')and (LabelEditDate2.Text='  .  .    ') then
-  LabelEditDate2.Text:=FormatDateTime('dd.mm.yyyy',SToDate(day,StrToDate(LabelEditDate1.text)));
-
-  eCountWieghtChange(Sender);
-
-
-
+    cbPolych.Visible:=true;
+    eTariff.Visible:=true;
+    cbPolych.Where:='City_Ident='+intToStr(cbPynkt.SQLComboBox.GetData);
+    cbPolych.Recalc;
+    if cbType.getdata=2 then    {автомобил}
+    begin
+      day:=sql.SelectString('City','Sending','Ident='+IntToStr(cbPynkt.GetData));
+      if (day<>'')and (LabelEditDate2.Text='  .  .    ') then
+        LabelEditDate2.Text:=FormatDateTime('dd.mm.yyyy',SToDate(day,StrToDate(LabelEditDate1.text)));
+      eCountWieghtChange(Sender);
+    end
+  else
+    if cbType.getdata=1 then   {железнодор}
+    begin
+      cbNTrain.Where:='City_Ident='+ IntToStr(cbPynkt.GetData)+' and Arch<>1';
+      cbNTrain.SQLComboBox.Recalc;
+      eCountWieghtChange(Sender) ;
+      distance:=sql.selectstring('City','Distance','Ident='+IntToStr(cbPynkt.GetData));
+      query:=sql.Select('TrainTariff','*','Distance>='+sql.MakeStr(distance),'Distance ASC');
+      eTariff.text:=StrTo00(query.FieldByName('Tariff').AsString);
+    end
+    else
+    begin
+      Application.MessageBox('Выберите тип перевозки!','Ошибка',0);
+      cbType.SetFocus;
+      exit;
+    end;
   end
-
- else if cbType.getdata=1 then   {железнодор}
- begin
-  cbNTrain.Where:='City_Ident='+ IntToStr(cbPynkt.GetData)+' and Arch<>1';
-  cbNTrain.SQLComboBox.Recalc;
-  eCountWieghtChange(Sender) ;
-  Dis:=sql.selectstring('City','Distance','Ident='+IntToStr(cbPynkt.GetData));
-  q:=sql.Select('TrainTariff','*','Distance>='+sql.MakeStr(Dis),'Distance ASC');
-  eTariff.text:=StrTo00(q.FieldByName('Tariff').AsString);
- end
-   else  begin
-         Application.MessageBox('Выберите тип перевозки!','Ошибка',0);
-         cbType.SetFocus;
-         exit;
-         end;
-
-end else
-     begin
-     eTariff.Visible:=false;
-     cbPolych.Visible:=false;
-     end;
-
+  else
+  begin
+    eTariff.Visible:=false;
+    cbPolych.Visible:=false;
+  end;
 end;
 
 procedure TFormSend.eWieghtChange(Sender: TObject);
 begin
-if cbType.getdata=2 then
-begin
-if (trim(eWieght.text)<>'0') and (trim(eVolume.text)<>'0.00') and (trim(eVolume.text)<>'0.0')
-    and (trim(eWieght.text)<>'') and (trim(eVolume.text)<>'') and (trim(eVolume.text)<>'0.')
-    and (trim(eVolume.text)<>'0')
-then
- begin
- eCountWieght.visible:=true;
- eCountWieght.Text:=CountWieght(trim(eWieght.text),trim(eVolume.text))
- end else
-     begin
+  if cbType.getdata=2 then
+  begin
+    if (trim(eWieght.text)<>'0') and (trim(eVolume.text)<>'0.00') and (trim(eVolume.text)<>'0.0')
+      and (trim(eWieght.text)<>'') and (trim(eVolume.text)<>'') and (trim(eVolume.text)<>'0.')
+      and (trim(eVolume.text)<>'0') then
+    begin
+      eCountWieght.visible:=true;
+      eCountWieght.Text:=CountWieght(trim(eWieght.text),trim(eVolume.text))
+    end
+    else
+    begin
+      eCountWieght.visible:=false;
+      //    eCountWieght.text:='';
+    end;
+  end
+  else
+  begin
+    if cbType.getdata=1 then
+    begin
+      if (trim(eWieght.text)<>'0')   and (trim(eWieght.text)<>'') then
+      begin
+        eCountWieght.visible:=true;
+        eCountWieght.Text:=CountWieghtGD(trim(eWieght.text));
+        LabelInteger1.Text:=trim(eWieght.text);
+      end
+      else
+      begin
+        eCountWieght.Text:='';
         eCountWieght.visible:=false;
-    //    eCountWieght.text:='';
-     end;   
-end else if cbType.getdata=1 then
-       begin
-       if (trim(eWieght.text)<>'0')   and (trim(eWieght.text)<>'') then
-       begin
-       eCountWieght.visible:=true;
-       eCountWieght.Text:=CountWieghtGD(trim(eWieght.text));
-       LabelInteger1.Text:=trim(eWieght.text);
-       end else begin
-       eCountWieght.Text:='';
-       eCountWieght.visible:=false;
-       end;
-       end else
-         begin
-            Application.MessageBox('Выберите тип перевозки!','Ошибка!',0);
-            cbType.SetFocus;
-            exit;
-         end;
-        eCountWieghtChange(Sender);
+      end;
+    end
+    else
+    begin
+      Application.MessageBox('Выберите тип перевозки!','Ошибка!',0);
+      cbType.SetFocus;
+      exit;
+    end;
+  end;
+  eCountWieghtChange(Sender);
 end;
 
 function TFormSend.CountWieghtGD(Wieght:string):string;
-var W,s:string;
+var weight, str: string;
     j:integer;
     len:integer ;
 begin
- W:=Wieght;
- len:=Length(W);
- if len>1 then
- begin
- s:=copy(W,len,1);
- Delete(w,len,1);
- j:=StrToInt(W);
- if s<>'0' then j:=j+1;
- end else j:=1;
+  weight:=Wieght;
+  len:=Length(weight);
+  if len>1 then
+  begin
+    str:=copy(weight,len,1);
+    Delete(weight,len,1);
+    j:=StrToInt(weight);
+    if str <> '0' then
+      j:=j+1;
+  end
+  else
+    j:=1;
 
- CountWieghtGD:=IntToStr(j)+'0';
+  CountWieghtGD:=IntToStr(j)+'0';
 end;
 
 function TFormSend.CountWieght(Wieght,Volume:string):string;
 var
     Wfloat,Vfloat,UWFloat:real;
 begin
- Wfloat:=StrToFloat(Wieght);
- Vfloat:=StrToFloat(Volume);
- UWFloat:=StrToFloat(sql.Selectstring('Constant','UnitVol',''));
- if Wfloat/Vfloat< UWFloat then
- CountWieght:=FloatToStr(Vfloat*UWFloat)
-  else  CountWieght:=FloatToStr(Wfloat);
+  Wfloat:=StrToFloat(Wieght);
+  Vfloat:=StrToFloat(Volume);
+  UWFloat:=StrToFloat(sql.Selectstring('Constant','UnitVol',''));
+  if Wfloat/Vfloat< UWFloat then
+    CountWieght:=FloatToStr(Vfloat*UWFloat)
+  else
+    CountWieght:=FloatToStr(Wfloat);
 end;
 
 procedure TFormSend.eVolumeChange(Sender: TObject);
 begin
-if cbType.getdata=2 then
-begin
- if (trim(eWieght.text)<>'0') and (trim(eVolume.text)<>'0.00') and
-    (trim(eVolume.text)<>'0.0') and (trim(eWieght.text)<>'') and
-    (trim(eVolume.text)<>'') and (trim(eVolume.text)<>'0.') and
-    (trim(eVolume.text)<>'0')
- then
- begin
- eCountWieght.visible:=true;
- eCountWieght.Text:=CountWieght(trim(eWieght.text),trim(eVolume.text))
- end else
-     begin
-        eCountWieght.visible:=false;
-       // eCountWieght.text:='';
-     end;
- end;
- eCountWieghtChange(Sender);
+  if cbType.getdata=2 then
+  begin
+    if (trim(eWieght.text)<>'0') and (trim(eVolume.text)<>'0.00') and
+      (trim(eVolume.text)<>'0.0') and (trim(eWieght.text)<>'') and
+      (trim(eVolume.text)<>'') and (trim(eVolume.text)<>'0.') and
+      (trim(eVolume.text)<>'0')
+    then
+    begin
+      eCountWieght.visible:=true;
+      eCountWieght.Text:=CountWieght(trim(eWieght.text),trim(eVolume.text))
+    end
+    else
+    begin
+      eCountWieght.visible:=false;
+      // eCountWieght.text:='';
+    end;
+  end;
+  eCountWieghtChange(Sender);
 end;
 
 procedure TFormSend.eTariffChange(Sender: TObject);
 begin
-eCountWieghtChange(Sender);
+  eCountWieghtChange(Sender);
 end;
 
 procedure TFormSend.eCountWieghtChange(Sender: TObject);
-var FW:real;
+var
+  FW:real;
 begin
-if (cbType.GetData=2) then
-begin
-if (trim(eCountWieght.text)<>'')   {автоперевозки}
-   and (trim(eCountWieght.Text)<>'0')and
-   ((trim(eTariff.text)='')or(trim(eTariff.text)='0.00'))
-then
-begin
-FW:=StrToFloat(trim(eCountWieght.text));
-
-if FW<200 then
-    if  CheckBox8.Checked then eTariff.text:=sql.SelectString('City','Tariff500',
+  if (cbType.GetData=2) then
+  begin
+    if (trim(eCountWieght.text)<>'')   {автоперевозки}
+      and (trim(eCountWieght.Text)<>'0') and
+      ((trim(eTariff.text)='')or(trim(eTariff.text)='0.00')) then
+    begin
+      FW:=StrToFloat(trim(eCountWieght.text));
+      if FW<200 then
+        if  CheckBox8.Checked then
+          eTariff.text:=sql.SelectString('City','Tariff500',
                                'Ident='+IntToStr(cbPynkt.GetData))
-         else eTariff.text:=sql.SelectString('City','Tariff200',
+        else
+          eTariff.text:=sql.SelectString('City','Tariff200',
                              'Ident='+IntToStr(cbPynkt.GetData));
-if ((FW>=200) and (FW<500)) then
-    if  CheckBox8.Checked then eTariff.text:=sql.SelectString('City','Tariff1000',
+        if ((FW>=200) and (FW<500)) then
+          if  CheckBox8.Checked then
+            eTariff.text:=sql.SelectString('City','Tariff1000',
                              'Ident='+IntToStr(cbPynkt.GetData))
-         else eTariff.text:=sql.SelectString('City','Tariff500',
+          else
+            eTariff.text:=sql.SelectString('City','Tariff500',
                                'Ident='+IntToStr(cbPynkt.GetData));
-if (FW>=500)and(FW<1000) then
-    if  CheckBox8.Checked then eTariff.text:=sql.SelectString('City','Tariff2000',
+          if (FW>=500)and(FW<1000) then
+            if  CheckBox8.Checked then
+              eTariff.text:=sql.SelectString('City','Tariff2000',
                                'Ident='+IntToStr(cbPynkt.GetData))
-         else eTariff.text:=sql.SelectString('City','Tariff1000',
+            else
+              eTariff.text:=sql.SelectString('City','Tariff1000',
                               'Ident='+IntToStr(cbPynkt.GetData));
-if (FW>=1000)and(FW<2000) then
-     if  CheckBox8.Checked then eTariff.text:=sql.SelectString('City','TariffMore2000',
+          if (FW>=1000)and(FW<2000) then
+            if  CheckBox8.Checked then
+              eTariff.text:=sql.SelectString('City','TariffMore2000',
                                               'Ident='+IntToStr(cbPynkt.GetData))
-         else eTariff.text:=sql.SelectString('City','Tariff2000',
+            else
+              eTariff.text:=sql.SelectString('City','Tariff2000',
                              'Ident='+IntToStr(cbPynkt.GetData));
-if (FW>=2000) then eTariff.text:=sql.SelectString('City','TariffMore2000',
+            if (FW>=2000) then
+              eTariff.text:=sql.SelectString('City','TariffMore2000',
                                               'Ident='+IntToStr(cbPynkt.GetData));
 
-end;
-end else if cbType.GetData=1 then
- begin
+    end;
+  end
+  else
+    if cbType.GetData=1 then
+    begin
+    end   {ждперевозки}
+    else
+    begin
+      Application.MessageBox('Выберите тип перевозки!','Ошибка',0);
+      cbType.SetFocus;
+      exit;
+    end;
+    if (trim(eTariff.text)<>'0.00') and (trim(eCountWieght.Text)<>'0')
+      and(trim(eTariff.text)<>'')and (trim(eCountWieght.Text)<>'') then
+    begin
+      eFare.Text:=Fare(trim(eTariff.text),trim(eCountWieght.Text));
+    end
+    else
+      eFare.Text:='0.00' ;
 
- end   {ждперевозки}
- else begin
-         Application.MessageBox('Выберите тип перевозки!','Ошибка',0);
-         cbType.SetFocus;
-         exit;
-      end;
- if (trim(eTariff.text)<>'0.00') and (trim(eCountWieght.Text)<>'0')
-     and(trim(eTariff.text)<>'')and (trim(eCountWieght.Text)<>'')
-then
-begin
-  eFare.Text:=Fare(trim(eTariff.text),trim(eCountWieght.Text));
-end else    eFare.Text:='0.00' ;
-InsuranceSumMin;
-eInsuranceSumChange(Sender);
+  InsuranceSumMin;
+  eInsuranceSumChange(Sender);
 end;
 
 function TFormSend.Fare(Tariff,CountWieght:string):string;
-var FTariff,FCountWieght,FWieght:real;
-    Fare1,Fare2,Fare3,Fare4,Fare5,Fare6,Fare7,Pr:real;
-    Percent,Count,i:integer;
+var
+  FTariff,FCountWieght,FWieght:real;
+  Fare1,Fare2,Fare3,Fare4,Fare5,Fare6,Fare7,Pr:real;
+  Percent,Count,i:integer;
 begin
- Fare2:=0;
- Fare3:=0;
- Fare4:=0;
- Fare5:=0;
- Fare6:=0;
- Fare7:=0;
- //Percent:=0;
- //Count:=0;
- FWieght:=0;
- FTariff:=StrToFloat(Tariff);
- {считаем скидку NN%}
- if trim(ePercent.text) <> '' then
- FTariff:=FTariff*(100-StrToInt(trim(ePercent.text)))/100  ;
- FCountWieght:=StrToFloat(CountWieght);
- if  trim(eWieght.text) <> '' then
+  Fare2:=0;
+  Fare3:=0;
+  Fare4:=0;
+  Fare5:=0;
+  Fare6:=0;
+  Fare7:=0;
+  //Percent:=0;
+  //Count:=0;
+  FWieght:=0;
+  FTariff:=StrToFloat(Tariff);
+  {считаем скидку NN%}
+  if trim(ePercent.text) <> '' then
+    FTariff:=FTariff*(100-StrToInt(trim(ePercent.text)))/100  ;
+
+  FCountWieght:=StrToFloat(CountWieght);
+  if  trim(eWieght.text) <> '' then
     FWieght:=StrToFloat(trim(eWieght.text));
-if cbType.getData=2 then
-begin
- Fare1:=fTariff*FCountWieght;
- if CheckBox1.Checked then
+
+  if cbType.getData=2 then
+  begin
+    Fare1:=fTariff*FCountWieght;
+    if CheckBox1.Checked then
     begin
-     Percent:=sql.SelectInteger('Constant','PercentWarm','') ;
-     Fare2:=Fare1*Percent/100;
+      Percent:=sql.SelectInteger('Constant','PercentWarm','') ;
+      Fare2:=Fare1*Percent/100;
     end;
- if CheckBox2.Checked then
+    if CheckBox2.Checked then
     begin
-     Percent:=sql.SelectInteger('Constant','PercentFragile','') ;
-     Fare3:=Fare1*Percent/100;
+      Percent:=sql.SelectInteger('Constant','PercentFragile','') ;
+      Fare3:=Fare1*Percent/100;
     end;
- Fare1:=Fare2+Fare3+Fare1;
+    Fare1:=Fare2+Fare3+Fare1;
 //------------------------------------------------------
-  Fare2:=StrToFloat(sql.selectstring('Constant','MinPay',''));
-  if Fare1< Fare2 then Fare1:=Fare2; {минимальная плата за провоз}
+    Fare2:=StrToFloat(sql.selectstring('Constant','MinPay',''));
+    if Fare1< Fare2 then
+      Fare1:=Fare2; {минимальная плата за провоз}
 //------------------------------------------------------
-  if Pos(' склад',cbPynkt.SQLComboBox.Text) <> 0 then
-   Fare2:=StrToFloat(sql.selectstring('Constant','PriceSklad',''));
-   if Fare1< Fare2 then Fare1:=Fare2; {минимальная плата за провоз до склада}
+    if Pos(' склад',cbPynkt.SQLComboBox.Text) <> 0 then
+    Fare2:=StrToFloat(sql.selectstring('Constant','PriceSklad',''));
+
+    if Fare1< Fare2 then
+      Fare1:=Fare2; {минимальная плата за провоз до склада}
 //------------------------------------------------------
-  if Pos('до дверей',cbPynkt.SQLComboBox.Text) <> 0 then
-       Fare2:=StrToFloat(sql.selectstring('Constant','PriceDver',''));
-   if Fare1< Fare2 then Fare1:=Fare2; {минимальная плата за провоз до дверей}
+    if Pos('до дверей',cbPynkt.SQLComboBox.Text) <> 0 then
+      Fare2:=StrToFloat(sql.selectstring('Constant','PriceDver',''));
+
+    if Fare1< Fare2 then
+      Fare1:=Fare2; {минимальная плата за провоз до дверей}
 //------------------------------------------------------
-  if CheckBox1.Checked then
-       Fare2:=StrToFloat(sql.selectstring('Constant','MinPayWarm','')) ;
-   if Fare1< Fare2 then Fare1:=Fare2; {минимальная плата за провоз теплого груза}
+    if CheckBox1.Checked then
+      Fare2:=StrToFloat(sql.selectstring('Constant','MinPayWarm','')) ;
+    if Fare1< Fare2 then
+      Fare1:=Fare2; {минимальная плата за провоз теплого груза}
 //----------------------------------------------------------------
- if (LabelSQLComboBox1.GetData=2) and (FWieght <> 0) then
+    if (LabelSQLComboBox1.GetData=2) and (FWieght <> 0) then
     begin
-    Pr:=StrToFloat(sql.selectString('Constant','UnitPack','')); {выгрузка силами перевозчика}
-    fare5:=FCountWieght*Pr;
+      Pr:=StrToFloat(sql.selectString('Constant','UnitPack','')); {выгрузка силами перевозчика}
+      fare5:=FCountWieght*Pr;
     end;
- if CheckBox3.Checked then
+    if CheckBox3.Checked then
     begin
-     Percent:=sql.SelectInteger('Constant','PercentOversized','') ; {доплата за негаборитный груз}
-     Fare4:=Fare1*Percent/100;
+      Percent:=sql.SelectInteger('Constant','PercentOversized','') ; {доплата за негаборитный груз}
+      Fare4:=Fare1*Percent/100;
     end;
-  Fare1:=Fare1+Fare4+Fare5;
-  if (trim(LblEditMoney6.Text)<>'') and (trim(LblEditMoney6.text)<>'0.00') and     {сумму по доп услуге не суммируем с перевозной платой с 01.06.2012 }
-     (StrToDate(LabelEditDate1.text) <= StrToDate('31.05.2012')) then
-  fare7:= StrToFloat(trim(LblEditMoney6.Text));  {переносим в доп услуги} {доп. плата за доставку}
+    Fare1:=Fare1+Fare4+Fare5;
+    if (trim(LblEditMoney6.Text)<>'') and (trim(LblEditMoney6.text)<>'0.00') and     {сумму по доп услуге не суммируем с перевозной платой с 01.06.2012 }
+      (StrToDate(LabelEditDate1.text) <= StrToDate('31.05.2012')) then
+      fare7:= StrToFloat(trim(LblEditMoney6.Text));  {переносим в доп услуги} {доп. плата за доставку}
 //----------------------------------------------------------------
  { if Pos(' склад',cbPynkt.SQLComboBox.Text) <> 0 then
    Fare2:=StrToFloat(sql.selectstring('Constant','PriceSklad',''))
@@ -1784,132 +1812,141 @@ begin
          else if CheckBox1.Checked then
        Fare2:=StrToFloat(sql.selectstring('Constant','MinPayWarm',''))
               else  Fare2:=StrToFloat(sql.selectstring('Constant','MinPay','')); }
- Fare:=StrTo00(FloatToStr(Fare1+Fare7));
-
-end else if cbType.getdata=1 then
+    Fare:=StrTo00(FloatToStr(Fare1+Fare7));
+  end
+  else
+    if cbType.getdata=1 then
     begin
-     Percent:=sql.SelectInteger('Constant','PercentTarGd','');
-     Fare3:=StrToFloat(sql.selectstring('Constant','MinPayGd',''));
-     Count:=sql.SelectInteger('City','Check','Ident='+
+      Percent:=sql.SelectInteger('Constant','PercentTarGd','');
+      Fare3:=StrToFloat(sql.selectstring('Constant','MinPayGd',''));
+      Count:=sql.SelectInteger('City','Check','Ident='+
                               IntToStr(cbPynkt.getdata));
-     if  (sql.SelectString('City','GDStrah','Ident='+IntToStr(cbPynkt.getdata)) <> '') then
-     Fare6:=StrToFloat(sql.SelectString('City','GDStrah','Ident='+
+      if  (sql.SelectString('City','GDStrah','Ident='+IntToStr(cbPynkt.getdata)) <> '') then
+        Fare6:=StrToFloat(sql.SelectString('City','GDStrah','Ident='+
                        IntToStr(cbPynkt.getdata)));
-     if Count=1 then
-     begin
-      i:=0;
-      if ePlac.AsInteger<>0 then  i:=ePlac.AsInteger;
-      Fare4:=StrToFloat(sql.selectstring('Constant','PlaceTariff',''));
-      Fare4:=Fare4*i;
-     end ;
-     Fare1:=(FTariff*FCountWieght/10);
-     Fare2:=(Fare1*Percent/100);
-
-
-     if Fare2<Fare3 then Fare2:=fare3+Fare4+Fare1+Fare6
-       else Fare2:=Fare2+Fare4+Fare1+Fare6;
-       fare:=StrTo00(FloatToStr(Fare2));
-    end else
-         begin
-         Application.MessageBox('Выберите тип перевозки!','Ошибка!',0);
-         cbType.SetFocus;
-         exit;
-         end;
+      if Count=1 then
+      begin
+        i:=0;
+        if ePlac.AsInteger<>0 then
+          i:=ePlac.AsInteger;
+        Fare4:=StrToFloat(sql.selectstring('Constant','PlaceTariff',''));
+        Fare4:=Fare4*i;
+      end ;
+      Fare1:=(FTariff*FCountWieght/10);
+      Fare2:=(Fare1*Percent/100);
+      if Fare2<Fare3 then
+        Fare2:=fare3+Fare4+Fare1+Fare6
+      else
+        Fare2:=Fare2+Fare4+Fare1+Fare6;
+      fare:=StrTo00(FloatToStr(Fare2));
+    end
+    else
+    begin
+      Application.MessageBox('Выберите тип перевозки!','Ошибка!',0);
+      cbType.SetFocus;
+      exit;
+    end;
 end;
 
 procedure TFormSend.CheckBox5Click(Sender: TObject);
 begin
-if  CheckBox5.Checked then
+  if CheckBox5.Checked then
   begin
-   dbGrid2.Visible:=true;
-   LBLEditMoney3.Visible:=true;
-
-
-  end else
-      begin
-       LBLEditMoney3.Text:='0.00';
-       dbGrid2.Visible:=false;
-       LBLEditMoney3.Visible:=false;
-
-      end;
-
+    dbGrid2.Visible:=true;
+    LBLEditMoney3.Visible:=true;
+  end
+  else
+  begin
+    LBLEditMoney3.Text:='0.00';
+    dbGrid2.Visible:=false;
+    LBLEditMoney3.Visible:=false;
+  end;
 end;
 
 procedure TFormSend.CheckBox4Click(Sender: TObject);
 begin
-if   CheckBox4.Checked then
+  if CheckBox4.Checked then
   begin
-   LBLEditMoney1.Visible:=true;
-   eExpCount.Visible:=true;
-   LBLEditMoney1.Text:=sql.Selectstring('Constant','UnitExp','');
-   end else
-       begin
-       LBLEditMoney1.Text:='0.00' ;
-       eExpCount.Text:='0.00';
-       LBLEditMoney1.Visible:=false;
-       eExpCount.Visible:=false;
-
-       end;
+    LBLEditMoney1.Visible:=true;
+    eExpCount.Visible:=true;
+    LBLEditMoney1.Text:=sql.Selectstring('Constant','UnitExp','');
+  end
+  else
+  begin
+    LBLEditMoney1.Text:='0.00' ;
+    eExpCount.Text:='0.00';
+    LBLEditMoney1.Visible:=false;
+    eExpCount.Visible:=false;
+  end;
 end;
 
 procedure TFormSend.CheckBox6Click(Sender: TObject);
 begin
- if   CheckBox6.Checked then
+  if CheckBox6.Checked then
   begin
-   LBLEditMoney2.Visible:=true;
-   LabelInteger2.Visible:=true;
-   LBLEditMoney2.Text:=sql.Selectstring('Constant','UnitPass','');
-   end else
-       begin
-       LBLEditMoney2.Text:='0.00';
-       LabelInteger2.Text:='0';
-       LBLEditMoney2.Visible:=false;
-       LabelInteger2.Visible:=false;
-       end;
+    LBLEditMoney2.Visible:=true;
+    LabelInteger2.Visible:=true;
+    LBLEditMoney2.Text:=sql.Selectstring('Constant','UnitPass','');
+  end
+  else
+  begin
+    LBLEditMoney2.Text:='0.00';
+    LabelInteger2.Text:='0';
+    LBLEditMoney2.Visible:=false;
+    LabelInteger2.Visible:=false;
+  end;
 end;
 
 procedure TFormSend.LabelInteger1Change(Sender: TObject);
 begin
-if ((trim(eExpCount.text)<>'') and (trim(eExpCount.text)<>'0.00'))          {сумму по доп услуге не суммируем с перевозной платой с 01.06.2012 }
-   or ((trim(LabelInteger2.text)<>'')and (trim(LabelInteger2.text)<>'0'))
-   or ((trim(LblEditMoney3.text)<>'') and (trim(LblEditMoney3.text)<>'0.00'))
-   or ((trim(LblEditMoney6.text)<>'') and (trim(LblEditMoney6.text)<>'0.00')
+  if ((trim(eExpCount.text)<>'') and (trim(eExpCount.text)<>'0.00'))          {сумму по доп услуге не суммируем с перевозной платой с 01.06.2012 }
+    or ((trim(LabelInteger2.text)<>'')and (trim(LabelInteger2.text)<>'0'))
+    or ((trim(LblEditMoney3.text)<>'') and (trim(LblEditMoney3.text)<>'0.00'))
+    or ((trim(LblEditMoney6.text)<>'') and (trim(LblEditMoney6.text)<>'0.00')
    and (StrToDate(LabelEditDate1.text) > StrToDate('31.05.2012')))   {доп услуги}
-
-then begin
-eAddServicePrace.Visible:=true;
-eAddServicePrace.Text:=addService;
-end else  eAddServicePrace.Visible:=false;
+  then
+  begin
+    eAddServicePrace.Visible:=true;
+    eAddServicePrace.Text:=addService;
+  end
+  else
+    eAddServicePrace.Visible:=false;
 end;
 
 procedure TFormSend.LabelInteger2Change(Sender: TObject);
 begin
-if ((trim(eExpCount.text)<>'') and (trim(eExpCount.text)<>'0.00'))               {сумму по доп услуге не суммируем с перевозной платой с 01.06.2012 }
-   or ((trim(LabelInteger2.text)<>'')and (trim(LabelInteger2.text)<>'0'))
-   or ((trim(LblEditMoney3.text)<>'') and (trim(LblEditMoney3.text)<>'0.00'))
-   or ((trim(LblEditMoney6.text)<>'') and (trim(LblEditMoney6.text)<>'0.00')
-   and (StrToDate(LabelEditDate1.text) > StrToDate('31.05.2012')))   {доп услуги}
-then begin
-eAddServicePrace.Visible:=true;
-eAddServicePrace.Text:=addService;
-end else  eAddServicePrace.Visible:=false;
+  if ((trim(eExpCount.text)<>'') and (trim(eExpCount.text)<>'0.00'))               {сумму по доп услуге не суммируем с перевозной платой с 01.06.2012 }
+    or ((trim(LabelInteger2.text)<>'')and (trim(LabelInteger2.text)<>'0'))
+    or ((trim(LblEditMoney3.text)<>'') and (trim(LblEditMoney3.text)<>'0.00'))
+    or ((trim(LblEditMoney6.text)<>'') and (trim(LblEditMoney6.text)<>'0.00')
+    and (StrToDate(LabelEditDate1.text) > StrToDate('31.05.2012')))   {доп услуги}
+  then
+  begin
+    eAddServicePrace.Visible:=true;
+    eAddServicePrace.Text:=addService;
+  end
+  else
+    eAddServicePrace.Visible:=false;
 end;
 
 function TFormSend.addService:string;
 var
-     Sum:real;
+  Sum:real;
 begin
   Sum:=0;
-  if (trim(eExpCount.text)<>'')and (trim(LBLEditMoney1.text)<>'')
-  then Sum:=Sum+StrToFloat(trim(LBLEditMoney1.text))*StrToFloat(trim(eExpCount.text));
-   if (trim(LabelInteger2.text)<>'')  and (trim(LBLEditMoney2.text)<>'')
-  then Sum:=Sum+StrToFloat(trim(LBLEditMoney2.text))*StrToFloat(trim(LabelInteger2.text));
-   if  (trim(LBLEditMoney3.text)<>'')
-  then Sum:=Sum+StrToFloat(trim(LBLEditMoney3.text));
-   if ((trim(LblEditMoney6.text)<>'') and (trim(LblEditMoney6.text)<>'0.00') and   {сумму по доп услуге не суммируем с перевозной платой с 01.06.2012 }
-   (StrToDate(LabelEditDate1.text) > StrToDate('31.05.2012')))   {доп услуги}
-  then Sum:=Sum+StrToFloat(trim(LBLEditMoney6.text));
+  if (trim(eExpCount.text)<>'')and (trim(LBLEditMoney1.text)<>'') then
+    Sum:=Sum+StrToFloat(trim(LBLEditMoney1.text))*StrToFloat(trim(eExpCount.text));
 
+  if (trim(LabelInteger2.text)<>'')  and (trim(LBLEditMoney2.text)<>'') then
+    Sum:=Sum+StrToFloat(trim(LBLEditMoney2.text))*StrToFloat(trim(LabelInteger2.text));
+
+  if  (trim(LBLEditMoney3.text)<>'') then
+    Sum:=Sum+StrToFloat(trim(LBLEditMoney3.text));
+
+  if ((trim(LblEditMoney6.text)<>'') and (trim(LblEditMoney6.text)<>'0.00') and   {сумму по доп услуге не суммируем с перевозной платой с 01.06.2012 }
+   (StrToDate(LabelEditDate1.text) > StrToDate('31.05.2012')))   {доп услуги}
+  then
+    Sum:=Sum+StrToFloat(trim(LBLEditMoney6.text));
   addService:=StrTo00(FloatToStr(Sum));
 end;
 
@@ -1919,44 +1956,46 @@ begin
 end;
 
 procedure TFormSend.Query1CountChange(Sender: TField);
-var Sum:string;
-    Sum1:integer;
+var
+  Sum:string;
+  Sum1:integer;
 begin
-Sum:='';
-Sum1:=0;
-Query1.DisableControls;
-Query1.First;
+  Sum:='';
+  Sum1:=0;
+  Query1.DisableControls;
+  Query1.First;
+  while (not Query1.eof) do
+  begin
+    Sum:=Sum+','+Query1.FieldByName('Name').asstring+' '+Query1.FieldByName('Count').asstring;
+    Sum1:=Sum1+Query1.FieldByName('Count').asInteger;
+    Query1.Next;
+  end;
 
-while (not Query1.eof) do
-begin
-Sum:=Sum+','+Query1.FieldByName('Name').asstring+' '+Query1.FieldByName('Count').asstring;
-Sum1:=Sum1+Query1.FieldByName('Count').asInteger;
-Query1.Next;
-end;
-
-Query1.EnableControls ;
-Delete(Sum,1,1);
-ePlace.Text:=Sum;
-ePlac.Text:=IntToStr(Sum1);
+  Query1.EnableControls ;
+  Delete(Sum,1,1);
+  ePlace.Text:=Sum;
+  ePlac.Text:=IntToStr(Sum1);
 end;
 
 Function TFormSend.Numbercalc:string;
-var Num1,Num2:string;
-    N1,N2:integer;
-    q:TQuery;
+var
+  Num1,Num2:string;
+  N1,N2:integer;
+  q:TQuery;
 begin
- q:=sql.Select('Send','Namber','`Start`='+
+  q:=sql.Select('Send','Namber','`Start`='+
                sql.MakeStr(FormatDateTime('yyyy-mm-dd',StrToDate(LabelEditDate1.text))),'');
 
- if  q.Eof then Number:='1/'+FormatDateTime('ddmmyy',StrToDate(LabelEditDate1.text))
+  if  q.Eof then
+    Number:='1/'+FormatDateTime('ddmmyy',StrToDate(LabelEditDate1.text))
   else
-     begin
-      Num1:=q.fieldByName('Namber').AsString;
-      N1:=pos('/',Num1);
-      delete(Num1,N1,Length(Num1)-N1+1) ;
-      N1:=StrToInt(Num1);
-      while not q.Eof do
-      begin
+  begin
+    Num1:=q.fieldByName('Namber').AsString;
+    N1:=pos('/',Num1);
+    delete(Num1,N1,Length(Num1)-N1+1) ;
+    N1:=StrToInt(Num1);
+    while not q.Eof do
+    begin
       Num2:=q.fieldByName('Namber').AsString;
       N2:=pos('/',Num2);
       delete(Num2,N2,Length(Num2)-N2+1) ;
@@ -1964,225 +2003,234 @@ begin
       if N1<N2 then N1:=N2;
       q.Next;
       end;
-     Number:=IntToStr(N1+1)+'/'+FormatDateTime('ddmmyy',StrToDate(LabelEditDate1.text));
-     end;
-  q.Free;   
+      Number:=IntToStr(N1+1)+'/'+FormatDateTime('ddmmyy',StrToDate(LabelEditDate1.text));
+    end;
+  q.Free;
 end;
+
 procedure TFormSend.eInsuranceSumChange(Sender: TObject);
 begin
- if (trim(eInsuranceSum.text)<>'') and  (trim(eInsurancePercent.text)<>'') and
- (trim(eInsuranceSum.text)<>'0.00') and  (trim(eInsurancePercent.text)<>'0.00')
- then
-begin
- eInsuranceValue.visible:=true;
- if StrToFloat(trim(eInsuranceSum.text))<(StrToFloat(trim(eCountWieght.text))*100) then
-   InsuranceSumMin;     {если сумма страховки меньше чем (провозная плата * 10) то пересчитываем на мин}
- eInsuranceValue.text:=StrTo00(FloatToStr((strToFloat(trim(eInsuranceSum.text))-(strToFloat(trim(eCountWieght.text))*100))*(strToFloat(trim(eInsurancePercent.text))/100)));
-end else
-    begin
+  if (trim(eInsuranceSum.text)<>'') and  (trim(eInsurancePercent.text)<>'') and
+    (trim(eInsuranceSum.text)<>'0.00') and  (trim(eInsurancePercent.text)<>'0.00')
+  then
+  begin
+    eInsuranceValue.visible:=true;
+    if StrToFloat(trim(eInsuranceSum.text))<(StrToFloat(trim(eCountWieght.text))*100) then
+    InsuranceSumMin;     {если сумма страховки меньше чем (провозная плата * 10) то пересчитываем на мин}
+    eInsuranceValue.text:=StrTo00(FloatToStr((strToFloat(trim(eInsuranceSum.text))-(strToFloat(trim(eCountWieght.text))*100))*(strToFloat(trim(eInsurancePercent.text))/100)));
+  end
+  else
+  begin
     eInsuranceValue.text:='';
     eInsuranceValue.visible:=false;
-
-    end;
+  end;
 end;
 
 procedure TFormSend.eInsurancePercentChange(Sender: TObject);
 begin
-if (trim(eInsuranceSum.text)<>'') and  (trim(eInsurancePercent.text)<>'')then
-begin
- eInsuranceValue.visible:=true;
- eInsuranceValue.text:=StrTo00(FloatToStr(strToFloat(trim(eInsuranceSum.text))*(strToFloat(trim(eInsurancePercent.text))/100)));
-end else
-    begin
+  if (trim(eInsuranceSum.text)<>'') and  (trim(eInsurancePercent.text)<>'') then
+  begin
+    eInsuranceValue.visible:=true;
+    eInsuranceValue.text:=StrTo00(FloatToStr(strToFloat(trim(eInsuranceSum.text))*(strToFloat(trim(eInsurancePercent.text))/100)));
+  end
+  else
+  begin
     eInsuranceValue.visible:=false;
     eInsuranceValue.text:='';
-    end;
-   
+  end;
 end;
 
 procedure TFormSend.eFareChange(Sender: TObject);
-var f1,f2,f3:real;
+var
+  f1,f2,f3:real;
 begin
-f1:=0;
-f2:=0;
-f3:=0;
-if  trim(eFare.text)<>'' then f1:=StrToFloat(trim(eFare.text));
-if  trim(eAddServicePrace.text)<>'' then f2:=StrToFloat(trim(eAddServicePrace.text));
-if trim(eInsuranceValue.text)<>'' then f3:=strToFloat(trim(eInsuranceValue.text));
+  f1:=0;
+  f2:=0;
+  f3:=0;
+  if  trim(eFare.text)<>'' then
+    f1:=StrToFloat(trim(eFare.text));
 
-f1:=f1+f2+f3;
-eSumCount.text:=StrTo00(FloatToStr(f1));
+  if  trim(eAddServicePrace.text)<>'' then
+    f2:=StrToFloat(trim(eAddServicePrace.text));
+  if trim(eInsuranceValue.text)<>'' then
+    f3:=strToFloat(trim(eInsuranceValue.text));
+
+  f1:=f1+f2+f3;
+  eSumCount.text:=StrTo00(FloatToStr(f1));
 end;
 
 procedure TFormSend.LabelEditDate1Enter(Sender: TObject);
 begin
-DateTest:=LabelEditDate1.text;
+  DateTest:=LabelEditDate1.text;
 end;
 
 procedure TFormSend.LabelEditDate1Exit(Sender: TObject);
 begin
-try
-FormatDateTime('yyyy-mm-dd',StrToDate(LabelEditDate1.text));
-except
- Application.MessageBox('Неправильно введена дата!','Ошибка',0);
- PageControl1.ActivePage:=TabSheet1;
- LabelEditDate1.Text:= DateTest;
- LabelEditDate1.SetFocus;
- exit;
-end;
+  try
+    FormatDateTime('yyyy-mm-dd',StrToDate(LabelEditDate1.text));
+  except
+    Application.MessageBox('Неправильно введена дата!','Ошибка',0);
+    PageControl1.ActivePage:=TabSheet1;
+    LabelEditDate1.Text:= DateTest;
+    LabelEditDate1.SetFocus;
+    exit;
+  end;
 end;
 
- procedure TFormSend.CheckBox1Click(Sender: TObject);
- begin
- eCountWieghtChange(Sender);
- end;
+procedure TFormSend.CheckBox1Click(Sender: TObject);
+begin
+  eCountWieghtChange(Sender);
+end;
+
 procedure TFormSend.CheckBox2Click(Sender: TObject);
 begin
- eCountWieghtChange(Sender);
+  eCountWieghtChange(Sender);
 end;
 
 procedure TFormSend.CheckBox3Click(Sender: TObject);
 begin
- eCountWieghtChange(Sender);
+  eCountWieghtChange(Sender);
 end;
 
 procedure TFormSend.eAddServicePraceChange(Sender: TObject);
 begin
-if  trim(eAddServicePrace.text)<>''then
- eFareChange(Sender);
+if trim(eAddServicePrace.text)<>'' then
+  eFareChange(Sender);
 end;
 
 procedure TFormSend.eInsuranceValueChange(Sender: TObject);
 begin
- if  trim(eInsuranceValue.text)<>''then
- eFareChange(Sender);
+  if trim(eInsuranceValue.text)<>'' then
+    eFareChange(Sender);
 end;
 
 procedure TFormSend.RadioGroup1Click(Sender: TObject);
 begin
-if RadioGroup1.ItemIndex=0 then
-begin
- cbPayType.SetActive(1);
- cbZak.Where:='PersonType_Ident=1';
- cbZak.Recalc
- end;
-if RadioGroup1.ItemIndex=1 then
-begin
-cbPayType.SetActive(2);
-cbZak.Where:='PersonType_Ident=2';
-cbZak.Recalc;
+  if RadioGroup1.ItemIndex=0 then
+  begin
+    cbPayType.SetActive(1);
+    cbZak.Where:='PersonType_Ident=1';
+    cbZak.Recalc
+  end;
 
-end;
+  if RadioGroup1.ItemIndex=1 then
+  begin
+    cbPayType.SetActive(2);
+    cbZak.Where:='PersonType_Ident=2';
+    cbZak.Recalc;
+  end;
 end;
 
 procedure TFormSend.LabelEditDate2Enter(Sender: TObject);
 begin
- DateTest:=LabelEditDate2.text;
+  DateTest:=LabelEditDate2.text;
 end;
 
 procedure TFormSend.LabelEditDate2Exit(Sender: TObject);
 begin
-if LabelEditDate2.text<>'  .  .    ' then
-begin
- try
-FormatDateTime('yyyy-mm-dd',StrToDate(LabelEditDate2.text));
-except
- Application.MessageBox('Неправильно введена дата!','Ошибка',0);
- PageControl1.ActivePage:=TabSheet1;
- LabelEditDate2.Text:= DateTest;
- LabelEditDate2.SetFocus;
- exit;
-end;
-end;
+  if LabelEditDate2.text<>'  .  .    ' then
+  begin
+    try
+      FormatDateTime('yyyy-mm-dd',StrToDate(LabelEditDate2.text));
+    except
+      Application.MessageBox('Неправильно введена дата!','Ошибка',0);
+      PageControl1.ActivePage:=TabSheet1;
+      LabelEditDate2.Text:= DateTest;
+      LabelEditDate2.SetFocus;
+      exit;
+    end;
+  end;
 end;
 
 procedure TFormSend.LabelEditDate3Enter(Sender: TObject);
 begin
- DateTest:=LabelEditDate3.text;
+  DateTest:=LabelEditDate3.text;
 end;
 
 procedure TFormSend.LabelEditDate3Exit(Sender: TObject);
 var
-Year, Month, Day, YearN, MonthN, DayN: Word;
-
+  Year, Month, Day, YearN, MonthN, DayN: Word;
 begin
-if LabelEditDate3.text<>'  .  .    ' then
-begin
- try
-FormatDateTime('yyyy-mm-dd',StrToDate(LabelEditDate3.text));
-DecodeDate(StrToDate(LabelEditDate3.text),Year,Month,Day);
-DecodeDate(Now,YearN,MonthN,DayN);
-if  Year <> YearN then
-    Application.MessageBox('Неправильно введен год!','Сообщение',0);
-if  Month <> MonthN then
-    Application.MessageBox('Неправильно введен месяц!','Сообщение',0);
+  if LabelEditDate3.text<>'  .  .    ' then
+  begin
+    try
+      FormatDateTime('yyyy-mm-dd',StrToDate(LabelEditDate3.text));
+      DecodeDate(StrToDate(LabelEditDate3.text),Year,Month,Day);
+      DecodeDate(Now,YearN,MonthN,DayN);
+      if  Year <> YearN then
+        Application.MessageBox('Неправильно введен год!','Сообщение',0);
+      if  Month <> MonthN then
+        Application.MessageBox('Неправильно введен месяц!','Сообщение',0);
 
-except
- Application.MessageBox('Неправильно введена дата!','Ошибка',0);
- PageControl1.ActivePage:=TabSheet3;
- LabelEditDate3.Text:= DateTest;
- LabelEditDate3.SetFocus;
- exit;
-end;
-end;
+    except
+      Application.MessageBox('Неправильно введена дата!','Ошибка',0);
+      PageControl1.ActivePage:=TabSheet3;
+      LabelEditDate3.Text:= DateTest;
+      LabelEditDate3.SetFocus;
+      exit;
+    end;
+  end;
 end;
 
 procedure TFormSend.BitBtn2Click(Sender: TObject);
 var
-    l:longint;
+  l:longint;
 begin
- CityForm:=TCityForm.Create(Application) ;
+  CityForm:=TCityForm.Create(Application) ;
   l:=CityForm.AddRecord;
   if l<>0 then
-    begin
+  begin
     cbPynkt.SQLComboBox.Recalc;
     cbPynkt.SQLComboBox.SetActive(l);
-    end;
+  end;
   CityForm.Free   ;
-cbTypeExit(Sender);
+  cbTypeExit(Sender);
 end;
 
 procedure TFormSend.BitBtn1Click(Sender: TObject);
-var l:longint;
+var
+  l:longint;
 begin
-Card:=TCard.Create(Application) ;
-l:=Card.AddRecord;
-if l<>0 then
-    begin
+  Card:=TCard.Create(Application) ;
+  l:=Card.AddRecord;
+  if l<>0 then
+  begin
     cbZak.Recalc;
     cbZak.SetActive(l);
     cbOtpr.Recalc;
   //  cbOtpr.SetActive(l);
-    end;
-Card.Free;
-cbZakChange(Sender);
+  end;
+  Card.Free;
+  cbZakChange(Sender);
 end;
 
 procedure TFormSend.BitBtn3Click(Sender: TObject);
-var l:longint;
+var
+  l:longint;
 begin
-Card:=TCard.Create(Application) ;
-l:=Card.AddRecord;
-if l<>0 then
-    begin
+  Card:=TCard.Create(Application) ;
+  l:=Card.AddRecord;
+  if l<>0 then
+  begin
     cbOtpr.Recalc;
     cbOtpr.SetActive(l);
     cbZak.Recalc;
-    end;
-Card.Free;
-cbOtprChange(Sender);
+  end;
+  Card.Free;
+  cbOtprChange(Sender);
 end;
 
 procedure TFormSend.BitBtn4Click(Sender: TObject);
-var l:longint;
+var
+  l:longint;
 begin
-          FormAcceptor:=TFormAcceptor.Create(Application) ;
-          l:=FormAcceptor.AddRecord;
-         if l<>0 then
-         begin
-          cbPolych.Where:='City_Ident='+intToStr(cbPynkt.SQLComboBox.GetData);
-          cbPolych.Recalc;
-          cbPolych.SetActive(l);   
+  FormAcceptor:=TFormAcceptor.Create(Application);
+  l:=FormAcceptor.AddRecord;
+  if l<>0 then
+  begin
+    cbPolych.Where:='City_Ident='+intToStr(cbPynkt.SQLComboBox.GetData);
+    cbPolych.Recalc;
+    cbPolych.SetActive(l);   
          end;
           FormAcceptor.Free;
           cbPolychChange(Sender);

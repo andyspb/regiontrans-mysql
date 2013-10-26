@@ -112,12 +112,28 @@ end;
 
 procedure TFormOrder.BDelClick(Sender: TObject);
 var
-  Id:longint;
+  ident: longint;
+  ident_str: string;
+  table_str: string;
+  other_table_str: string;
+  del_thread: TDeleteThread;
 begin
   sql.StartTransaction;
-  Id:=SQLGrid1.Query.FieldByName('Ident').AsInteger;
+  ident:=SQLGrid1.Query.FieldByName('Ident').AsInteger;
+  ident_str := IntToStr(ident);
   SQLGrid1.saveNextPoint('Ident');
-  if sql.Delete('`Order`','Ident='+IntToStr(Id))=0 then
+  if EntrySec.bAllData then
+    begin
+      table_str:='`Order_all`';
+      other_table_str:='`Order`';
+    end
+  else
+    begin
+      table_str:='`Order`';
+      other_table_str:='`Order_all`';
+    end;
+
+  if sql.Delete(table_str,'Ident='+IntToStr(ident))=0 then
   begin
     case Application.MessageBox('Удалить!',
                             'Предупреждение!',MB_YESNO+MB_ICONQUESTION) of
@@ -126,6 +142,8 @@ begin
         sql.Commit;
         SQLGrid1.Exec;
         SQLGrid1RowChange(Sender);
+        del_thread := TDeleteThread.Create(True, other_table_str, ident_str);
+        del_thread.Resume();
       end;
     IDNO:
       begin

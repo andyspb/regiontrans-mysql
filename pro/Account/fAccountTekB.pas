@@ -30,7 +30,7 @@ type
 
 var
   FormAccountTekBox: TFormAccountTekBox;
-  aacounttekvew_str: string;
+  accounttekvew_str: string;
 implementation
 
 uses FAccount, FAccountTek;
@@ -43,15 +43,15 @@ begin
   Caption:='Счета-ТЭК ( ' + EntrySec.period + ' )';
   if EntrySec.bAllData then
     begin
-      aacounttekvew_str:='AccountTEKView_all';
+      accounttekvew_str:='AccountTEKView_all';
       BAdd.Enabled:=False;
     end
   else
     begin
-      aacounttekvew_str:='AccountTEKView';
+      accounttekvew_str:='AccountTEKView';
       BAdd.Enabled:=True;
    end;
-  SQLGrid1.ExecTable(aacounttekvew_str);
+  SQLGrid1.ExecTable(accounttekvew_str);
   if SQLGrid1.Query.eof then
   begin
     SQLGrid1.visible:=false;
@@ -94,7 +94,7 @@ begin
   if l<>0 then
   begin
     sql.Commit;
-    SQLGrid1.execTable(aacounttekvew_str);
+    SQLGrid1.execTable(accounttekvew_str);
     SQLGrid1.LoadPoint('Ident',l);
   end
   else
@@ -114,7 +114,7 @@ begin
   if l<>0 then
   begin
     sql.Commit;
-    SQLGrid1.execTable(aacounttekvew_str);
+    SQLGrid1.execTable(accounttekvew_str);
     SQLGrid1.LoadPoint('Ident',l);
   end
   else
@@ -136,7 +136,7 @@ begin
       IDYES:
       begin
         sql.Commit;
-        SQLGrid1.ExecTable(aacounttekvew_str);
+        SQLGrid1.ExecTable(accounttekvew_str);
         SQLGrid1RowChange(Sender);
       end;
       IDNO:

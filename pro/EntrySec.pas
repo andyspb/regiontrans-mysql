@@ -4,8 +4,8 @@ interface
 
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  Tadjform, StdCtrls, Sqlctrls, Lbledit, ExtCtrls, Buttons, BMPBtn,tsqlcls,
-  DB,DBTables,SEQUENCE;
+  Tadjform, StdCtrls, Sqlctrls, Lbledit, ExtCtrls, Buttons, BMPBtn, tsqlcls,
+  DB, DBTables, SEQUENCE;
 
 type
   TEntrySecurity = class(Tadjustform)
@@ -62,6 +62,18 @@ type
      procedure Execute; override;
   end;
 
+type
+  TDeleteThread = class(TThread)
+  public
+     Constructor Create(CreateSuspended: boolean;
+                              table_str: string;
+                              ident_str: string);
+  protected
+     procedure Execute; override;
+  private
+    table: string;
+    ident: string;
+  end;
 
 
 implementation
@@ -70,7 +82,7 @@ uses    Menu;
 
 {$R *.DFM}
 
-constructor TTestThread.Create(CreateSuspended : boolean);
+constructor TTestThread.Create(CreateSuspended: boolean);
 begin
   FreeOnTerminate := True;
   inherited Create(CreateSuspended);
@@ -88,6 +100,32 @@ begin
     sql_str.free;
   end;
 end;
+
+constructor TDeleteThread.Create(CreateSuspended: boolean;
+                                       table_str: string;
+                                       ident_str: string);
+begin
+  table :=table_str;
+  ident :=ident_str;
+  FreeOnTerminate := True;
+  inherited Create(CreateSuspended);
+end;
+
+procedure TDeleteThread.Execute;
+var
+  sql_str: TStringList;
+  temp_str: string;
+begin
+  if not Terminated then
+  begin
+    sql_str:=TStringList.Create;
+    temp_str:='delete from ' + table + ' where `Ident` = ' + ident;
+    sql_str.Add(temp_str);
+    sql.ExecSQL(sql_str);
+    sql_str.free;
+  end;
+end;
+
 
 procedure TEntrySecurity.btOKClick(Sender: TObject);
 var

@@ -29,6 +29,8 @@ type
 
 var
   FormAccountBox: TFormAccountBox;
+  accountvew_str: string;
+
 
 implementation
 
@@ -42,15 +44,16 @@ begin
   SQLGrid1.Section:='Account' ;
   if EntrySec.bAllData then
     begin
-      SQLGrid1.ExecTable('AccountView_all');
+      accountvew_str:='AccountView_all';
       BAdd.Enabled:=False;
     end
   else
     begin
-      SQLGrid1.ExecTable('AccountView');
+      accountvew_str:='AccountView';
       BAdd.Enabled:=True;
     end;
 
+  SQLGrid1.ExecTable(accountvew_str);
   if SQLGrid1.Query.eof then
   begin
     SQLGrid1.visible:=false;
@@ -93,10 +96,7 @@ begin
   if l<>0 then
   begin
     sql.Commit;
-    if EntrySec.bAllData then
-      SQLGrid1.execTable('AccountView_all')
-    else
-      SQLGrid1.execTable('AccountView');
+    SQLGrid1.execTable(accountvew_str);
     SQLGrid1.LoadPoint('Ident',l);
   end
   else
@@ -115,10 +115,7 @@ begin
   if l<>0 then
   begin
     sql.Commit;
-    if EntrySec.bAllData then
-      SQLGrid1.execTable('AccountView_all')
-    else
-      SQLGrid1.execTable('AccountView');
+    SQLGrid1.execTable(accountvew_str);
     SQLGrid1.LoadPoint('Ident',l);
   end
   else
@@ -127,23 +124,39 @@ end;
 
 procedure TFormAccountBox.BDelClick(Sender: TObject);
 var
-  Id:longint;
+  ident: longint;
+  ident_str: string;
+  table_str: string;
+  other_table_str: string;
+  del_thread: TDeleteThread;
 begin
   sql.StartTransaction;
-  Id:=SQLGrid1.Query.FieldByName('Ident').AsInteger;
+  ident := SQLGrid1.Query.FieldByName('Ident').AsInteger;
   SQLGrid1.saveNextPoint('Ident');
-  if sql.Delete('`Account`','Ident='+IntToStr(Id))=0 then
+  ident_str := IntToStr(ident);
+  if EntrySec.bAllData then
+  begin
+    table_str:='`Account_all`';
+    other_table_str:='`Account`';
+  end
+  else
+  begin
+    table_str:='`Account`';
+    other_table_str:='`Account_all`';
+  end;
+
+
+  if sql.Delete(table_str,'Ident='+IntToStr(ident))=0 then
   begin
     case Application.MessageBox('Удалить!',
-                            'Предупреждение!',MB_YESNO+MB_ICONQUESTION) of
+                                'Предупреждение!',
+                                MB_YESNO+MB_ICONQUESTION) of
       IDYES:
       begin
         sql.Commit;
-        if EntrySec.bAllData then
-          SQLGrid1.ExecTable('AccountView_all')
-        else
-          SQLGrid1.ExecTable('AccountView');
-        SQLGrid1RowChange(Sender);
+        SQLGrid1.ExecTable(accountvew_str);
+        del_thread := TDeleteThread.Create(True, other_table_str, ident_str);
+        del_thread.Resume();
       end;
       IDNO:
       begin
