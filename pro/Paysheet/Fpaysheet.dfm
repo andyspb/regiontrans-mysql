@@ -1,5 +1,5 @@
 object FormPaysheetBox: TFormPaysheetBox
-  Left = 613
+  Left = 608
   Top = 183
   Width = 702
   Height = 409

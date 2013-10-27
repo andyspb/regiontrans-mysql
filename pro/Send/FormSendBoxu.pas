@@ -158,14 +158,15 @@ str1.free;   }
 end;
 
 procedure TFormSendBox.eCardClick(Sender: TObject);
-var l:longint;
+var
+  result:longint;
 begin
   sqlGrid1.SavePoint('Ident');
   sql.StartTransaction;
-  FormSend:=TFormSend.Create(Application) ;
-  l:=FormSend.EditRecord(SQLGrid1.Query);
+  FormSend := TFormSend.Create(Application);
+  result := FormSend.EditRecord(SQLGrid1.Query);
   FormSend.Free;
-  if l<>0 then
+  if (result <> 0) then
   begin
     sql.Commit;
     sqlGrid1.Exec;
@@ -181,17 +182,18 @@ begin
 end;
 
 procedure TFormSendBox.eCreateClick(Sender: TObject);
-var l:longint;
+var
+  result: longint;
 begin
   sql.StartTransaction;
   FormSend:=TFormSend.Create(Application) ;
-  l:=FormSend.AddRecord;
+  result:=FormSend.AddRecord;
   FormSend.Free;
-  if l<>0 then
+  if (result <> 0) then
   begin
     sql.Commit;
     sqlGrid1.Exec;
-    sqlGrid1.LoadPoint('Ident',l);
+    sqlGrid1.LoadPoint('Ident', result);
     if (not SQLGrid1.Query.Eof) or (not SQLGrid1.Query.bof)then
     begin
       eCard.Enabled:=true;
@@ -210,44 +212,42 @@ var
 begin
   sqlGrid1.SaveNextPoint('Ident');
   ident_str:=sqlGrid1.FieldByName('Ident').AsString;
-  sql.StartTransaction;
-  if sql.Delete('Send','Ident='+
-    IntToStr(sqlGrid1.FieldByName('Ident').asInteger))<>0 then
+  case Application.MessageBox('Удалить ?', 'Warning!',MB_YESNO+MB_ICONQUESTION) of
+    IDYES:
     begin
-      Application.MessageBox('Отправка не подлежит удалению!','Ошибка',0);
-      sql.rollback;
+      sql.StartTransaction;
+      if sql.Delete('Send','Ident='+ IntToStr(sqlGrid1.FieldByName('Ident').asInteger))<>0 then
+      begin
+        Application.MessageBox('Отправка не подлежит удалению!','Ошибка',0);
+        sql.rollback;
       end
       else
       begin
         if sqlGrid1.FieldByName('InvoiceNumber').asString<>'' then
-          ShowMessage('Отправка просчитана в счет-фактуре № '+
-                  sqlGrid1.FieldByName('InvoiceNumber').asString+'! '+
+          ShowMessage('Отправка просчитана в счет-фактуре № '+ sqlGrid1.FieldByName('InvoiceNumber').asString+'! '+
                   'Пересчитайте счет-фактуру, после удаления! ');
-        case Application.MessageBox('Удалить!',
-                            'Предупреждение!',MB_YESNO+MB_ICONQUESTION) of
-        IDYES:
-          begin
-            sql.commit;
-            // krutogolov
-            // delete from all as well
-            if not EntrySec.bAllData then
-            begin
-              del_thread := TDeleteThread.Create(True, '`send_all`', ident_str);
-              del_thread.Resume();
-            end;
-          end;
-        IDNO:
-          sql.rollback;
-      end
+      end;
+      sql.commit;
+      sqlGrid1.Exec;
+      // krutogolov
+      // delete from all as well
+      if not EntrySec.bAllData then
+      begin
+        del_thread := TDeleteThread.Create(True, '`send_all`', ident_str);
+        del_thread.Resume();
+      end;
     end;
-
-  sqlGrid1.Exec;
-  if (SQLGrid1.Query.Eof) and (SQLGrid1.Query.bof)then
+    IDNO:
     begin
-      eCard.Enabled:=false;
-      edelete.Enabled:=false;
-      SQLGrid1.visible:=false;
+      exit;
     end;
+  end;
+  if (SQLGrid1.Query.Eof) and (SQLGrid1.Query.bof)then
+  begin
+    eCard.Enabled:=false;
+    edelete.Enabled:=false;
+    SQLGrid1.visible:=false;
+  end;
 end;
 
 procedure TFormSendBox.btPrintClick(Sender: TObject);

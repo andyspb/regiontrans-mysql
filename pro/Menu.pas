@@ -56,6 +56,7 @@ type
     N42: TMenuItem;
     N20071: TMenuItem;
     N43: TMenuItem;
+    N44: TMenuItem;
     procedure N7Click(Sender: TObject);
     procedure N2Click(Sender: TObject);
     procedure N5Click(Sender: TObject);
@@ -99,6 +100,7 @@ type
     procedure N20071Click(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure N43Click(Sender: TObject);
+    procedure N44Click(Sender: TObject);
    
   private
     { Private declarations }
@@ -120,7 +122,7 @@ uses EntrySec, ClientCard, ClientCardBox, Contracts,
    CardBoss, FormSendBoxu, FNation, FConstant, FInsp, FTrain, FOrder,
   fAccountB, FTrainTariff, FInvoiceBox, FPrint, Fpaysheet, FActiveSend,
   FormSelectu,Invoice, FFerrymanBox, FWayBill, FAktBox, fAccountTekB,SendStr,
-  FWayBill2, FPrintBox,DLoad, FormUnload, DataChangeLoad, FSaldo;
+  FWayBill2, FPrintBox,DLoad, FormUnload, DataChangeLoad, FSaldo, FormSendu;
 
 {$R *.dfm}
 
@@ -175,10 +177,11 @@ end;
 procedure TFMenu.N2Click(Sender: TObject);
 begin    {перерегестрация}
   EntrySecurity:=TEntrySecurity.Create(Application);
-  if EntrySecurity.ShowModal = mrCancel then
+  //------------
+  if (EntrySecurity.ShowModal = mrCancel) then
   begin
     EntrySecurity.Free;
-    if FMenu.CurrentUser<>0 then
+    if (FMenu.CurrentUser <> 0) then
       exit
     else
       close
@@ -186,6 +189,7 @@ begin    {перерегестрация}
   else
     EntrySecurity.Free;
     // krutogolov
+  //------------
   N15.Caption := 'ОТПРАВКИ ( ' + EntrySec.period +' )';
   N27.Caption := 'СЧЕТ-ФАКТУРЫ ( ' + EntrySec.period +' )';
   N25.Caption := 'СЧЕТА ( ' + EntrySec.period +' )';
@@ -193,9 +197,12 @@ begin    {перерегестрация}
   N29.Caption := 'ОПЛАТА ( ' + EntrySec.period +' )';
   N37.Caption := 'АКТЫ-ТЭК ( ' + EntrySec.period +' )';
   N38.Caption := 'СЧЕТА-ТЭК ( ' + EntrySec.period +' )';
-  Caption := 'РегионТранс ( Данные за период: ' + EntrySec.period + ' )';
+  Caption := 'РегионТранс 2.0 ( Данные за период: ' + EntrySec.period + ' )';
+  //------------
+  N44.Enabled := iff(EntrySec.bAllData, False, True);
+  N44.Caption := iff(EntrySec.bAllData, '', '  + Создать Отправку');
 
-  if CurrentUserRoles=1 then
+  if (CurrentUserRoles=1) then
   begin
     BYH:=true;
     OPER:=true;
@@ -603,6 +610,19 @@ begin
   if sql.ExecSQL(sql_str) = 0 then
     Application.MessageBox('Обновление сервера завершено!','',0);
   sql_str.free;
+end;
+
+procedure TFMenu.N44Click(Sender: TObject);
+var
+  result: longint;
+begin
+  FormSend:= TFormSend.Create(Application) ;
+  result:=FormSend.AddRecord;
+  if (result = 0) then
+    Application.MessageBox('Карточка не создана!','Warning',0)
+  else
+    Application.MessageBox('Карточка создана!','Confirmation',0);
+  FormSend.free;
 end;
 
 end.

@@ -7,6 +7,18 @@ uses
   Tadjform, StdCtrls, Sqlctrls, Lbledit, ExtCtrls, Buttons, BMPBtn, tsqlcls,
   DB, DBTables, SEQUENCE;
 
+  function Iff(const Condition: Boolean; const TruePart, FalsePart: Boolean ): Boolean;  overload;
+  function Iff(const Condition: Boolean; const TruePart, FalsePart: Byte    ): Byte;     overload;
+  function Iff(const Condition: Boolean; const TruePart, FalsePart: Cardinal): Cardinal; overload;
+  function Iff(const Condition: Boolean; const TruePart, FalsePart: Char    ): Char;     overload;
+  function Iff(const Condition: Boolean; const TruePart, FalsePart: Extended): Extended;    overload;
+  function Iff(const Condition: Boolean; const TruePart, FalsePart: Integer ): Integer;  overload;
+  function Iff(const Condition: Boolean; const TruePart, FalsePart: Pointer ): Pointer;  overload;
+  function Iff(const Condition: Boolean; const TruePart, FalsePart: String  ): String;   overload;
+  {$IFDEF SUPPORTS_INT64}
+    function Iff(const Condition: Boolean; const TruePart, FalsePart: Int64   ): Int64;    overload;
+  {$ENDIF SUPPORTS_INT64}
+
 type
   TEntrySecurity = class(Tadjustform)
     Bevel1: TBevel;
@@ -74,7 +86,6 @@ type
     table: string;
     ident: string;
   end;
-
 
 implementation
 
@@ -243,5 +254,65 @@ begin
   if key = VK_Return then
     btOKClick(Sender)
 end;
+
+//*******************************************************
+// Funes
+// Substituio do operador "?" em C
+//*******************************************************
+function Iff(const Condition: Boolean; const TruePart, FalsePart: Boolean): Boolean; overload;
+begin
+  if Condition then    Result := TruePart
+  else    Result := FalsePart;
+end;
+//*******************************************************
+function Iff(const Condition: Boolean; const TruePart, FalsePart: Byte): Byte; overload;
+begin
+  if Condition then    Result := TruePart
+  else    Result := FalsePart;
+end;
+//*******************************************************
+function Iff(const Condition: Boolean; const TruePart, FalsePart: Cardinal): Cardinal; overload;
+begin
+  if Condition then    Result := TruePart
+  else    Result := FalsePart;
+end;
+//*******************************************************
+function Iff(const Condition: Boolean; const TruePart, FalsePart: Char): Char; overload;
+begin
+  if Condition then    Result := TruePart
+  else    Result := FalsePart;
+end;
+//*******************************************************
+function Iff(const Condition: Boolean; const TruePart, FalsePart: Extended): Extended; overload;
+begin
+  if Condition then    Result := TruePart
+  else    Result := FalsePart;
+end;
+//*******************************************************
+function Iff(const Condition: Boolean; const TruePart, FalsePart: Integer): Integer; overload;
+begin
+  if Condition then    Result := TruePart
+  else    Result := FalsePart;
+end;
+//*******************************************************
+function Iff(const Condition: Boolean; const TruePart, FalsePart: Pointer): Pointer; overload;
+begin
+  if Condition then    Result := TruePart
+  else    Result := FalsePart;
+end;
+//*******************************************************
+function Iff(const Condition: Boolean; const TruePart, FalsePart: String): String; overload;
+begin
+  if Condition then    Result := TruePart
+  else    Result := FalsePart;
+end;
+//*******************************************************
+{$IFDEF SUPPORTS_INT64}
+function Iff(const Condition: Boolean; const TruePart, FalsePart: Int64): Int64; overload;
+begin
+  if Condition then    Result := TruePart
+  else    Result := FalsePart;
+end;
+{$ENDIF SUPPORTS_INT64}
 
 end.
