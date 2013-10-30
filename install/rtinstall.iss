@@ -61,40 +61,15 @@ CloseApplications=no
 
 [Files]
 Source: "{#BinarySourceDir}\pro\RegionTrans.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "{#BinarySourceDir}\pro\Account\*.rtf"; DestDir: "{app}\Account\"; Flags: ignoreversion recursesubdirs createallsubdirs
-
-;Source: "{#BinarySourceDir}\app_host.exe"; DestDir: "{app}"; Flags: ignoreversion
-;Source: "{#BinarySourceDir}\wow_helper.exe"; DestDir: "{app}"; Flags: ignoreversion
-; NOTE: Don't use "Flags: ignoreversion" on any shared system files
+Source: "{#BinarySourceDir}\pro\*.ini"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "{#BinarySourceDir}\pro\*.rtf"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
-Name: "{group}\{#MyAppName}"; Filename: "{#BinarySourceDir}\icon\IconSelect.ico"
-Name: "{commondesktop}\{#MyAppName}"; Filename: "{#BinarySourceDir}\icon\IconSelect.ico"; Tasks: desktopicon
-;Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
-;Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: quicklaunchicon
-;Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}" 
+Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
+Name: "{commonprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}" 
+Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
 
 [Registry]
-;Root: HKCU; Subkey: "Software\{#MyAppName}\Update\Clients\{#MyAppId}"; ValueType: string; ValueName: "lang"; ValueData: "en"
-;Root: HKCU; Subkey: "Software\{#MyAppName}\Update\Clients\{#MyAppId}"; ValueType: string; ValueName: "name"; ValueData: {#MyAppName}
-;Root: HKCU; Subkey: "Software\{#MyAppName}\Update\Clients\{#MyAppId}"; ValueType: string; ValueName: "pv"; ValueData: {#MyAppVersion}
-;Root: HKCU; Subkey: "Software\{#MyAppName}\Update\Clients\{#MyAppId}"; ValueType: string; ValueName: "version"; ValueData: {#MyAppVersion}
-
-;Root: HKCU; Subkey: "Software\Wow6432Node\{#MyAppName}\Update\Clients\{#MyAppId}"; ValueType: string; ValueName: "lang"; ValueData: "en"
-;Root: HKCU; Subkey: "Software\Wow6432Node\{#MyAppName}\Update\Clients\{#MyAppId}"; ValueType: string; ValueName: "name"; ValueData: {#MyAppName}
-;Root: HKCU; Subkey: "Software\Wow6432Node\{#MyAppName}\Update\Clients\{#MyAppId}"; ValueType: string; ValueName: "pv"; ValueData: {#MyAppVersion}
-;Root: HKCU; Subkey: "Software\Wow6432Node\{#MyAppName}\Update\Clients\{#MyAppId}"; ValueType: string; ValueName: "version"; ValueData: {#MyAppVersion}
-                               
-;Root: HKLM; Subkey: "Software\{#MyAppName}\Update\Clients\{#MyAppId}"; ValueType: string; ValueName: "lang"; ValueData: "en"
-;Root: HKLM; Subkey: "Software\{#MyAppName}\Update\Clients\{#MyAppId}"; ValueType: string; ValueName: "name"; ValueData: {#MyAppName}
-;Root: HKLM; Subkey: "Software\{#MyAppName}\Update\Clients\{#MyAppId}"; ValueType: string; ValueName: "pv"; ValueData: {#MyAppVersion}
-;Root: HKLM; Subkey: "Software\{#MyAppName}\Update\Clients\{#MyAppId}"; ValueType: string; ValueName: "version"; ValueData: {#MyAppVersion}
-
-;Root: HKLM; Subkey: "Software\Wow6432Node\{#MyAppName}\Update\Clients\{#MyAppId}"; ValueType: string; ValueName: "lang"; ValueData: "en"
-;Root: HKLM; Subkey: "Software\Wow6432Node\{#MyAppName}\Update\Clients\{#MyAppId}"; ValueType: string; ValueName: "name"; ValueData: {#MyAppName}
-;Root: HKLM; Subkey: "Software\Wow6432Node\{#MyAppName}\Update\Clients\{#MyAppId}"; ValueType: string; ValueName: "pv"; ValueData: {#MyAppVersion}
-;Root: HKLM; Subkey: "Software\Wow6432Node\{#MyAppName}\Update\Clients\{#MyAppId}"; ValueType: string; ValueName: "version"; ValueData: {#MyAppVersion}
           
 [Run]
-;Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
 
