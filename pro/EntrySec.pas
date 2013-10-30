@@ -189,7 +189,7 @@ begin
   // krutogolov
   // data for the period
   begin
-    period:='ÃÎÄ';
+    period:='6M';
     // tables
     account_str:='account';
     accounttek_str:='accounttek';
@@ -215,7 +215,7 @@ begin
   if (bAllData) then
   begin
     sql_str:=TStringList.Create;
-    sql_str.Add('call  `update_tables_all`;');
+    sql_str.Add('call  `update_tables_all_6m`;');
     sql.ExecSQL(sql_str);
     sql_str.free;
   end
