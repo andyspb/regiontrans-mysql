@@ -5,7 +5,7 @@ DROP procedure IF EXISTS `update_tables_all`;
 DELIMITER $$
 
 USE `severtrans`$$
-CREATE DEFINER=`dba`@`192.168.1.40` PROCEDURE `update_tables_all`()
+CREATE DEFINER=`dba`@`localhost` PROCEDURE `update_tables_all`()
 
 BEGIN
 replace into send_all select * from send;
