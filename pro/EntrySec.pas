@@ -81,7 +81,7 @@ type
                               table_str: string;
                               ident_str: string);
   protected
-     procedure Execute; override;
+    procedure Execute; override;
   private
     table: string;
     ident: string;
@@ -106,6 +106,8 @@ begin
   if not Terminated then
   begin
     sql_str:=TStringList.Create;
+    // krutogolov
+    // see @
     sql_str.Add('call  `update_tables_all`;');
     sql.ExecSQL(sql_str);
     sql_str.free;
