@@ -1,6 +1,4 @@
-#################
-## Eclipse
-#################
+##################
 *.dcu
 *.~*~
 *.local
@@ -13,6 +11,8 @@ __history
 bin/*
 *.exe
 *.dcu
+*.MB
+pro/*.MB
  
 *.pydevproject
 .project

@@ -213,7 +213,7 @@ CREATE TABLE if not exists `akttek_all` (
 
 delimiter $$
 
-CREATE TABLE `paysheet_all` (
+CREATE TABLE if not exists `paysheet_all` (
   `Ident` int(11) NOT NULL,
   `Client_Ident` int(11) NOT NULL,
   `Number` varchar(10) NOT NULL,
