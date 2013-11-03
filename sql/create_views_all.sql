@@ -69,7 +69,7 @@ delimiter $$
 CREATE or replace ALGORITHM=UNDEFINED DEFINER=`dba`@`localhost` SQL SECURITY DEFINER VIEW `orderstek_all` 
 AS select `order_all`.`Ident` AS `Ident`,`order_all`.`Client_Ident` AS `Client_Ident`,`clientstek`.`Acronym` AS `ClientsName`,`order_all`.`Number` AS `Number`,(substr(`order_all`.`Number`,1,(length(`order_all`.`Number`) - 3)) + 0) 
 AS `Num`,`order_all`.`Dat` AS `Dat`,year(`order_all`.`Dat`) AS `Year`,`order_all`.`Sum` AS `Sum`,`order_all`.`NDS` AS `NDS`,concat(`order_all`.`Number`,';',dayofmonth(`order_all`.`Dat`),'.',month(`order_all`.`Dat`),'.',year(`order_all`.`Dat`)) 
-AS `NumDat`,concat('Оплата перевозки/',`clientstek`.`Acronym`) AS `ClN`,`order_all`.`SumNDS` AS `SumNDS` from (`clientstek` left join `order_all` on((`order_all`.`Client_Ident` = `clientstek`.`Ident`))) 
+AS `NumDat`,concat(cast('Оплата перевозки/' as char character set cp1251),`clientstek`.`Acronym`) AS `ClN`,`order_all`.`SumNDS` AS `SumNDS` from (`clientstek` left join `order_all` on((`order_all`.`Client_Ident` = `clientstek`.`Ident`))) 
 where (`order_all`.`Dat` > '2006-10-31')$$
 
 delimiter $$
