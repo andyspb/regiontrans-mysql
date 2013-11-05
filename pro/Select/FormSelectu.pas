@@ -54,7 +54,7 @@ uses SendStr,makerepp,Invoice;
 
 procedure TFormSelect.FormCreate(Sender: TObject);
 begin
-  Caption := 'Списки ( ' + EntrySec.period + ' )';
+  Caption := 'Списки ( Период: ' + EntrySec.period + ' )';
   if EntrySec.bAllData then
   begin
     sends_view := 'sends_all';
@@ -1713,345 +1713,371 @@ end;
 end;
 
 procedure TFormSelect.cbxListChange(Sender: TObject);
-var l:integer;
+var
+  index: integer;
 begin
-l:=cbxList.ComboBox.ItemIndex;
- if (l=0)or (l=1) then   {платежи}
+  index := cbxList.ComboBox.ItemIndex;
+  // -----------------------------------------------------
+  if ((index = 0) or (index = 1)) then   {платежи}
   begin
- LabelEditDate2.Visible:=true;
- LabelEditDate1.Visible:=true;
-   cbZak.Visible:=true;
-   cbZak.SQLComboBox.Table:='Clients';
+    LabelEditDate2.Visible:=true;
+    LabelEditDate1.Visible:=true;
+    cbZak.Visible:=true;
+    cbZak.SQLComboBox.Table:='Clients';
     cbZak.SQLComboBox.Recalc ;
-   cbxSort.Visible:=true;
-   cbCity.Visible:=false;
-   cbxSort.ComboBox.Clear;
-   cbxSort.ComboBox.items.Insert(0,'Заказчик');
-   cbxSort.ComboBox.items.Insert(1,'Дата');
+    cbxSort.Visible:=true;
+    cbCity.Visible:=false;
+    cbxSort.ComboBox.Clear;
+    cbxSort.ComboBox.items.Insert(0,'Заказчик');
+    cbxSort.ComboBox.items.Insert(1,'Дата');
     RadioGroup1.Visible:=false;
-   cbNumber.Visible:=false;
+    cbNumber.Visible:=false;
   end;
- if l=2 then        {Сверка для заказчика}
- begin
- LabelEditDate2.Visible:=true;
- LabelEditDate1.Visible:=true;
+  // -----------------------------------------------------
+  if (index = 2) then        {Сверка для заказчика}
+  begin
+    LabelEditDate2.Visible:=true;
+    LabelEditDate1.Visible:=true;
+    cbZak.Visible:=true;
+    cbZak.SQLComboBox.Table:='ClientsNotTek';
+    cbZak.SQLComboBox.Recalc  ;
+    cbxSort.Visible:=false;
+    cbCity.Visible:=false;
+    RadioGroup1.Visible:=false;
+    cbNumber.Visible:=false;
+  end;
+  // -----------------------------------------------------
+  if (index = 15) then        {Сверка для заказчика TEK}
+  begin
+    LabelEditDate2.Visible:=true;
+    LabelEditDate1.Visible:=true;
+    cbZak.Visible:=true;
+    cbZak.SQLComboBox.Table:='ClientsTek';
+    cbZak.SQLComboBox.Recalc  ;
+    cbxSort.Visible:=false;
+    cbCity.Visible:=false;
+    RadioGroup1.Visible:=false;
+    cbNumber.Visible:=false;
+  end;
+  // -----------------------------------------------------
+  // if l=3 then    {Ж/д отправки}
+  { begin
+  LabelEditDate2.Visible:=true;
+  LabelEditDate1.Visible:=true;
   cbZak.Visible:=true;
-     cbZak.SQLComboBox.Table:='ClientsNotTek';
-     cbZak.SQLComboBox.Recalc  ;
-
-  cbxSort.Visible:=false;
+  cbZak.SQLComboBox.Table:='Clients';
+  cbZak.SQLComboBox.Recalc  ;
+  cbxSort.Visible:=true;
   cbCity.Visible:=false;
-   RadioGroup1.Visible:=false;
-   cbNumber.Visible:=false;
- end ;
-  if l=15 then        {Сверка для заказчика TEK}
- begin
- LabelEditDate2.Visible:=true;
- LabelEditDate1.Visible:=true;
-  cbZak.Visible:=true;
-     cbZak.SQLComboBox.Table:='ClientsTek';
-     cbZak.SQLComboBox.Recalc  ;
-  cbxSort.Visible:=false;
-  cbCity.Visible:=false;
-   RadioGroup1.Visible:=false;
-   cbNumber.Visible:=false;
- end ;
-// if l=3 then    {Ж/д отправки}
-{ begin
- LabelEditDate2.Visible:=true;
- LabelEditDate1.Visible:=true;
-   cbZak.Visible:=true;
-      cbZak.SQLComboBox.Table:='Clients';
-          cbZak.SQLComboBox.Recalc  ;
-   cbxSort.Visible:=true;
-   cbCity.Visible:=false;
-      cbxSort.ComboBox.Clear;
-   cbxSort.ComboBox.items.Insert(0,'Заказчик');
-   cbxSort.ComboBox.items.Insert(1,'Город')    ;
-   RadioGroup1.Visible:=false;
-   cbNumber.Visible:=false;
- end;   }
- if l=3 then        {Объем перевозок}
- begin
- LabelEditDate2.Visible:=true;
- LabelEditDate1.Visible:=true;
-  cbZak.Visible:=true;
-      cbZak.SQLComboBox.Table:='Clients';
-          cbZak.SQLComboBox.Recalc  ;
-  cbxSort.Visible:=false;
-  cbCity.Visible:=true;
-  RadioGroup1.Visible:=true;
+  cbxSort.ComboBox.Clear;
+  cbxSort.ComboBox.items.Insert(0,'Заказчик');
+  cbxSort.ComboBox.items.Insert(1,'Город')    ;
+  RadioGroup1.Visible:=false;
   cbNumber.Visible:=false;
- end;
- if l=4 then        {Сводка по счет-фактурам}
- begin
- LabelEditDate2.Visible:=true;
- LabelEditDate1.Visible:=true;
- cbZak.Visible:=true;
-      cbZak.SQLComboBox.Table:='Clients';
-          cbZak.SQLComboBox.Recalc  ;
- RadioGroup1.Visible:=false;
- cbxSort.Visible:=false;
- cbCity.Visible:=false;
- cbNumber.Visible:=false;
- end;
- if (l=5) then        {Договора}
- begin
- LabelEditDate2.Visible:=false;
- LabelEditDate1.Visible:=false;
- cbZak.Visible:=false;
+  end;   }
+  // -----------------------------------------------------
+  if (index = 3) then        {Объем перевозок}
+  begin
+    LabelEditDate2.Visible:=true;
+    LabelEditDate1.Visible:=true;
+    cbZak.Visible:=true;
+    cbZak.SQLComboBox.Table:='Clients';
+    cbZak.SQLComboBox.Recalc  ;
+    cbxSort.Visible:=false;
+    cbCity.Visible:=true;
+    RadioGroup1.Visible:=true;
+    cbNumber.Visible:=false;
+  end;
+  // -----------------------------------------------------
+  if (index = 4) then        {Сводка по счет-фактурам}
+  begin
+    LabelEditDate2.Visible:=true;
+    LabelEditDate1.Visible:=true;
+    cbZak.Visible:=true;
+    cbZak.SQLComboBox.Table:='Clients';
+    cbZak.SQLComboBox.Recalc  ;
+    RadioGroup1.Visible:=false;
+    cbxSort.Visible:=false;
+    cbCity.Visible:=false;
+    cbNumber.Visible:=false;
+  end;
+  // -----------------------------------------------------
+  if (index = 5) then        {Договора}
+  begin
+    LabelEditDate2.Visible:=false;
+    LabelEditDate1.Visible:=false;
+    cbZak.Visible:=false;
    //   cbZak.SQLComboBox.Table:='Clients';
    //       cbZak.SQLComboBox.Recalc  ;
- RadioGroup1.Visible:=false;
- cbxSort.Visible:=false;
- cbCity.Visible:=false;
- cbNumber.Visible:=false;
- end;
- if (l=6) or (l=26) or (l=28) then   {книга продаж}{26 - проверка счет-фактур}   {Пропущенные номера счет-фактур}
- begin
- LabelEditDate2.Visible:=true;
- LabelEditDate1.Visible:=true;
- cbZak.Visible:=false;
-   //   cbZak.SQLComboBox.Table:='Clients';
-   //       cbZak.SQLComboBox.Recalc  ;
- RadioGroup1.Visible:=false;
- cbxSort.Visible:=false;
- cbCity.Visible:=false;
- cbNumber.Visible:=false;
- end;
- if l=7 then   {платежные поручения}
- begin
- LabelEditDate2.Visible:=true;
- LabelEditDate1.Visible:=true;
- cbZak.Visible:=true;
-      cbZak.SQLComboBox.Table:='Clients';
-          cbZak.SQLComboBox.Recalc  ;
- RadioGroup1.Visible:=false;
- cbxSort.Visible:=false;
- cbCity.Visible:=false;
- cbNumber.Visible:=false;
- end;
-if l=8 then   {Кредит}
- begin
- LabelEditDate2.Visible:=true;
- LabelEditDate1.Visible:=true;
- cbZak.Visible:=true;
-      cbZak.SQLComboBox.Table:='Clients';
-          cbZak.SQLComboBox.Recalc  ;
- RadioGroup1.Visible:=false;
- cbxSort.Visible:=false;
- cbCity.Visible:=false;
- cbNumber.Visible:=false;
- end;
- if (l=9) or (l=29) then   {Сводка по не вернувшимся актам}
- begin
- LabelEditDate2.Visible:=true;
- LabelEditDate1.Visible:=true;
- cbZak.Visible:=true;
-      if l=9 then cbZak.SQLComboBox.Table:='ClientsNotTek'
-      else cbZak.SQLComboBox.Table:='ClientsTek';
+    RadioGroup1.Visible:=false;
+    cbxSort.Visible:=false;
+    cbCity.Visible:=false;
+    cbNumber.Visible:=false;
+  end;
+  // -----------------------------------------------------
+  if ((index = 6)or(index = 26)or(index = 28)) then   {книга продаж}{26 - проверка счет-фактур}   {Пропущенные номера счет-фактур}
+  begin
+    LabelEditDate2.Visible:=true;
+    LabelEditDate1.Visible:=true;
+    cbZak.Visible:=false;
+    //   cbZak.SQLComboBox.Table:='Clients';
+    //       cbZak.SQLComboBox.Recalc  ;
+    RadioGroup1.Visible:=false;
+    cbxSort.Visible:=false;
+    cbCity.Visible:=false;
+    cbNumber.Visible:=false;
+  end;
+  // -----------------------------------------------------
+  if (index = 7) then   {платежные поручения}
+  begin
+    LabelEditDate2.Visible:=true;
+    LabelEditDate1.Visible:=true;
+    cbZak.Visible:=true;
+    cbZak.SQLComboBox.Table:='Clients';
+    cbZak.SQLComboBox.Recalc  ;
+    RadioGroup1.Visible:=false;
+    cbxSort.Visible:=false;
+    cbCity.Visible:=false;
+    cbNumber.Visible:=false;
+  end;
+  // -----------------------------------------------------
+  if (index = 8) then   {Кредит}
+  begin
+    LabelEditDate2.Visible:=true;
+    LabelEditDate1.Visible:=true;
+    cbZak.Visible:=true;
+    cbZak.SQLComboBox.Table:='Clients';
+    cbZak.SQLComboBox.Recalc  ;
+    RadioGroup1.Visible:=false;
+    cbxSort.Visible:=false;
+    cbCity.Visible:=false;
+    cbNumber.Visible:=false;
+  end;
+  // -----------------------------------------------------
+  if ((index = 9)or(index=29)) then   {Сводка по не вернувшимся актам}
+  begin
+    LabelEditDate2.Visible:=true;
+    LabelEditDate1.Visible:=true;
+    cbZak.Visible:=true;
+    if (index = 9) then
+      cbZak.SQLComboBox.Table:='ClientsNotTek'
+    else cbZak.SQLComboBox.Table:='ClientsTek';
       cbZak.SQLComboBox.Recalc  ;
- RadioGroup1.Visible:=false;
- cbxSort.Visible:=false;
- cbCity.Visible:=false;
- cbNumber.Visible:=false;
- end;
- if (l=10) or (l=25) then   {Сводка по "-" сальдо}
- begin
- LabelEditDate2.Visible:=false;
- LabelEditDate1.Visible:=false;
- cbZak.Visible:=false;
- //     cbZak.SQLComboBox.Table:='Clients';
-//          cbZak.SQLComboBox.Recalc  ;
- RadioGroup1.Visible:=false;
- cbxSort.Visible:=true;
- //cbxSort.ComboBox.items.Delete(0);
-  cbxSort.ComboBox.Clear;
-  cbxSort.ComboBox.items.Insert(0,'Кредит');
-  cbxSort.ComboBox.items.Insert(1,'Дата');
- //cbxSort.ComboBox.Items.Add('Кредит');
- cbCity.Visible:=false;
- cbNumber.Visible:=false;
- end;
-//  if l=12 then   {Сводка по платежным поручениям (ж/д)}
-{ begin
- LabelEditDate2.Visible:=false;
- LabelEditDate1.Visible:=false;
- cbZak.Visible:=false;
+    RadioGroup1.Visible:=false;
+    cbxSort.Visible:=false;
+    cbCity.Visible:=false;
+    cbNumber.Visible:=false;
+  end;
+  // -----------------------------------------------------
+  if ((index = 10)or(index = 25)) then   {Сводка по "-" сальдо}
+  begin
+    LabelEditDate2.Visible:=false;
+    LabelEditDate1.Visible:=false;
+    cbZak.Visible:=false;
+    // cbZak.SQLComboBox.Table:='Clients';
+    // cbZak.SQLComboBox.Recalc  ;
+    RadioGroup1.Visible:=false;
+    cbxSort.Visible:=true;
+    //cbxSort.ComboBox.items.Delete(0);
+    cbxSort.ComboBox.Clear;
+    cbxSort.ComboBox.items.Insert(0,'Кредит');
+    cbxSort.ComboBox.items.Insert(1,'Дата');
+    //cbxSort.ComboBox.Items.Add('Кредит');
+    cbCity.Visible:=false;
+    cbNumber.Visible:=false;
+  end;
+  // -----------------------------------------------------
+  //if l=12 then   {Сводка по платежным поручениям (ж/д)}
+  { begin
+      LabelEditDate2.Visible:=false;
+      LabelEditDate1.Visible:=false;
+      cbZak.Visible:=false;
       cbZak.SQLComboBox.Table:='Clients';
-          cbZak.SQLComboBox.Recalc  ;
- RadioGroup1.Visible:=false;
- cbxSort.Visible:=false;
- cbCity.Visible:=false;
- cbNumber.Visible:=true;
- end;}
- if (l=11) or (l=19) {or (l=27)} or (l=24)then  {Сводная ведомость}
- begin
-  LabelEditDate2.Visible:=true;
- LabelEditDate1.Visible:=true;
- cbZak.Visible:=false;
- //     cbZak.SQLComboBox.Table:='Clients';
- //         cbZak.SQLComboBox.Recalc  ;
- RadioGroup1.Visible:=false;
- cbxSort.Visible:=false;
-{ cbxSort.Visible:=true;
-  cbxSort.ComboBox.Clear;
- cbxSort.ComboBox.items.Insert(0,'Клиент');
-  cbxSort.ComboBox.items.Insert(1,'Сальдо');   }
- cbCity.Visible:=false;
- cbNumber.Visible:=false;
- end ;
-  if l=12 then        {Объем перевозок (пр.)}
- begin
- LabelEditDate2.Visible:=true;
- LabelEditDate1.Visible:=true;
-  cbZak.Visible:=true;
-      cbZak.SQLComboBox.Table:='Clients';
-          cbZak.SQLComboBox.Recalc  ;
-  cbxSort.Visible:=false;
-  cbCity.Visible:=true;
-  RadioGroup1.Visible:=true;
-  cbNumber.Visible:=false;
- end;
- if l=13 then   {Кредит (пр.)}
- begin
- LabelEditDate2.Visible:=true;
- LabelEditDate1.Visible:=true;
- cbZak.Visible:=true;
-      cbZak.SQLComboBox.Table:='Clients';
-          cbZak.SQLComboBox.Recalc  ;
- RadioGroup1.Visible:=false;
- cbxSort.Visible:=false;
- cbCity.Visible:=false;
- cbNumber.Visible:=false;
- end;
-if l=14 then        {Объем перевозок по с/ф}
- begin
- LabelEditDate2.Visible:=true;
- LabelEditDate1.Visible:=true;
-  cbZak.Visible:=true;
-      cbZak.SQLComboBox.Table:='Clients';
-          cbZak.SQLComboBox.Recalc  ;
-  cbxSort.Visible:=false;
-  cbCity.Visible:=true;
-  RadioGroup1.Visible:=false;
-  cbNumber.Visible:=false;
+      cbZak.SQLComboBox.Recalc  ;
+      RadioGroup1.Visible:=false;
+      cbxSort.Visible:=false;
+      cbCity.Visible:=false;
+      cbNumber.Visible:=true;
+    end;}
+  // -----------------------------------------------------
+  if ((index = 11)or(index = 19){or (l=27)}or(index = 24))then  {Сводная ведомость}
+  begin
+    LabelEditDate2.Visible:=true;
+    LabelEditDate1.Visible:=true;
+    cbZak.Visible:=false;
+    // cbZak.SQLComboBox.Table:='Clients';
+    // cbZak.SQLComboBox.Recalc  ;
+    RadioGroup1.Visible:=false;
+    cbxSort.Visible:=false;
+    { cbxSort.Visible:=true;
+    cbxSort.ComboBox.Clear;
+    cbxSort.ComboBox.items.Insert(0,'Клиент');
+    cbxSort.ComboBox.items.Insert(1,'Сальдо');   }
+    cbCity.Visible:=false;
+    cbNumber.Visible:=false;
+  end;
+  // -----------------------------------------------------
+  if (index = 12) then        {Объем перевозок (пр.)}
+  begin
+    LabelEditDate2.Visible:=true;
+    LabelEditDate1.Visible:=true;
+    cbZak.Visible:=true;
+    cbZak.SQLComboBox.Table:='Clients';
+    cbZak.SQLComboBox.Recalc  ;
+    cbxSort.Visible:=false;
+    cbCity.Visible:=true;
+    RadioGroup1.Visible:=true;
+    cbNumber.Visible:=false;
+  end;
+  // -----------------------------------------------------
+  if (index = 13) then   {Кредит (пр.)}
+  begin
+    LabelEditDate2.Visible:=true;
+    LabelEditDate1.Visible:=true;
+    cbZak.Visible:=true;
+    cbZak.SQLComboBox.Table:='Clients';
+    cbZak.SQLComboBox.Recalc  ;
+    RadioGroup1.Visible:=false;
+    cbxSort.Visible:=false;
+    cbCity.Visible:=false;
+    cbNumber.Visible:=false;
+  end;
+  // -----------------------------------------------------
+  if (index = 14) then        {Объем перевозок по с/ф}
+  begin
+    LabelEditDate2.Visible:=true;
+    LabelEditDate1.Visible:=true;
+    cbZak.Visible:=true;
+    cbZak.SQLComboBox.Table:='Clients';
+    cbZak.SQLComboBox.Recalc  ;
+    cbxSort.Visible:=false;
+    cbCity.Visible:=true;
+    RadioGroup1.Visible:=false;
+    cbNumber.Visible:=false;
+  end;
+  // -----------------------------------------------------
+  // if l=17 then   {Кредит (04)}
+  { begin
+    LabelEditDate2.Visible:=true;
+    LabelEditDate1.Visible:=true;
+    cbZak.Visible:=true;
+    cbZak.SQLComboBox.Table:='Clients';
+    cbZak.SQLComboBox.Recalc  ;
+    RadioGroup1.Visible:=false;
+    cbxSort.Visible:=false;
+    cbCity.Visible:=false;
+    cbNumber.Visible:=false;
+  end; }
+  // -----------------------------------------------------
+  if (index = 15) then        {Сверка для заказчика TEK}
+  begin
+    LabelEditDate2.Visible:=true;
+    LabelEditDate1.Visible:=true;
+    cbZak.Visible:=true;
+    cbZak.SQLComboBox.Table:='ClientsTek';
+    cbZak.SQLComboBox.Recalc;
+    cbxSort.Visible:=false;
+    cbCity.Visible:=false;
+    RadioGroup1.Visible:=false;
+    cbNumber.Visible:=false;
+  end;
+  // -----------------------------------------------------
+  if ((index = 16)or(index=23)) then        {Обьем и стоимость перевозок}
+  begin
+    LabelEditDate2.Visible:=true;
+    LabelEditDate1.Visible:=true;
+    cbZak.Visible:=false;
+  // -----------------------------------------------------
+  //if l=16 then
+    //     cbZak.SQLComboBox.Table:='ClientsNotTek'
+    //     else cbZak.SQLComboBox.Table:='ClientsTek';
+    //     cbZak.SQLComboBox.Recalc  ;
+    cbxSort.Visible:=false;
+    cbCity.Visible:=true;
+    RadioGroup1.Visible:=true;
+    cbNumber.Visible:=false;
+  end ;
+  // -----------------------------------------------------
+  if (index = 17) then         {Сводная ведомость по грузу склад1}
+  begin
+    LabelEditDate2.Visible:=true;
+    LabelEditDate1.Visible:=true;
+    cbZak.Visible:=false;
+    //cbZak.SQLComboBox.Table:='Clients';
+    //cbZak.SQLComboBox.Recalc  ;
+    cbxSort.Visible:=false;
+    cbCity.Visible:=false;
+    RadioGroup1.Visible:=true;
+    cbNumber.Visible:=false;
+  end;
+  // -----------------------------------------------------
+  if (index = 18) then         {Сводная ведомость по грузу склад1}
+  begin
+    LabelEditDate2.Visible:=true;
+    LabelEditDate1.Visible:=true;
+    cbZak.Visible:=false;
+    //cbZak.SQLComboBox.Table:='Clients';
+    //cbZak.SQLComboBox.Recalc  ;
+    cbxSort.Visible:=false;
+    cbCity.Visible:=false;
+    RadioGroup1.Visible:=true;
+    cbNumber.Visible:=false;
+  end;
+  // -----------------------------------------------------
+  if (index =20) then   {'Сводка по операторам'}
+  begin
+    LabelEditDate2.Visible:=true;
+    LabelEditDate1.Visible:=true;
+    cbZak.Visible:=false;
+    // cbZak.SQLComboBox.Table:='Clients';
+    // cbZak.SQLComboBox.Recalc  ;
+    cbxSort.Visible:=false;
+    cbCity.Visible:=false;
+    RadioGroup1.Visible:=false;
+    cbNumber.Visible:=false;
+  end;
+  // -----------------------------------------------------
+  if (index = 21) then   {'Сводка для счетов'}
+  begin
+    LabelEditDate2.Visible:=true;
+    LabelEditDate1.Visible:=true;
+    cbZak.Visible:=false;
+    // cbZak.SQLComboBox.Table:='Clients';
+    // cbZak.SQLComboBox.Recalc  ;
+    cbxSort.Visible:=false;
+    cbCity.Visible:=false;
+    RadioGroup1.Visible:=false;
+    cbNumber.Visible:=false;
+  end;
+  // -----------------------------------------------------
+  if (index = 22) then   {'Книга доходов и расходов'}
+  begin
+    LabelEditDate2.Visible:=true;
+    LabelEditDate1.Visible:=true;
+    cbZak.Visible:=false;
+    //   cbZak.SQLComboBox.Table:='Clients';
+    //        cbZak.SQLComboBox.Recalc  ;
+    cbxSort.Visible:=false;
+    cbCity.Visible:=false;
+    RadioGroup1.Visible:=false;
+    cbNumber.Visible:=false;
+  end;
+  // -----------------------------------------------------
+  if (index = 27) then        {Отправки без счет-фактур}
+  begin
+    LabelEditDate2.Visible:=true;
+    LabelEditDate1.Visible:=true;
+    cbZak.Visible:=false;
+   // cbZak.SQLComboBox.Table:='Clients';
+   // cbZak.SQLComboBox.Recalc  ;
+    RadioGroup1.Visible:=false;
+    cbxSort.Visible:=false;
+    cbCity.Visible:=false;
+    cbNumber.Visible:=false;
+  end;
 end;
-// if l=17 then   {Кредит (04)}
-{ begin
- LabelEditDate2.Visible:=true;
- LabelEditDate1.Visible:=true;
- cbZak.Visible:=true;
-      cbZak.SQLComboBox.Table:='Clients';
-          cbZak.SQLComboBox.Recalc  ;
- RadioGroup1.Visible:=false;
- cbxSort.Visible:=false;
- cbCity.Visible:=false;
- cbNumber.Visible:=false;
- end; }
- if l=15 then        {Сверка для заказчика TEK}
- begin
- LabelEditDate2.Visible:=true;
- LabelEditDate1.Visible:=true;
-  cbZak.Visible:=true;
-      cbZak.SQLComboBox.Table:='ClientsTek';
-          cbZak.SQLComboBox.Recalc  ;
-  cbxSort.Visible:=false;
-  cbCity.Visible:=false;
-   RadioGroup1.Visible:=false;
-   cbNumber.Visible:=false;
- end ;
-  if (l=16) or (l=23) then        {Обьем и стоимость перевозок}
- begin
- LabelEditDate2.Visible:=true;
- LabelEditDate1.Visible:=true;
-  cbZak.Visible:=false;
-//  if l=16 then
-//     cbZak.SQLComboBox.Table:='ClientsNotTek'
-//     else cbZak.SQLComboBox.Table:='ClientsTek';
-//     cbZak.SQLComboBox.Recalc  ;
-  cbxSort.Visible:=false;
-  cbCity.Visible:=true;
-   RadioGroup1.Visible:=true;
-   cbNumber.Visible:=false;
- end ;
-   if l=17 then         {Сводная ведомость по грузу склад1}
- begin
- LabelEditDate2.Visible:=true;
- LabelEditDate1.Visible:=true;
-  cbZak.Visible:=false;
- //     cbZak.SQLComboBox.Table:='Clients';
- //         cbZak.SQLComboBox.Recalc  ;
-  cbxSort.Visible:=false;
-  cbCity.Visible:=false;
-  RadioGroup1.Visible:=true;
-  cbNumber.Visible:=false;
- end;
-  if l=18 then         {Сводная ведомость по грузу склад1}
-  begin
- LabelEditDate2.Visible:=true;
- LabelEditDate1.Visible:=true;
-  cbZak.Visible:=false;
- //     cbZak.SQLComboBox.Table:='Clients';
- //         cbZak.SQLComboBox.Recalc  ;
-  cbxSort.Visible:=false;
-  cbCity.Visible:=false;
-  RadioGroup1.Visible:=true;
-  cbNumber.Visible:=false;
-  end;
-  if l=20 then   {'Сводка по операторам'}
-  begin
-  LabelEditDate2.Visible:=true;
-  LabelEditDate1.Visible:=true;
-  cbZak.Visible:=false;
- //     cbZak.SQLComboBox.Table:='Clients';
-  //        cbZak.SQLComboBox.Recalc  ;
-  cbxSort.Visible:=false;
-  cbCity.Visible:=false;
-  RadioGroup1.Visible:=false;
-  cbNumber.Visible:=false;
-  end;
-    if l=21 then   {'Сводка для счетов'}
-  begin
-  LabelEditDate2.Visible:=true;
-  LabelEditDate1.Visible:=true;
-  cbZak.Visible:=false;
-   //   cbZak.SQLComboBox.Table:='Clients';
-  //        cbZak.SQLComboBox.Recalc  ;
-  cbxSort.Visible:=false;
-  cbCity.Visible:=false;
-  RadioGroup1.Visible:=false;
-  cbNumber.Visible:=false;
-  end;
 
-  if l=22 then   {'Книга доходов и расходов'}
-  begin
-  LabelEditDate2.Visible:=true;
-  LabelEditDate1.Visible:=true;
-  cbZak.Visible:=false;
-   //   cbZak.SQLComboBox.Table:='Clients';
-  //        cbZak.SQLComboBox.Recalc  ;
-  cbxSort.Visible:=false;
-  cbCity.Visible:=false;
-  RadioGroup1.Visible:=false;
-  cbNumber.Visible:=false;
-  end;
-  if (l=27)then        {Отправки без счет-фактур}
- begin
- LabelEditDate2.Visible:=true;
- LabelEditDate1.Visible:=true;
- cbZak.Visible:=false;
-   //   cbZak.SQLComboBox.Table:='Clients';
-   //       cbZak.SQLComboBox.Recalc  ;
- RadioGroup1.Visible:=false;
- cbxSort.Visible:=false;
- cbCity.Visible:=false;
- cbNumber.Visible:=false;
- end;
-end;
-
-procedure TFormSelect.FormKeyDown(Sender: TObject; var Key: Word;
-  Shift: TShiftState);
+procedure TFormSelect.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
 if key = VK_Return
   then btPrintClick(Sender)
