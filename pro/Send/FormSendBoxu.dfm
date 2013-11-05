@@ -1,5 +1,5 @@
 object FormSendBox: TFormSendBox
-  Left = 67
+  Left = 5
   Top = 112
   Width = 1070
   Height = 601
@@ -11688,7 +11688,7 @@ object FormSendBox: TFormSendBox
       ToolBarButton = True
       FileName = 
         'F:\SeverTrans\Icon\IconSelekt_ico'#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0 +
-        #0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0
+        #0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0
     end
     object eCreate: TToolbarButton
       Left = 100

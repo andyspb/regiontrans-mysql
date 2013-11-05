@@ -44,9 +44,9 @@ type
 
 var
   FormSendBox: TFormSendBox;
-  send_str:string;
-  akttek_str:string;
-  invoice_str:string;
+  send_str: string;
+  akttek_str: string;
+  invoice_str: string;
 
 implementation
 

@@ -6,7 +6,7 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, toolbtn, StdCtrls, Buttons, BMPBtn, ToolWin, ComCtrls, Sqlctrls,
   LblCombo,Printers, LblEdtDt, ExtCtrls, TSQLCLS, SqlGrid, DB,
-   DBTables, Lbsqlcmb, OleServer, Word2000,XMLDOM, DBClient, MConnect;
+   DBTables, Lbsqlcmb, OleServer, Word2000,XMLDOM, DBClient, MConnect, EntrySec;
 
 type
   TFormSelect = class(TForm)
@@ -41,6 +41,11 @@ type
 
 var
   FormSelect: TFormSelect;
+  sends_view: string;
+  order_table: string;
+  paysheet_table: string;
+  send_table: string;
+  invoice_table: string;
 
 implementation
 
@@ -49,188 +54,219 @@ uses SendStr,makerepp,Invoice;
 
 procedure TFormSelect.FormCreate(Sender: TObject);
 begin
- cbxList.ComboBox.DropDownCount:=30;
+  Caption := 'Списки ( ' + EntrySec.period + ' )';
+  if EntrySec.bAllData then
+  begin
+    sends_view := 'sends_all';
+    order_table := '`Order_all`';
+    paysheet_table := 'PaySheet_all';
+    send_table := 'Send_all';
+	invoice_table := 'invoice_all';
+  end
+  else
+  begin
+    sends_view := 'sends';
+    order_table := '`Order`';
+    paysheet_table := 'PaySheet';
+    send_table := 'Send';
+	invoice_table := 'invoice';
+  end;
 
- cbxList.ComboBox.Items.Add('Приходные ордера') ;      {0}
- cbxList.ComboBox.Items.Add('Платежки')    ;            {1}
- cbxList.ComboBox.Items.Add('Сверка для заказчика') ;    {2}
- //cbxList.ComboBox.Items.Add('Ж/д отправки')    ;          {3}
- cbxList.ComboBox.Items.Add('Объем перевозок')  ;         {3}
- cbxList.ComboBox.Items.Add('Сводка по счет-фактурам');     {4}
- cbxList.ComboBox.Items.Add('Договора')  ;                {5}
- cbxList.ComboBox.Items.Add('Книга продаж')  ;             {6}
- cbxList.ComboBox.Items.Add('Платежные поручения')  ;     {7}
- cbxList.ComboBox.Items.Add('Кредит')  ;                  {8}
- cbxList.ComboBox.Items.Add('Сводка по не вернувшимся актам')  ;  {9}
- cbxList.ComboBox.Items.Add('Сводка по "-" сальдо')  ;            {10}
- //cbxList.ComboBox.Items.Add('Сводка по платежным поручениям (ж/д)');   {12}
- cbxList.ComboBox.Items.Add('Сводная ведомость')  ;            {11}
- cbxList.ComboBox.Items.Add('Объем перевозок (пр.)')  ;       {12}
- cbxList.ComboBox.Items.Add('Кредит (пр.)')  ;                   {13}
- cbxList.ComboBox.Items.Add('Объем перевозок (по с/ф)')  ;       {14}
- //cbxList.ComboBox.Items.Add('Кредит (04)')  ;                     {17}
- cbxList.ComboBox.Items.Add('Сверка для заказчика ТЭК') ;             {15}
- cbxList.ComboBox.Items.Add('Объем и стоимость перевозок')  ;         {16}
- cbxList.ComboBox.Items.Add('Сводная ведомость по грузу склад1')  ;    {17}
- cbxList.ComboBox.Items.Add('Сводная ведомость по грузу склад2')  ;    {18}
- cbxList.ComboBox.Items.Add('Сводная ведомость по Ч/Л')  ;             {19}
- cbxList.ComboBox.Items.Add('Сводка по операторам')  ;                  {20}
- cbxList.ComboBox.Items.Add('Сводка для счетов')  ;                      {21}
- cbxList.ComboBox.Items.Add('Книга доходов и расходов')  ;               {22}
- cbxList.ComboBox.Items.Add('Объем и стоимость перевозок ТЭК')  ;        {23}
- //cbxList.ComboBox.Items.Add('Сводная ведомость 2007')  ;                 {27}
- cbxList.ComboBox.Items.Add('Сводная ведомость ТЭК')  ;                {24}
- cbxList.ComboBox.Items.Add('Сводка по "+" сальдо')  ;                {25}
- cbxList.ComboBox.Items.Add('Проверка счет-фактур')  ;                {26}
- cbxList.ComboBox.Items.Add('Отправки без счет-фактур')  ;             {27}
- cbxList.ComboBox.Items.Add('Пропущенные номера счет-фактур')  ;      {28}
- cbxList.ComboBox.Items.Add('Сводка по не вернувшимся актам ТЭК')  ;  {29}
- //cbxList.ComboBox.Items.Add('Кредит (04)')  ;
- //------------------------------------
+  cbxList.ComboBox.DropDownCount:=30;
+
+  cbxList.ComboBox.Items.Add('Приходные ордера') ;      {0}
+  cbxList.ComboBox.Items.Add('Платежки')    ;            {1}
+  cbxList.ComboBox.Items.Add('Сверка для заказчика') ;    {2}
+  //cbxList.ComboBox.Items.Add('Ж/д отправки')    ;          {3}
+  cbxList.ComboBox.Items.Add('Объем перевозок')  ;         {3}
+  cbxList.ComboBox.Items.Add('Сводка по счет-фактурам');     {4}
+  cbxList.ComboBox.Items.Add('Договора')  ;                {5}
+  cbxList.ComboBox.Items.Add('Книга продаж')  ;             {6}
+  cbxList.ComboBox.Items.Add('Платежные поручения')  ;     {7}
+  cbxList.ComboBox.Items.Add('Кредит')  ;                  {8}
+  cbxList.ComboBox.Items.Add('Сводка по не вернувшимся актам')  ;  {9}
+  cbxList.ComboBox.Items.Add('Сводка по "-" сальдо')  ;            {10}
+  //cbxList.ComboBox.Items.Add('Сводка по платежным поручениям (ж/д)');   {12}
+  cbxList.ComboBox.Items.Add('Сводная ведомость')  ;            {11}
+  cbxList.ComboBox.Items.Add('Объем перевозок (пр.)')  ;       {12}
+  cbxList.ComboBox.Items.Add('Кредит (пр.)')  ;                   {13}
+  cbxList.ComboBox.Items.Add('Объем перевозок (по с/ф)')  ;       {14}
+  //cbxList.ComboBox.Items.Add('Кредит (04)')  ;                     {17}
+  cbxList.ComboBox.Items.Add('Сверка для заказчика ТЭК') ;             {15}
+  cbxList.ComboBox.Items.Add('Объем и стоимость перевозок')  ;         {16}
+  cbxList.ComboBox.Items.Add('Сводная ведомость по грузу склад1')  ;    {17}
+  cbxList.ComboBox.Items.Add('Сводная ведомость по грузу склад2')  ;    {18}
+  cbxList.ComboBox.Items.Add('Сводная ведомость по Ч/Л')  ;             {19}
+  cbxList.ComboBox.Items.Add('Сводка по операторам')  ;                  {20}
+  cbxList.ComboBox.Items.Add('Сводка для счетов')  ;                      {21}
+  cbxList.ComboBox.Items.Add('Книга доходов и расходов')  ;               {22}
+  cbxList.ComboBox.Items.Add('Объем и стоимость перевозок ТЭК')  ;        {23}
+  //cbxList.ComboBox.Items.Add('Сводная ведомость 2007')  ;                 {27}
+  cbxList.ComboBox.Items.Add('Сводная ведомость ТЭК')  ;                {24}
+  cbxList.ComboBox.Items.Add('Сводка по "+" сальдо')  ;                {25}
+  cbxList.ComboBox.Items.Add('Проверка счет-фактур')  ;                {26}
+  cbxList.ComboBox.Items.Add('Отправки без счет-фактур')  ;             {27}
+  cbxList.ComboBox.Items.Add('Пропущенные номера счет-фактур')  ;      {28}
+  cbxList.ComboBox.Items.Add('Сводка по не вернувшимся актам ТЭК')  ;  {29}
+  //cbxList.ComboBox.Items.Add('Кредит (04)')  ;
+  //------------------------------------
   cbxSort.ComboBox.Items.Add('Заказчик');
   cbxSort.ComboBox.Items.Add('Дата')    ;
- // cbxSort.ComboBox.Items.Add('Город')    ;
- //cbxSort.ComboBox.Items.Add('')
+  // cbxSort.ComboBox.Items.Add('Город')    ;
+  //cbxSort.ComboBox.Items.Add('')
 
-
- //cbZak.SQLComboBox.Sorted:=true;
+  //cbZak.SQLComboBox.Sorted:=true;
 end;
 
 procedure TFormSelect.eExitClick(Sender: TObject);
 begin
-close;
+  close;
 end;
 
 procedure TFormSelect.btPrintClick(Sender: TObject);
 var
 //   C:TextFile;
-   cond,cond1,cd,vs,str,credit1:string;
-   l,i,sort,Num,CLI:integer;
-   ReportMakerWP:TReportMakerWP;
-   Fil,FilIni,FilOut:string;
-   str1:TStringList;
-   q,qCL:TQuery;
-   Sum,WR,WC,F,ASP,Iv,ASPack:real;
-   p,w1,w2,w3,w4,w5: OleVariant;
-   SG,NG,SAv,NAV,SA,NA,SP,NP,SPA,NPA,SS,NS,SSA,NSA,SNDS:real;
-   n,FilOp:integer;
-   IdSend: longint;
-//label T;
-label FO;
+  cond, cond1, cd, vs, str, credit1: string;
+  l, i, sort,Num,CLI:integer;
+  ReportMakerWP:TReportMakerWP;
+  Fil,FilIni,FilOut:string;
+  str1:TStringList;
+  q, qCL: TQuery;
+  Sum,WR,WC,F,ASP,Iv,ASPack:real;
+  p,w1,w2,w3,w4,w5: OleVariant;
+  SG,NG,SAv,NAV,SA,NA,SP,NP,SPA,NPA,SS,NS,SSA,NSA,SNDS:real;
+  n,FilOp:integer;
+  IdSend: longint;
+  //label T;
+  label FO;
 begin
-cond:='';
-cond1:='';
-cd:='';
-l:=cbxList.ComboBox.ItemIndex;
- sort:=cbxSort.ComboBox.ItemIndex;
-if l=-1 then
-begin
-Application.MessageBox('Выберите тип списка для печати!','Ошибка!',0);
-exit
-end;
-if  ((LabelEditDate1.Text='  .  .    ') or (LabelEditDate2.Text='  .  .    '))
-    and (l<>5) and (l<>10) and (l<>25) and (l<>26)
-then begin
-      Application.MessageBox('Введите даты!','Ошибка!',0);
-      exit
-     end;
-//--------------------
-if (l<>5) and (l<>9) and (l<>10) and (l<>25) and (l<>26)
-then      {для всех кроме договоров и сводки по не верн. актам}
-begin
-try
-if  (strToDate(LabelEditDate1.Text) > StrToDate(LabelEditDate2.Text))  then
+  cond:='';
+  cond1:='';
+  cd:='';
+  l:=cbxList.ComboBox.ItemIndex;
+  sort:=cbxSort.ComboBox.ItemIndex;
+  if l=-1 then
   begin
-      Application.MessageBox('Дата "с" больше даты "по"!','Ошибка!',0);
-      exit
+    Application.MessageBox('Выберите тип списка для печати!','Ошибка!',0);
+    exit
   end;
-{  if (l=27) and (strToDate(LabelEditDate1.Text)< strToDate('01.01.2007'))then
+  if  ((LabelEditDate1.Text='  .  .    ') or (LabelEditDate2.Text='  .  .    '))
+    and (l<>5) and (l<>10) and (l<>25) and (l<>26) then
   begin
-      Application.MessageBox('Дата "с" меньше даты "01.01.2007"!','Ошибка!',0);
+    Application.MessageBox('Введите даты!','Ошибка!',0);
+    exit
+  end;
+  //--------------------
+  if (l<>5) and (l<>9) and (l<>10) and (l<>25) and (l<>26) then {для всех кроме договоров и сводки по не верн. актам}
+  begin
+    try
+      if (strToDate(LabelEditDate1.Text) > StrToDate(LabelEditDate2.Text)) then
+      begin
+        Application.MessageBox('Дата "с" больше даты "по"!','Ошибка!',0);
+        exit
+      end;
+      { if (l=27) and (strToDate(LabelEditDate1.Text)< strToDate('01.01.2007'))then
+      begin
+        Application.MessageBox('Дата "с" меньше даты "01.01.2007"!','Ошибка!',0);
+        exit
+      end  }
+    except
+      Application.MessageBox('Проверьте правильность введенных дат!','Ошибка!',0);
       exit
-  end  }
-except
- Application.MessageBox('Проверьте правильность введенных дат!','Ошибка!',0);
- exit
-end;
-end;
-//-------------------------
-try
-ReportMakerWP:=TReportMakerWP.Create(Application);
-ReportMakerWP.ClearParam;
-cond:='';
-
-Case l of
-0:  {Приходные ордера}
-    begin
-    if sort=0 then cond:='ClientName'
-     else if sort=1 then cond:='Dat' ;
-     ReportMakerWP.AddParam('1='+cond);
-     cond:='';
-     cond1:='';
-     if LabelEditDate1.text<>'  .  .    ' then
-        cond1:='Dat>='''+FormatDateTime('yyyy-mm-dd',StrToDate(LabelEditDate1.text))+'''';
+    end;
+  end;
+  //-------------------------
+  try
+    ReportMakerWP:=TReportMakerWP.Create(Application);
+    ReportMakerWP.ClearParam;
+    cond:='';
+    Case l of
+      0:  {Приходные ордера}
+      begin
+        if sort=0 then
+          cond:='ClientName'
+        else
+          if sort=1 then
+            cond:='Dat' ;
+        ReportMakerWP.AddParam('1='+cond);
+        cond:='';
+        cond1:='';
+        if LabelEditDate1.text<>'  .  .    ' then
+          cond1:='Dat>='''+FormatDateTime('yyyy-mm-dd',StrToDate(LabelEditDate1.text))+'''';
         cond:= 'Dat>='+FormatDateTime('yyyy-mm-dd',StrToDate(LabelEditDate1.text));
 
-     if LabelEditDate2.text<>'  .  .    ' then
-         if cond<>'' then cond:=cond +' and ';
-         if cond1<>'' then cond1:=cond1 +' and ';
+        if LabelEditDate2.text<>'  .  .    ' then
+          if cond<>'' then
+            cond:=cond +' and ';
+        if cond1<>'' then
+          cond1:=cond1 +' and ';
         cond1:=cond1+'Dat<='''+FormatDateTime('yyyy-mm-dd',StrToDate(LabelEditDate2.text))+'''';
         cond:=cond+ 'Dat<='''+FormatDateTime('yyyy-mm-dd',StrToDate(LabelEditDate2.text))+'''';
-     if cbZak.SQLComboBox.GetData<>0 then
-     begin
-      if cond<>'' then cond:=cond+' and Client_Ident='+IntToStr(cbZak.SQLComboBox.GetData)
-        else cond:='Client_Ident='+IntToStr(cbZak.SQLComboBox.GetData);
-      if cond1<>'' then cond1:=cond1+' and Client_Ident='+IntToStr(cbZak.SQLComboBox.GetData)
-        else cond1:='Client_Ident='+IntToStr(cbZak.SQLComboBox.GetData);
-     end;
-     ReportMakerWP.AddParam('2='+cond1);
-     if  LabelEditDate1.text<>'  .  .    ' then
-     ReportMakerWP.AddParam('3='+'С '+LabelEditDate1.text)
-      else ReportMakerWP.AddParam('3='+'');
-     if  LabelEditDate2.text<>'  .  .    ' then
-     ReportMakerWP.AddParam('4='+'по '+LabelEditDate2.text)
-       else ReportMakerWP.AddParam('4='+'');
-     ReportMakerWP.AddParam('5='+'Приходные ордера');
-     q:=sql.select('`Order`','',cond1,'');
-     Sum:=0;
-     while (not q.eof) do
-     begin
-      Sum:=Sum+q.fieldByName('SumNDS').asFloat;
-      q.next;
-     end;
-     q.Free;
-     ReportMakerWP.AddParam('6='+StrTo00(FloatToStr(Sum)));
-     Fil:='PayReceipt'  ;
-     FilIni:='PayReceipt'  ;
+        if cbZak.SQLComboBox.GetData<>0 then
+        begin
+          if cond<>'' then
+            cond:=cond+' and Client_Ident='+IntToStr(cbZak.SQLComboBox.GetData)
+          else
+            cond:='Client_Ident='+IntToStr(cbZak.SQLComboBox.GetData);
+          if cond1<>'' then
+            cond1:=cond1+' and Client_Ident='+IntToStr(cbZak.SQLComboBox.GetData)
+          else cond1:='Client_Ident='+IntToStr(cbZak.SQLComboBox.GetData);
+        end;
+        ReportMakerWP.AddParam('2='+cond1);
+        if  LabelEditDate1.text<>'  .  .    ' then
+          ReportMakerWP.AddParam('3='+'С '+LabelEditDate1.text)
+        else
+          ReportMakerWP.AddParam('3='+'');
+        if LabelEditDate2.text<>'  .  .    ' then
+          ReportMakerWP.AddParam('4='+'по '+LabelEditDate2.text)
+        else ReportMakerWP.AddParam('4='+'');
+          ReportMakerWP.AddParam('5='+'Приходные ордера');
+        q:=sql.select(order_table,'',cond1,'');
+        Sum:=0;
+        while (not q.eof) do
+        begin
+          Sum:=Sum+q.fieldByName('SumNDS').asFloat;
+          q.next;
+        end;
+        q.Free;
+        ReportMakerWP.AddParam('6='+StrTo00(FloatToStr(Sum)));
+        Fil:='PayReceipt'  ;
+        FilIni:='PayReceipt'  ;
     end;
 1:  {Платежки}
     begin
-    Cond:='Acronym';
-     if sort=0 then cond:='Acronym'
-     else if sort=1 then cond:='Dat' ;
-     ReportMakerWP.AddParam('1='+cond);
-     cond:='';
-     if LabelEditDate1.text<>'  .  .    ' then
+      Cond:='Acronym';
+      if sort=0 then
+        cond:='Acronym'
+      else
+        if sort=1 then
+          cond:='Dat' ;
+      ReportMakerWP.AddParam('1='+cond);
+      cond:='';
+      if LabelEditDate1.text<>'  .  .    ' then
         cond:='Dat>='''+FormatDateTime('yyyy-mm-dd',StrToDate(LabelEditDate1.text))+'''';
 
-     if LabelEditDate2.text<>'  .  .    ' then
-     if cond<>'' then cond:=cond +' and ';
+      if LabelEditDate2.text<>'  .  .    ' then
+      if cond<>'' then cond:=cond +' and ';
         cond:=cond+'Dat<='''+FormatDateTime('yyyy-mm-dd',StrToDate(LabelEditDate2.text))+'''';
-     if cbZak.SQLComboBox.GetData<>0 then
-     begin
-      if cond<>'' then cond:=cond+' and Client_Ident='+IntToStr(cbZak.SQLComboBox.GetData)
-        else cond:='Client_Ident='+IntToStr(cbZak.SQLComboBox.GetData);
-     end;
-     ReportMakerWP.AddParam('2='+cond);
-     if  LabelEditDate1.text<>'  .  .    ' then
-     ReportMakerWP.AddParam('3='+'С '+LabelEditDate1.text)
-      else ReportMakerWP.AddParam('3='+'');
-     if  LabelEditDate2.text<>'  .  .    ' then
-     ReportMakerWP.AddParam('4='+'по '+LabelEditDate2.text)
-       else ReportMakerWP.AddParam('4='+'');
-     ReportMakerWP.AddParam('5='+'Платежки');
-     q:=sql.select('PaySheet','',cond,'');
+      if cbZak.SQLComboBox.GetData<>0 then
+      begin
+        if cond<>'' then
+          cond:=cond+' and Client_Ident='+IntToStr(cbZak.SQLComboBox.GetData)
+        else
+          cond:='Client_Ident='+IntToStr(cbZak.SQLComboBox.GetData);
+      end;
+      ReportMakerWP.AddParam('2='+cond);
+      if LabelEditDate1.text<>'  .  .    ' then
+        ReportMakerWP.AddParam('3='+'С '+LabelEditDate1.text)
+      else
+        ReportMakerWP.AddParam('3='+'');
+      if LabelEditDate2.text<>'  .  .    ' then
+        ReportMakerWP.AddParam('4='+'по '+LabelEditDate2.text)
+      else
+        ReportMakerWP.AddParam('4='+'');
+      ReportMakerWP.AddParam('5='+'Платежки');
+      q:=sql.select(paysheet_table,'',cond,'');
      Sum:=0;
      while (not q.eof) do
      begin
@@ -268,7 +304,7 @@ Case l of
         else ReportMakerWP.AddParam('18='+'');
 
 //-----------------------------------------------------------------
-    q:=sql.select('`Order`','SumNDS','Client_Ident='+IntTostr(cbZak.SQLComboBox.GetData)+
+    q:=sql.select(order_table,'SumNDS','Client_Ident='+IntTostr(cbZak.SQLComboBox.GetData)+
                   ' and dat>='+sql.MakeStr(FormatDateTime('yyyy-mm-dd',StrToDate(LabelEditDate1.text)))+
                   ' and dat<='+sql.MakeStr(FormatDateTime('yyyy-mm-dd',StrToDate(LabelEditDate2.text))),'');
     Sum:=0;
@@ -280,7 +316,7 @@ Case l of
     q.Free;
     ReportMakerWP.AddParam('7='+StrTo00(FloatToStr(Sum)));
 //--------------------------------------------------------------------
-     q:=sql.select('PaySheet','Sum','Client_Ident='+IntTostr(cbZak.SQLComboBox.GetData)+
+     q:=sql.select(paysheet_table, 'Sum','Client_Ident='+IntTostr(cbZak.SQLComboBox.GetData)+
                   ' and dat>='+sql.MakeStr(FormatDateTime('yyyy-mm-dd',StrToDate(LabelEditDate1.text)))+
                   ' and dat<='+sql.MakeStr(FormatDateTime('yyyy-mm-dd',StrToDate(LabelEditDate2.text))),'');
     WR:=0;
@@ -292,7 +328,7 @@ Case l of
     q.Free;
     ReportMakerWP.AddParam('8='+StrTo00(FloatToStr(WR)));
 //-------------------------------------------------------------------------
- q:=sql.select('Send','SumCount','Client_Ident='+IntTostr(cbZak.SQLComboBox.GetData)+
+ q:=sql.select(send_table,'SumCount','Client_Ident='+IntTostr(cbZak.SQLComboBox.GetData)+
                   ' and `Start`>='+sql.MakeStr(FormatDateTime('yyyy-mm-dd',StrToDate(LabelEditDate1.text)))+
                   ' and `Start`<='+sql.MakeStr(FormatDateTime('yyyy-mm-dd',StrToDate(LabelEditDate2.text))),'');
     WC:=0;
@@ -765,8 +801,8 @@ NG:=0;    {отгружено}
 IF (L=11) {or (L=27)} THEN  {выбираем только те отправки на которые выставлены счет фактуры в указанный период}
   begin
 
-     q:=sql.Select('Send','SumCount',
-     'Invoice_ident in (Select Ident from Invoice where Data>=' +
+     q:=sql.Select(send_table, 'SumCount',
+     'Invoice_ident in (Select Ident from ' + invoice_table+ ' where Data>=' +
           sql.MakeStr(FormatDateTime('yyyy-mm-dd',StrToDate(LabelEditDate1.Text)))+
           ' and Data<='+sql.MakeStr(FormatDateTime('yyyy-mm-dd',StrToDate(LabelEditDate2.Text)))+
           ' and Clients_Ident='+IntToStr(CLI)+' ) ','')
@@ -1440,7 +1476,7 @@ q.Free;
        cd:=cd+','+sql.MakeStr(qcl.fieldByName('Acronym').asString) ;
 //-------------------------------------------
            {дата последней оплаты}
-       q:=sql.Select('PaySheet','Dat','Client_Ident='+qcl.fieldbyname('Ident').asString,
+       q:=sql.Select(paysheet_table, 'Dat','Client_Ident='+qcl.fieldbyname('Ident').asString,
                'Dat DESC');
        if not q.eof then
           cd:=cd+','+ sql.MakeStr(FormatDateTime('yyyy-mm-dd',StrToDate(q.FieldByName('Dat').AsString)))
@@ -1504,12 +1540,12 @@ q.Free;
 
     str1:=TStringList.Create;
     str1.Add('alter view Checkinvoice ');//+
-    str1.Add('as select invoice.ident, invoice.number,');//+
-    str1.Add('invoice.Sum as invoicesum,');//+
-    str1.Add('invoice.Data as data,'); //+
-    str1.Add('Sum(send.sumcount) as sendsum from invoice');//+
+    str1.Add('as select ' + invoice_table + '.ident, ' + invoice_table+ '.number,');//+
+    str1.Add('' + invoice_table+ '.Sum as invoicesum,');//+
+    str1.Add('' + invoice_table+ '.Data as data,'); //+
+    str1.Add('Sum(send.sumcount) as sendsum from ' + invoice_table+ '');//+
     str1.Add('left outer join send on ');//+
-    str1.Add('send.invoice_ident=invoice.ident ');//+
+    str1.Add('send.invoice_ident=' + invoice_table+ '.ident ');//+
     str1.Add(cond1);//+
     str1.Add('group by ident ');//+
 

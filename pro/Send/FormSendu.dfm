@@ -1,6 +1,6 @@
 object FormSend: TFormSend
-  Left = 380
-  Top = 196
+  Left = 90
+  Top = 27
   Width = 926
   Height = 728
   HorzScrollBar.ButtonSize = 20

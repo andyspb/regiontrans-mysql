@@ -1,6 +1,6 @@
 object FMenu: TFMenu
-  Left = 109
-  Top = 54
+  Left = 177
+  Top = 0
   Width = 825
   Height = 60
   HorzScrollBar.Color = clBlue
