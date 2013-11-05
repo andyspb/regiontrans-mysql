@@ -1,6 +1,6 @@
 object FormAkt: TFormAkt
-  Left = 384
-  Top = 140
+  Left = 115
+  Top = 90
   Width = 398
   Height = 317
   Caption = #1040#1082#1090'-'#1058#1069#1050

@@ -1,6 +1,6 @@
 object FormInvoice: TFormInvoice
-  Left = 838
-  Top = 242
+  Left = 141
+  Top = 135
   Width = 393
   Height = 304
   Caption = #1057#1095#1077#1090' '#1092#1072#1082#1090#1091#1088#1072' (period)'
