@@ -1,6 +1,6 @@
 object FormAccountTEK: TFormAccountTEK
-  Left = 357
-  Top = 146
+  Left = 233
+  Top = 155
   Width = 374
   Height = 270
   Caption = #1057#1095#1077#1090' - '#1058#1069#1050

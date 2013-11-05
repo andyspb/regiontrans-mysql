@@ -1,6 +1,6 @@
 object FormAccountTekBox: TFormAccountTekBox
-  Left = 399
-  Top = 269
+  Left = 150
+  Top = 194
   Width = 696
   Height = 480
   Caption = #1057#1095#1077#1090#1072'-'#1058#1069#1050
@@ -65,7 +65,7 @@ object FormAccountTekBox: TFormAccountTekBox
     ToolBarButton = True
     FileName = 
       'EDIT_BMP'#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0 +
-      #0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0
+      #0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0
   end
   object BAdd: TBMPBtn
     Left = 108
@@ -88,7 +88,7 @@ object FormAccountTekBox: TFormAccountTekBox
     ToolBarButton = True
     FileName = 
       'ADD_BMP'#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0 +
-      #0#0#0#0#0#0#0#0#0#0#0#0#0#0#0
+      #0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0
   end
   object BDel: TBMPBtn
     Left = 209
@@ -111,7 +111,7 @@ object FormAccountTekBox: TFormAccountTekBox
     ToolBarButton = True
     FileName = 
       'DEL_BMP'#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0 +
-      #0#0#0#0#0#0#0#0#0#0#0#0#0#0#0
+      #0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0
   end
   object BExit: TBMPBtn
     Left = 312
@@ -134,6 +134,6 @@ object FormAccountTekBox: TFormAccountTekBox
     ToolBarButton = True
     FileName = 
       'EXIT_BMP'#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0 +
-      #0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0
+      #0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0
   end
 end
