@@ -662,8 +662,8 @@ str1.Add(' where '+ cond);
 sqlGrid1.ExecSQL(str1);
 str1.free;}
    SqlGrid1.ExecTableCond('Sends',cond);
-
-FilterDiscard.Enabled := false;
+  // FIX IT
+  // FilterDiscard.Enabled := false;
 
 end;
 
@@ -691,7 +691,7 @@ begin
       eFilter.Enabled := true
   else
       eFilter.Enabled := false;
-  FilterDiscard.Enabled :=false;
+  // FilterDiscard.Enabled :=false;
 end;
 
 end.
