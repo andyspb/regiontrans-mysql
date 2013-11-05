@@ -13,7 +13,6 @@ bin/*
 *.dcu
 *.MB
 pro/*.MB
-pro/*.~*
  
 *.pydevproject
 .project
