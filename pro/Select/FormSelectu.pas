@@ -5,39 +5,39 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, toolbtn, StdCtrls, Buttons, BMPBtn, ToolWin, ComCtrls, Sqlctrls,
-  LblCombo,Printers, LblEdtDt, ExtCtrls, TSQLCLS, SqlGrid, DB,
-   DBTables, Lbsqlcmb, OleServer, Word2000,XMLDOM, DBClient, MConnect, EntrySec;
+  LblCombo, Printers, LblEdtDt, ExtCtrls, TSQLCLS, SqlGrid, DB,
+  DBTables, Lbsqlcmb, OleServer, Word2000, XMLDOM, DBClient, MConnect, EntrySec;
 
 type
   TFormSelect = class(TForm)
-    ToolBar1: TToolBar;
-    btPrint: TBMPBtn;
-    eExit: TToolbarButton;
-    Panel1: TPanel;
-    cbxList: TLabelComboBox;
-    Panel2: TPanel;
-    LabelEditDate1: TLabelEditDate;
-    LabelEditDate2: TLabelEditDate;
-    Panel3: TPanel;
-    cbZak: TLabelSQLComboBox;
-    Panel4: TPanel;
-    cbxSort: TLabelComboBox;
-    WordApplication1: TWordApplication;
-    cbCity: TLabelSQLComboBox;
-    RadioGroup1: TRadioGroup;
-    Panel5: TPanel;
-    cbNumber: TLabelSQLComboBox;
-    procedure FormCreate(Sender: TObject);
-    procedure eExitClick(Sender: TObject);
-    procedure btPrintClick(Sender: TObject);
-    procedure cbxListChange(Sender: TObject);
-    procedure FormKeyDown(Sender: TObject; var Key: Word;
-      Shift: TShiftState);
-  private
-    { Private declarations }
-  public
-    { Public declarations }
-  end;
+  ToolBar1: TToolBar;
+  btPrint: TBMPBtn;
+  eExit: TToolbarButton;
+  Panel1: TPanel;
+  cbxList: TLabelComboBox;
+  Panel2: TPanel;
+  LabelEditDate1: TLabelEditDate;
+  LabelEditDate2: TLabelEditDate;
+  Panel3: TPanel;
+  cbZak: TLabelSQLComboBox;
+  Panel4: TPanel;
+  cbxSort: TLabelComboBox;
+  WordApplication1: TWordApplication;
+  cbCity: TLabelSQLComboBox;
+  RadioGroup1: TRadioGroup;
+  Panel5: TPanel;
+  cbNumber: TLabelSQLComboBox;
+
+  procedure FormCreate(Sender: TObject);
+  procedure eExitClick(Sender: TObject);
+  procedure btPrintClick(Sender: TObject);
+  procedure cbxListChange(Sender: TObject);
+  procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+private
+  { Private declarations }
+public
+  { Public declarations }
+end;
 
 var
   FormSelect: TFormSelect;
@@ -145,6 +145,7 @@ begin
   cd:='';
   l:=cbxList.ComboBox.ItemIndex;
   sort:=cbxSort.ComboBox.ItemIndex;
+//--------------------
   if l=-1 then
   begin
     Application.MessageBox('Выберите тип списка для печати!','Ошибка!',0);
@@ -156,7 +157,8 @@ begin
     Application.MessageBox('Введите даты!','Ошибка!',0);
     exit
   end;
-  //--------------------
+
+//--------------------
   if (l<>5) and (l<>9) and (l<>10) and (l<>25) and (l<>26) then {для всех кроме договоров и сводки по не верн. актам}
   begin
     try
@@ -175,7 +177,6 @@ begin
       exit
     end;
   end;
-  //-------------------------
   try
     ReportMakerWP:=TReportMakerWP.Create(Application);
     ReportMakerWP.ClearParam;
@@ -233,40 +234,42 @@ begin
         Fil:='PayReceipt'  ;
         FilIni:='PayReceipt'  ;
     end;
+//--------------------
 1:  {Платежки}
     begin
-      Cond:='Acronym';
-      if sort=0 then
-        cond:='Acronym'
+      Cond := 'Acronym';
+      if (sort = 0) then
+        cond := 'Acronym'
       else
-        if sort=1 then
-          cond:='Dat' ;
+        if (sort = 1) then
+          cond := 'Dat' ;
       ReportMakerWP.AddParam('1='+cond);
-      cond:='';
-      if LabelEditDate1.text<>'  .  .    ' then
+      cond := '';
+      if (LabelEditDate1.text <> '  .  .    ') then
         cond:='Dat>='''+FormatDateTime('yyyy-mm-dd',StrToDate(LabelEditDate1.text))+'''';
 
-      if LabelEditDate2.text<>'  .  .    ' then
-      if cond<>'' then cond:=cond +' and ';
-        cond:=cond+'Dat<='''+FormatDateTime('yyyy-mm-dd',StrToDate(LabelEditDate2.text))+'''';
-      if cbZak.SQLComboBox.GetData<>0 then
+      if (LabelEditDate2.text<>'  .  .    ') then
+      if (cond <> '') then
+        cond := cond +' and ';
+      cond := cond+'Dat<='''+FormatDateTime('yyyy-mm-dd',StrToDate(LabelEditDate2.text))+'''';
+      if (cbZak.SQLComboBox.GetData <> 0) then
       begin
-        if cond<>'' then
+        if (cond <> '') then
           cond:=cond+' and Client_Ident='+IntToStr(cbZak.SQLComboBox.GetData)
         else
           cond:='Client_Ident='+IntToStr(cbZak.SQLComboBox.GetData);
       end;
       ReportMakerWP.AddParam('2='+cond);
-      if LabelEditDate1.text<>'  .  .    ' then
+      if (LabelEditDate1.text <> '  .  .    ') then
         ReportMakerWP.AddParam('3='+'С '+LabelEditDate1.text)
       else
         ReportMakerWP.AddParam('3='+'');
-      if LabelEditDate2.text<>'  .  .    ' then
+      if (LabelEditDate2.text<>'  .  .    ') then
         ReportMakerWP.AddParam('4='+'по '+LabelEditDate2.text)
       else
         ReportMakerWP.AddParam('4='+'');
       ReportMakerWP.AddParam('5='+'Платежки');
-      q:=sql.select(paysheet_table,'',cond,'');
+      q := sql.select(paysheet_table,'',cond,'');
      Sum:=0;
      while (not q.eof) do
      begin
@@ -409,7 +412,7 @@ end else
 //    CLI:=0;  {кол мест}
 //    ASPack:=0;  {услуги нал}
 //    Num:=0;
-//    q:=sql.select('Sends','*',cond,'');
+//    q:=sql.select(sends_view,'*',cond,'');
 //    while not q.eof do
 //    begin
 //    Num:=Num+1;
@@ -1093,7 +1096,7 @@ ReportMakerWP.AddParam('3='+'на '+FormatDateTime('dd.mm.yyyy',now));
      fil:= '';
      str:='';
      FilIni:='';
-     vs:='Sends';
+     vs:=sends_view;
    if l=16 then
     begin
     cond := ' PersonType_Ident=1 ' ;
@@ -1188,7 +1191,7 @@ ReportMakerWP.AddParam('3='+'на '+FormatDateTime('dd.mm.yyyy',now));
      cond1:= cond1 + ' and (ClientAcr like ''"%'')'  ;
 
 //  q:=sql.Select('VolumeSumSends ','*','','');
- q:=sql.Select('Sends ','*',cond1,'') ;
+ q:=sql.Select(sends_view,'*',cond1,'') ;
  Sql.Delete('PrintVolSumSend','');
  Sum:=0;
  Wr:=0;
@@ -1382,7 +1385,7 @@ q.Free;
     str1.Add('as select Inspector_Ident,');//+
     str1.Add('PeopleFIO,');//+
     str1.Add('Count(Inspector_Ident) as Counts ');//+
-    str1.Add('from sends where ');//+
+    str1.Add('from ' + sends_view + ' where ');//+
     str1.Add(cond1);
     str1.Add(' Group by Inspector_Ident, PeopleFIO;');//;
 
@@ -1414,7 +1417,7 @@ q.Free;
     str1.Add('ClientSenderName,');//+
     str1.Add('AcceptorName,');//+
     str1.Add('SumCount ');//+
-    str1.Add('from sends where ');//+
+    str1.Add('from ' + sends_view + ' where ');//+
     str1.Add(cond1+' and Client_Ident != Client_Ident_Sender;');
 
     sql.ExecSQL(str1);
@@ -1575,7 +1578,7 @@ q.Free;
            ' DateSupp >= ' + sql.MakeStr(cond) + ' and '+
            ' DateSupp <= ' + sql.MakeStr(cond1) + ' and (CountInvoice is not NULL) '+
            ' and (not((ClientAcr like ''"%''))) ';
-    q:=sql.select('Sends','',str,'');
+    q:=sql.select(sends_view,'',str,'');
     if q.Eof then
       begin
         application.MessageBox('На указанный период нет отправок без счет-фактур!','Сообщение!',0);
@@ -2079,8 +2082,8 @@ end;
 
 procedure TFormSelect.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
-if key = VK_Return
-  then btPrintClick(Sender)
+if (key = VK_Return) then
+  btPrintClick(Sender)
 end;
 
 end.
