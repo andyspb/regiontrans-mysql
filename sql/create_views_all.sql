@@ -48,7 +48,8 @@ AS `NDSSt`,`invoice_all`.`SumStAg`
 AS `SumStAg`,`invoice_all`.`NDSStAg` 
 AS `NDSStAg`,(substr(`invoice_all`.`Number`,-(4),(-(length(`invoice_all`.`Number`)) + 3)) + 0) 
 AS `NUM`,`invoice_all`.`ReportReturn` 
-AS `ReportReturn`,`severtrans`.`Report_return`(`invoice_all`.`ReportReturn`) AS `ReportReturnName` from (`invoice_all` join `clients` on((`invoice_all`.`Clients_Ident` = `clients`.`Ident`)))$$
+AS `ReportReturn`,`severtrans`.`Report_return`(`invoice_all`.`ReportReturn`) 
+AS `ReportReturnName` from (`invoice_all` join `clients` on((`invoice_all`.`Clients_Ident` = `clients`.`Ident`)))$$
 
 delimiter $$
 CREATE or replace ALGORITHM=UNDEFINED DEFINER=`dba`@`localhost` SQL SECURITY DEFINER VIEW `orders_all` 
@@ -67,15 +68,19 @@ AS `DatNow` from (`order_all` left join `clients` on((`order_all`.`Client_Ident`
 delimiter $$
 
 CREATE or replace ALGORITHM=UNDEFINED DEFINER=`dba`@`localhost` SQL SECURITY DEFINER VIEW `orderstek_all` 
-AS select `order_all`.`Ident` AS `Ident`,`order_all`.`Client_Ident` AS `Client_Ident`,`clientstek`.`Acronym` AS `ClientsName`,`order_all`.`Number` AS `Number`,(substr(`order_all`.`Number`,1,(length(`order_all`.`Number`) - 3)) + 0) 
-AS `Num`,`order_all`.`Dat` AS `Dat`,year(`order_all`.`Dat`) AS `Year`,`order_all`.`Sum` AS `Sum`,`order_all`.`NDS` AS `NDS`,concat(`order_all`.`Number`,';',dayofmonth(`order_all`.`Dat`),'.',month(`order_all`.`Dat`),'.',year(`order_all`.`Dat`)) 
-AS `NumDat`,concat(cast('Оплата перевозки/' as char character set cp1251),`clientstek`.`Acronym`) AS `ClN`,`order_all`.`SumNDS` AS `SumNDS` from (`clientstek` left join `order_all` on((`order_all`.`Client_Ident` = `clientstek`.`Ident`))) 
+AS select `order_all`.`Ident` AS `Ident`,`order_all`.`Client_Ident` AS `Client_Ident`,`clientstek`.`Acronym` 
+AS `ClientsName`,`order_all`.`Number` AS `Number`,(substr(`order_all`.`Number`,1,(length(`order_all`.`Number`) - 3)) + 0) 
+AS `Num`,`order_all`.`Dat` AS `Dat`,year(`order_all`.`Dat`) AS `Year`,`order_all`.`Sum` AS `Sum`,`order_all`.`NDS` 
+AS `NDS`,concat(`order_all`.`Number`,';',dayofmonth(`order_all`.`Dat`),'.',month(`order_all`.`Dat`),'.',year(`order_all`.`Dat`)) 
+AS `NumDat`,concat(cast('Оплата перевозки/' as char character set cp1251),`clientstek`.`Acronym`) AS `ClN`,`order_all`.`SumNDS` 
+AS `SumNDS` from (`clientstek` left join `order_all` on((`order_all`.`Client_Ident` = `clientstek`.`Ident`))) 
 where (`order_all`.`Dat` > '2006-10-31')$$
 
 delimiter $$
 
 CREATE or replace ALGORITHM=UNDEFINED DEFINER=`dba`@`localhost` SQL SECURITY DEFINER VIEW `paysheetview_all` 
-AS select `paysheet_all`.`Ident` AS `Ident`,`paysheet_all`.`Client_Ident` AS `Client_Ident`,`clients`.`Acronym` AS `Acronym`,`paysheet_all`.`Number` AS `Number`,`paysheet_all`.`Dat` AS `Dat`,`paysheet_all`.`Sum` 
+AS select `paysheet_all`.`Ident` AS `Ident`,`paysheet_all`.`Client_Ident` AS `Client_Ident`,`clients`.`Acronym` 
+AS `Acronym`,`paysheet_all`.`Number` AS `Number`,`paysheet_all`.`Dat` AS `Dat`,`paysheet_all`.`Sum` 
 AS `Sum` from (`paysheet_all` left join `clients` on((`paysheet_all`.`Client_Ident` = `clients`.`Ident`)))$$
 
 delimiter $$
@@ -95,8 +100,8 @@ AS `MoneyGD`,`send_all`.`Fare` AS `Fare`,`send_all`.`PackTarif` AS `PackTarif`,`
 AS `AddServicePack`,`send_all`.`AddServiceProp` AS `AddServiceProp`,`send_all`.`AddServicePrace` AS `AddServicePrace`,`send_all`.`InsuranceSum` 
 AS `InsuranceSum`,`send_all`.`InsurancePercent` AS `InsurancePercent`,`send_all`.`InsuranceValue` AS `InsuranceValue`,`send_all`.`InsurancePay` 
 AS `InsurancePay`,`send_all`.`SumCount` AS `SumCount`,`send_all`.`Typegood_Ident1` AS `Typegood_Ident1`,`send_all`.`Typegood_Ident2` AS `Typegood_Ident2`,`send_all`.`Namber` 
-AS `Namber`,`send_all`.`PayType_Ident` AS `PayType_Ident`,`paytype`.`Name` AS `PayTypeName`,`send_all`.`NmberOrder` AS `NmberOrder`,`send_all`.`Invoice_Ident` AS `Invoice_Ident`,`invoice`.`Number` 
-AS `InvoiceNumber`,`invoice`.`Data` AS `InvoiceDate`,`send_all`.`NumberCountPattern` AS `NumberCountPattern`,`send_all`.`PayText` AS `PayText`,`send_all`.`StatusSupp_Ident` 
+AS `Namber`,`send_all`.`PayType_Ident` AS `PayType_Ident`,`paytype`.`Name` AS `PayTypeName`,`send_all`.`NmberOrder` AS `NmberOrder`,`send_all`.`Invoice_Ident` AS `Invoice_Ident`,`invoice_all`.`Number` 
+AS `InvoiceNumber`,`invoice_all`.`Data` AS `InvoiceDate`,`send_all`.`NumberCountPattern` AS `NumberCountPattern`,`send_all`.`PayText` AS `PayText`,`send_all`.`StatusSupp_Ident` 
 AS `StatusSupp_Ident`,`sendtype`.`Name` AS `SendTypeName`,`send_all`.`DateSupp` AS `DateSupp`,`send_all`.`Supplier_Ident` AS `Supplier_Ident`,`supplier`.`Name` 
 AS `SupplierName`,`send_all`.`SuppText` AS `SuppText`,cast(`send_all`.`PackCount` as char(60) charset utf8) AS `PackCount`,`send_all`.`ExpCount` AS `ExpCount`,`send_all`.`PropCount` 
 AS `PropCount`,`send_all`.`ExpTarif` AS `ExpTarif`,`send_all`.`PropTarif` AS `PropTarif`,`send_all`.`Train_Ident` AS `Train_Ident`,`send_all`.`AddServStr` AS `AddServStr`,`send_all`.`AddServSum` 
@@ -110,8 +115,8 @@ on((`send_all`.`Inspector_Ident` = `inspector`.`Ident`))) left join `contracttyp
 on((`clients`.`Ident` = `send_all`.`Client_Ident`))) left join `train` on((`train`.`Ident` = `send_all`.`Train_Ident`))) left join `city` on((`send_all`.`City_Ident` = `city`.`Ident`))) left join `acceptor` 
 on((`acceptor`.`Ident` = `send_all`.`Acceptor_Ident`))) left join `rollout` on((`send_all`.`Rollout_Ident` = `rollout`.`Ident`))) left join `namegood` on((`send_all`.`Namegood_Ident` = `namegood`.`Ident`))) 
 left join `forwarder` on((`forwarder`.`Ident` = `send_all`.`Forwarder_Ident`))) left join `paytype` on((`paytype`.`Ident` = `send_all`.`PayType_Ident`))) left join `supplier` 
-on((`send_all`.`Supplier_Ident` = `supplier`.`Ident`))) left join `sendtype` on((`send_all`.`StatusSupp_Ident` = `sendtype`.`Ident`))) left join `invoice` 
-on((`invoice`.`Ident` = `send_all`.`Invoice_Ident`))) left join `paytype` `ptway` on((`ptway`.`Ident` = `send_all`.`PayTypeWay_Ident`))) left join `paytype` `ptserv` 
+on((`send_all`.`Supplier_Ident` = `supplier`.`Ident`))) left join `sendtype` on((`send_all`.`StatusSupp_Ident` = `sendtype`.`Ident`))) left join `invoice_all` 
+on((`invoice_all`.`Ident` = `send_all`.`Invoice_Ident`))) left join `paytype` `ptway` on((`ptway`.`Ident` = `send_all`.`PayTypeWay_Ident`))) left join `paytype` `ptserv` 
 on((`ptserv`.`Ident` = `send_all`.`PayTypeServ_Ident`))) left join ((`send_all` `s` left join `clients` `cl` on((`cl`.`Ident` = `s`.`Client_Ident_Sender`))) left join `akttek_all` 
 on((`akttek_all`.`IDENT` = `s`.`Akttek_Ident`))) on((`send_all`.`Ident` = `s`.`Ident`)))$$
 
