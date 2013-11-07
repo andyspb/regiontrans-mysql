@@ -8,9 +8,6 @@ USE `severtrans`$$
 CREATE DEFINER=`dba`@`localhost` PROCEDURE `update_tables_all_6m`()
 
 BEGIN
-replace into send_all select * from send;
-delete from send where `start` < (select CURDATE()  - interval 6 month );
-
 replace into invoice_all select * from invoice;
 delete from invoice where `Data` < (select CURDATE()  - interval 6 month );
 
@@ -23,11 +20,16 @@ delete from accounttek where `Dat` < (select CURDATE()  - interval 6 month );
 replace into order_all select * from `order`;
 delete from `order` where `Dat` < (select CURDATE()  - interval 6 month );
 
-replace into akttek_all select * from akttek;
+-- replace into akttek_all select * from akttek;
+insert into akttek_all select * from akttek ON DUPLICATE KEY UPDATE  akttek_all.`Number`= akttek.`Number`, akttek_all.`Data`= akttek.`Data`, 
+akttek_all.Clients_Ident = akttek.Clients_Ident, akttek_all.`Sum`= akttek.`Sum`, akttek_all.ReportReturn = akttek.ReportReturn;
 delete from akttek where `Data` < (select CURDATE()  - interval 6 month );
 
 replace into paysheet_all select * from paysheet;
 delete from paysheet where `Dat` < (select CURDATE()  - interval 6 month );
+
+replace into send_all select * from send;
+delete from send where `start` < (select CURDATE()  - interval 6 month );
 
 END
 $$
