@@ -1,42 +1,109 @@
 --- drop func
 drop procedure `severtrans`.`update_tables_all_6m`
-
+drop procedure `severtrans`.`update_tables_all`;
 --- create func
 USE `severtrans`;
-
 DROP procedure IF EXISTS `update_tables_all_6m`;
-
 DELIMITER $$
-
 USE `severtrans`$$
 CREATE DEFINER=`dba`@`localhost` PROCEDURE `update_tables_all_6m`()
-
 BEGIN
-replace into invoice_all select * from invoice;
+--replace into invoice_all select * from invoice;
+--delete from invoice where `Data` < (select CURDATE()  - interval 6 month );
+--replace into invoice_all select * from invoice;
+insert into invoice_all select * from invoice ON DUPLICATE KEY UPDATE  
+invoice_all.`Number`=invoice.`Number`,
+invoice_all.`Data`=invoice.`Data`,
+invoice_all.`Clients_Ident`=invoice.`Clients_Ident`,
+invoice_all.`Sum`=invoice.`Sum`,
+invoice_all.`NDS`=invoice.`NDS`,
+invoice_all.`Fee`=invoice.`Fee`,
+invoice_all.`ReportReturn`=invoice.`ReportReturn`,
+invoice_all.`SumGD`=invoice.`SumGD`,
+invoice_all.`NDSGD`=invoice.`NDSGD`,
+invoice_all.`SumAVT`=invoice.`SumAVT`,
+invoice_all.`NDSAVT`=invoice.`NDSAVT`,
+invoice_all.`SumAG`=invoice.`SumAG`,
+invoice_all.`NDSAG`=invoice.`NDSAG`,
+invoice_all.`SumPak`=invoice.`SumPak`,
+invoice_all.`NDSPak`=invoice.`NDSPak`,
+invoice_all.`SumPakAg`=invoice.`SumPakAg`,
+invoice_all.`NDSPakAg`=invoice.`NDSPakAg`,
+invoice_all.`SumSt`=invoice.`SumSt`,
+invoice_all.`NDSSt`=invoice.`NDSSt`,
+invoice_all.`SumStAg`=invoice.`SumStAg`,
+invoice_all.`NDSStAg`=invoice.`NDSStAg`;
 delete from invoice where `Data` < (select CURDATE()  - interval 6 month );
 
 replace into account_all select * from account;
 delete from account where `Dat` < (select CURDATE()  - interval 6 month );
-
 replace into accounttek_all select * from accounttek;
 delete from accounttek where `Dat` < (select CURDATE()  - interval 6 month );
-
 replace into order_all select * from `order`;
 delete from `order` where `Dat` < (select CURDATE()  - interval 6 month );
-
 -- replace into akttek_all select * from akttek;
 insert into akttek_all select * from akttek ON DUPLICATE KEY UPDATE  akttek_all.`Number`= akttek.`Number`, akttek_all.`Data`= akttek.`Data`, 
 akttek_all.Clients_Ident = akttek.Clients_Ident, akttek_all.`Sum`= akttek.`Sum`, akttek_all.ReportReturn = akttek.ReportReturn;
 delete from akttek where `Data` < (select CURDATE()  - interval 6 month );
-
 replace into paysheet_all select * from paysheet;
 delete from paysheet where `Dat` < (select CURDATE()  - interval 6 month );
-
 replace into send_all select * from send;
 delete from send where `start` < (select CURDATE()  - interval 6 month );
-
 END
 $$
+
+--- create func
+USE `severtrans`;
+DROP procedure IF EXISTS `update_tables_all`;
+DELIMITER $$
+USE `severtrans`$$
+CREATE DEFINER=`dba`@`localhost` PROCEDURE `update_tables_all`()
+BEGIN
+--replace into invoice_all select * from invoice;
+--delete from invoice where `Data` < (select CURDATE()  - interval 6 month );
+
+--replace into invoice_all select * from invoice;
+insert into invoice_all select * from invoice ON DUPLICATE KEY UPDATE  
+invoice_all.`Number`=invoice.`Number`,
+invoice_all.`Data`=invoice.`Data`,
+invoice_all.`Clients_Ident`=invoice.`Clients_Ident`,
+invoice_all.`Sum`=invoice.`Sum`,
+invoice_all.`NDS`=invoice.`NDS`,
+invoice_all.`Fee`=invoice.`Fee`,
+invoice_all.`ReportReturn`=invoice.`ReportReturn`,
+invoice_all.`SumGD`=invoice.`SumGD`,
+invoice_all.`NDSGD`=invoice.`NDSGD`,
+invoice_all.`SumAVT`=invoice.`SumAVT`,
+invoice_all.`NDSAVT`=invoice.`NDSAVT`,
+invoice_all.`SumAG`=invoice.`SumAG`,
+invoice_all.`NDSAG`=invoice.`NDSAG`,
+invoice_all.`SumPak`=invoice.`SumPak`,
+invoice_all.`NDSPak`=invoice.`NDSPak`,
+invoice_all.`SumPakAg`=invoice.`SumPakAg`,
+invoice_all.`NDSPakAg`=invoice.`NDSPakAg`,
+invoice_all.`SumSt`=invoice.`SumSt`,
+invoice_all.`NDSSt`=invoice.`NDSSt`,
+invoice_all.`SumStAg`=invoice.`SumStAg`,
+invoice_all.`NDSStAg`=invoice.`NDSStAg`;
+delete from invoice where `Data` < (select CURDATE()  - interval 6 month );
+
+replace into account_all select * from account;
+delete from account where `Dat` < (select CURDATE()  - interval 6 month );
+replace into accounttek_all select * from accounttek;
+delete from accounttek where `Dat` < (select CURDATE()  - interval 6 month );
+replace into order_all select * from `order`;
+delete from `order` where `Dat` < (select CURDATE()  - interval 6 month );
+-- replace into akttek_all select * from akttek;
+insert into akttek_all select * from akttek ON DUPLICATE KEY UPDATE  akttek_all.`Number`= akttek.`Number`, akttek_all.`Data`= akttek.`Data`, 
+akttek_all.Clients_Ident = akttek.Clients_Ident, akttek_all.`Sum`= akttek.`Sum`, akttek_all.ReportReturn = akttek.ReportReturn;
+delete from akttek where `Data` < (select CURDATE()  - interval 6 month );
+replace into paysheet_all select * from paysheet;
+delete from paysheet where `Dat` < (select CURDATE()  - interval 6 month );
+replace into send_all select * from send;
+delete from send where `start` < (select CURDATE()  - interval 6 month );
+END
+$$
+
 
 DELIMITER ;
 

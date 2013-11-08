@@ -1,0 +1,1 @@
+mysql --user=dba --password=sql --host=192.168.1.99 severtrans < severtrans_backup_19h.sql

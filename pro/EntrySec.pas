@@ -108,7 +108,7 @@ begin
     sql_str:=TStringList.Create;
     // krutogolov
     // see @
-    sql_str.Add('call  `update_tables_all`;');
+    sql_str.Add('call  `update_tables_all_6m`;');
     sql.ExecSQL(sql_str);
     sql_str.free;
   end;

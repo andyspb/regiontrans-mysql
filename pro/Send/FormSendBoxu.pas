@@ -44,9 +44,10 @@ type
 
 var
   FormSendBox: TFormSendBox;
-  send_str: string;
-  akttek_str: string;
-  invoice_str: string;
+  send_table: string;
+  akttek_table: string;
+  invoice_table: string;
+  sends_view: string;
 
 implementation
 
@@ -61,31 +62,21 @@ end;
 
 procedure TFormSendBox.FormCreate(Sender: TObject);
 var
+  all: Boolean;
   cond: string;
-  sends_view: string;
-//str1:TStringList;
 begin
 // krutogolov
   fsection:='FormSends';
   sqlGrid1.Section:='Sends';
 
   Caption := 'Картотека отправок ( ' + EntrySec.period + ' )';
-  if EntrySec.bAllData then
-    begin
-      sends_view := '`sends_all`';
-      send_str := '`send_all`';
-      akttek_str := '`akttek_all`';
-	    invoice_Str := '`invoice_all`';
-      eCreate.Enabled := False;
-      eDelete.Enabled := False;
-    end
-  else
-    begin
-      sends_view := '`sends`';
-      send_str := '`send`';
-      akttek_str := '`akttek`';
-  	  invoice_Str := '`invoice`'
-    end;
+  all:=EntrySec.bAllData;
+  sends_view := iff(all, '`sends_all`', '`sends`');
+  send_table := iff(all, '`send_all`', '`sends`');
+  akttek_table := iff(all, '`akttek_all`', '`akttek`');
+  invoice_table := iff(all, '`invoice_all`', '`invoice`');
+  eCreate.Enabled := iff(all,False,True);
+  eDelete.Enabled := iff(all, False, true);
 
   cond := '`Start` >=' + FormatDateTime('yyyy-mm-dd',IncMonth(Date,-6));
   sqlGrid1.ExecTableCond(sends_view,cond);
@@ -502,30 +493,40 @@ var cond, str,StrNill:string;
     Val:integer;
 //    str1:TStringList;
 begin
-try
-  str:='';
-  Val:=cbZak.getData ;
-  if Val<>0 then str:=str+'Client_Ident='+IntToStr(Val);
-  Val:=cbPynkt.GetData;
-  if  (Val<>0) and (str='') then str:=str+'City_Ident='+IntToStr(Val);
-  if  (Val<>0) and (str<>'') then str:=str+' and '+'City_Ident='+IntToStr(Val);
-  if  (str<>'') then StrNill:=' and '
-   else StrNill:='';
-  if  (LabelEditDate1.Text<>'  .  .    ')and (LabelEditDate2.Text<>'  .  .    ') then
-    str:=str+StrNill+'(`Start`>='+
+  try
+    str:='';
+    Val:=cbZak.getData ;
+    //----------------------------------------
+    if (Val<>0) then
+      str:=str+'Client_Ident='+IntToStr(Val);
+    //----------------------------------------
+    Val:=cbPynkt.GetData;
+    if  (Val<>0) and (str='') then
+      str:=str+'City_Ident='+IntToStr(Val);
+    //----------------------------------------
+    if  (Val<>0) and (str<>'') then
+      str:=str+' and '+'City_Ident='+IntToStr(Val);
+    if  (str<>'') then
+      StrNill:=' and '
+    else
+      StrNill:='';
+    //----------------------------------------
+    if  (LabelEditDate1.Text<>'  .  .    ') and (LabelEditDate2.Text<>'  .  .    ') then
+      str:=str+StrNill+'(`Start`>='+
            sql.MakeStr(FormatDateTime('yyyy-mm-dd',StrToDate(LabelEditDate1.Text)))+
            ' and '+'`Start`<='+
            sql.MakeStr(FormatDateTime('yyyy-mm-dd',StrToDate(LabelEditDate2.Text)))+')'
-   else if  (LabelEditDate1.Text<>'  .  .    ')and (LabelEditDate2.Text='  .  .    ')then
-    str:=str+StrNill+'`Start`>='+
+    else
+      if  (LabelEditDate1.Text<>'  .  .    ')and (LabelEditDate2.Text='  .  .    ')then
+        str:=str+StrNill+'`Start`>='+
            sql.MakeStr(FormatDateTime('yyyy-mm-dd',StrToDate(LabelEditDate1.Text)))
 
-   else if  (LabelEditDate2.Text<>'  .  .    ')and (LabelEditDate1.Text='  .  .    ')then
-    str:=str+StrNill+'`Start`<='+
+    else if  (LabelEditDate2.Text<>'  .  .    ')and (LabelEditDate1.Text='  .  .    ')then
+      str:=str+StrNill+'`Start`<='+
            sql.MakeStr(FormatDateTime('yyyy-mm-dd',StrToDate(LabelEditDate2.Text)));
-//cond := ''+ send_str + '.`Start` >=' + FormatDateTime('yyyy-mm-dd',IncMonth(Date,-6));
-cond := '`Start` >=' + FormatDateTime('yyyy-mm-dd',IncMonth(Date,-6));
-{str1:=TStringList.Create;
+    //cond := ''+ send_str + '.`Start` >=' + FormatDateTime('yyyy-mm-dd',IncMonth(Date,-6));
+    cond := '`Start` >=' + FormatDateTime('yyyy-mm-dd',IncMonth(Date,-6));
+    {str1:=TStringList.Create;
 str1.Add('select distinct '+ send_str + '.`Ident` AS `Ident`,'+ send_str + '.`Check` AS `Check`,');
 str1.Add(''+ send_str + '.`Start` AS `Start`,'+ send_str + '.`Inspector_Ident` AS `Inspector_Ident`,');
 str1.Add('`inspector`.`PeopleFIO` AS `PeopleFIO`,'+ send_str + '.`ContractType_Ident` AS `ContractType_Ident`,');
@@ -584,15 +585,17 @@ str1.Add('left join '+ akttek_str + ' on(('+ akttek_str + '.`IDENT` = `s`.`Aktte
 str1.Add(' where ' + cond + ' and (' + str + ')');
 sqlGrid1.ExecSQL(str1);
 str1.free; }
-if trim(str) <> '' then
-    SqlGrid1.ExecTableCond('Sends','('+str+')'+ ' and '+ cond);
+    if trim(str) <> '' then
+    begin
+      //SqlGrid1.ExecTableCond('Sends','('+str+')'+ ' and '+ cond);
+      SqlGrid1.ExecTableCond(sends_view,'('+str+')'+ ' and '+ cond);
+    end
+  except
+    application.MessageBox('Проверьте правильность составления фильтра!','Ошибка!',0);
+    exit
+  end;
 
-except
-application.MessageBox('Проверьте правильность составления фильтра!','Ошибка!',0);
-exit
-end;
-
-FilterDiscard.Enabled := true;
+  FilterDiscard.Enabled := true;
 
 end;
 
@@ -661,7 +664,8 @@ str1.Add('left join '+ akttek_str + ' on(('+ akttek_str + '.`IDENT` = `s`.`Aktte
 str1.Add(' where '+ cond);
 sqlGrid1.ExecSQL(str1);
 str1.free;}
-   SqlGrid1.ExecTableCond('Sends',cond);
+//   SqlGrid1.ExecTableCond('Sends',cond);
+   SqlGrid1.ExecTableCond(sends_view,cond);
   // FIX IT
   // FilterDiscard.Enabled := false;
 
