@@ -217,6 +217,9 @@ var
   SendIdent: longint;
   Number: string;
   DateTest: string;
+  all: boolean;
+  send_table: string;
+  sends_view: string;
 
 implementation
 
@@ -237,14 +240,10 @@ begin
     eNumberCountPattern.Enabled:=false;
 
   Caption:='Карточка отправки ( ' + EntrySec.period + ' )';
-  if (EntrySec.bAllData) then
-  begin
-    btOk.Enabled:=False;
-  end
-  else
-  begin
-    btOk.Enabled:=True;
-  end
+  all := EntrySec.bAllData;
+  btOk.Enabled := Iff(all, False, True);
+  sends_view := iff(all, '`sends_all`', '`sends`');
+  send_table := iff(all, '`send_all`', '`sends`');
 end;
 
 function TFormSend.AddRecord:longint;
@@ -307,7 +306,7 @@ begin
 
   if ShowModal=mrOk then
   begin
-    l:=sql.FindNextInteger('Ident','Send','',MaxLongint);
+    l:=sql.FindNextInteger('Ident',send_table,'',MaxLongint);
 
     str:=IntToStr(l)+','+IntToStr(RadioGroup1.ItemIndex)+
          ','+sql.MakeStr(FormatDateTime('yyyy-mm-dd',StrToDate(LabelEditDate1.text)))+
@@ -612,7 +611,7 @@ begin
     //----------
     str:=str+','+sql.MakeStr(FormatDateTime('yyyy-mm-dd',StrToDate(LabelEditDate4.text)));
     //----------
-    if (sql.InsertString('Send','Ident,Check,`Start`,Inspector_Ident,ContractType_Ident,'+
+    if (sql.InsertString(send_table,'Ident,Check,`Start`,Inspector_Ident,ContractType_Ident,'+
                   'Client_Ident,Client_Ident_Sender,City_Ident,DateSend,'+
                   'Acceptor_Ident,Forwarder_Ident,RollOut_Ident,NameGood_Ident,'+
                   'TypeGood_Ident,TypeGood_Ident1,TypeGood_Ident2,TypeGood_Ident3,'+
@@ -770,10 +769,10 @@ begin
  if q.FieldByName('DateSend').asString<>'' then
    LabelEditDate2.Text:=FormatDateTime('dd.mm.yyyy',StrToDate(q.FieldByName('DateSend').asString));
  S:='';
- s:= sql.selectstring('Send','DateDelFirst','Ident='+q.FieldByName('Ident').asstring);
+ s:= sql.selectstring(send_table,'DateDelFirst','Ident='+q.FieldByName('Ident').asstring);
  if s<> ''
  then
- LabelEditDate4.Text:=FormatDateTime('dd.mm.yyyy',StrToDate(sql.selectstring('Send',
+ LabelEditDate4.Text:=FormatDateTime('dd.mm.yyyy',StrToDate(sql.selectstring(send_table,
                                      'DateDelFirst','Ident='+q.FieldByName('Ident').asString)))
  else  if q.FieldByName('DateSend').asString<>'' then
  LabelEditDate4.Text:=FormatDateTime('dd.mm.yyyy',IncDay(StrToDate(q.FieldByName('DateSend').asString),1))
@@ -815,10 +814,10 @@ begin
      CheckBox2.Checked:=true;
  if  q.FieldByName('TypeGood_Ident2').asInteger=1 then
      CheckBox3.Checked:=true;
- if  sql.SelectInteger('`Send`','TypeGood_Ident3','Ident='+IntToStr(SendIdent))=1 then
+ if  sql.SelectInteger(send_table,'TypeGood_Ident3','Ident='+IntToStr(SendIdent))=1 then
      CheckBox7.Checked:=true;
 
- if  sql.SelectInteger('`Send`','PrivilegedTariff','Ident='+IntToStr(SendIdent))=1 then
+ if  sql.SelectInteger(send_table,'PrivilegedTariff','Ident='+IntToStr(SendIdent))=1 then
      CheckBox8.Checked:=true;
 
  eWieght.Text:=trim(q.FieldByName('Weight').asString)   ;
@@ -1200,7 +1199,7 @@ if LabelEditDate4.text<>'  .  .    ' then
    str:=str+',DateDelFirst='+sql.MakeStr(FormatDateTime('yyyy-mm-dd',StrToDate(LabelEditDate4.text)))
      else str:=str+',DateDelFirst=NULL';
 //-----------------------------------------------
- if (sql.UpdateString('Send',str,'Ident='+IntToStr(SendIdent))<>0 )
+ if (sql.UpdateString(send_table,str,'Ident='+IntToStr(SendIdent))<>0 )
 
    then EditRecord:=0
  else begin
@@ -1399,7 +1398,7 @@ end else
   Query2.CommitUpdates;
   if Number='' then Numbercalc
   else begin     {дополнительная проверка, не дать удалить номер сф из отправки, если не начальник}
-    if ((sql.SelectString('Send','NumberCountPattern','Ident='+IntToStr(SendIdent)) <> '')
+    if ((sql.SelectString(send_table,'NumberCountPattern','Ident='+IntToStr(SendIdent)) <> '')
        and (trim(eNumberCountPattern.Text) = '') and (FMenu.CurrentUserRoles <> 1))
     then
     begin
@@ -1989,7 +1988,7 @@ var
   N1,N2:integer;
   q:TQuery;
 begin
-  q:=sql.Select('Send','Namber','`Start`='+
+  q:=sql.Select(send_table,'Namber','`Start`='+
                sql.MakeStr(FormatDateTime('yyyy-mm-dd',StrToDate(LabelEditDate1.text))),'');
 
   if  q.Eof then
@@ -2823,13 +2822,13 @@ if PageControl1.ActivePage=TabSheet3 then
 begin
 if CbType.GetData=1 then
 begin
-q:=sql.Select('Send','ContractType_Ident,NumberServ,DateSupp,Ident',
+q:=sql.Select(send_table,'ContractType_Ident,NumberServ,DateSupp,Ident',
               'ContractType_Ident=1 and NumberServ is not NULL and DateSupp'+
               ' is not NULL','Ident DESC') ;
 if (not q.eof )and (trim(LabelEdit11.Text)='') then
 LabelEdit11.Text:=q.FieldByName('NumberServ').AsString;
 q.Free;
-q:=sql.Select('Send','ContractType_Ident,NumberPP,DateSupp,Ident',
+q:=sql.Select(send_table,'ContractType_Ident,NumberPP,DateSupp,Ident',
               'ContractType_Ident=1 and NumberPP is not NULL and DateSupp'+
               ' is not NULL','Ident DESC') ;
 if (not q.eof) and (trim(LabelEdit13.Text)='')then
