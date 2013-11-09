@@ -45,25 +45,25 @@ var
   period: string;
   // krutogolov
   // strings for tables
-  account_str: string;
-  accounttek_str: string;
-  akttek_str: string;
-  invoice_str: string;
-  order_str: string;
-  paysheet_str: string;
-  send_str: string;
+  account_table: string;
+  accounttek_table: string;
+  akttek_table: string;
+  invoice_table: string;
+  order_table: string;
+  paysheet_table: string;
+  send_table: string;
   // strings for views
-  accountview_str: string;
-  accounttekview_str: string;
-  akttekview_str: string;
-  invoiceview_str: string;
-  orders_str: string;
-  orderstek_str: string;
-  paysheetview_str: string;
-  sends_str: string;
-  svpayreceipt_str: string;
-  vs1_str: string;
-  vs2_str: string;
+  accountview_view: string;
+  accounttekview_view: string;
+  akttekview_view: string;
+  invoiceview_view: string;
+  orders_view: string;
+  orderstek_view: string;
+  paysheetview_view: string;
+  sends_view: string;
+  svpayreceipt_view: string;
+  vs1_view: string;
+  vs2_view: string;
 
 
 type
@@ -161,58 +161,27 @@ begin
   FMenu.CurrentUserRoles:=q.FieldByName('Roles_Ident').AsInteger;
   FMenu.CurrentUserName:=eShortName.text;
   bAllData := ChBoxAll.Checked;
-  if (bAllData) then
-  // krutogolov
-  // all data
-  begin
-    period:='ÂÑÅ ÂÐÅÌß';
-    // tables
-    account_str:='account_all';
-    accounttek_str:='accounttek_all';
-    akttek_str:='akttek_all';
-    invoice_str:='invoice_all';
-    order_str:='order_all';
-    paysheet_str:='paysheet_all';
-    send_str:='send_all';
-    // strings for views
-    accountview_str:='accountview_all';
-    accounttekview_str:='accounttekview_all';
-    akttekview_str:='akttekview_all';
-    invoiceview_str:='invoiceview_all';
-    orders_str:='orders_all';
-    orderstek_str:='orderstek_all';
-    paysheetview_str:='paysheetview_all';
-    sends_str:='sends_all';
-    svpayreceipt_str:='svpayreceipt_all';
-    vs1_str:='vs1_all';
-    vs2_str:='vs2_all';
-  end
-  else
-  // krutogolov
-  // data for the period
-  begin
-    period:='6M';
-    // tables
-    account_str:='account';
-    accounttek_str:='accounttek';
-    akttek_str:='akttek';
-    invoice_str:='invoice';
-    order_str:='order';
-    paysheet_str:='paysheet';
-    send_str:='send';
-    // strings for views
-    accountview_str:='accountview';
-    accounttekview_str:='accounttekview';
-    akttekview_str:='akttekview';
-    invoiceview_str:='invoiceview';
-    orders_str:='orders';
-    orderstek_str:='orderstek';
-    paysheetview_str:='paysheetview';
-    sends_str:='sends';
-    svpayreceipt_str:='svpayreceipt';
-    vs1_str:='vs1';
-    vs2_str:='vs2';
-  end;
+  period:=iff(bAllData, 'ÂÑÅ ÂÐÅÌß', '6 Måñÿöåâ');
+  // tables
+  account_table:=iff(bAllData, 'account_all', 'account');
+  accounttek_table:=iff(bAllData, 'accounttek_all', 'accounttek');
+  akttek_table:=iff(bAllData, 'akttek_all', 'akttek');
+  invoice_table:=iff(bAllData, 'invoice_all', 'invoice');
+  order_table:=iff(bAllData, 'order_all', '`order`');
+  paysheet_table:=iff(bAllData, 'paysheet_all', 'paysheet');
+  send_table:=iff(bAllData, 'send_all', 'send');
+  // strings for views
+  accountview_view:=iff(bAllData, 'accountview_all', 'accountview');
+  accounttekview_view:=iff(bAllData, 'accounttekview_all', 'accounttekview');
+  akttekview_view:=iff(bAllData, 'akttekview_all', 'akttekview');
+  invoiceview_view:=iff(bAllData, 'invoiceview_all', 'invoiceview');
+  orders_view:=iff(bAllData, 'orders_all', 'orders');
+  orderstek_view:=iff(bAllData, 'orderstek_all', 'orderstek');
+  paysheetview_view:=iff(bAllData, 'paysheetview_all', 'paysheetview');
+  sends_view:=iff(bAllData, 'sends_all', 'sends');
+  svpayreceipt_view:=iff(bAllData, 'svpayreceipt_all', 'svpayreceipt');
+  vs1_view:=iff(bAllData, 'vs1_all', 'vs1');
+  vs2_view:=iff(bAllData, 'vs2_all', 'vs2');
 
   if (bAllData) then
   begin

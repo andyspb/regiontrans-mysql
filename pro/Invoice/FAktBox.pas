@@ -28,7 +28,6 @@ type
 
 var
   FormAktBox: TFormAktBox;
-  akttekview_str: string;
 
 implementation
 uses FInvoice,Invoice, FAKT;
@@ -37,18 +36,9 @@ uses FInvoice,Invoice, FAKT;
 procedure TFormAktBox.FormCreate(Sender: TObject);
 begin
   Caption:='Àêòû-ÒÝÊ ( ' + EntrySec.period + ' )';
-  if EntrySec.bAllData then
-    begin
-      akttekview_str:='AktTekView_all';
-      BAdd.Enabled:=False;
-    end
-  else
-    begin
-      akttekview_str:='AktTekView_all';
-      BAdd.Enabled:=True;
-    end;
+  BAdd.Enabled:= iff(EntrySec.bAllData, False, True);
   SQLGrid1.Section:='AktTekView';
-  SQLGrid1.ExecTable(akttekview_str);
+  SQLGrid1.ExecTable(EntrySec.akttekview_view);
   if SQLGrid1.Query.eof then
   begin
     SQLGrid1.visible:=false;
@@ -142,7 +132,7 @@ begin
   if l<>0 then
   begin
     sql.Commit;
-    SQLGrid1.execTable(akttekview_str);
+    SQLGrid1.execTable(EntrySec.akttekview_view);
     SQLGrid1.LoadPoint('Ident',l);
   end
   else
@@ -177,7 +167,7 @@ begin
   if l<>0 then
   begin
     sql.Commit;
-    SQLGrid1.execTable(akttekview_str);
+    SQLGrid1.execTable(EntrySec.akttekview_view);
     SQLGrid1.LoadPoint('Ident',l);
   end else sql.Rollback;
 

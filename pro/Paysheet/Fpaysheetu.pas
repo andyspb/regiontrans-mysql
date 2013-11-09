@@ -5,7 +5,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, LblEdtDt, Lbledit, Sqlctrls, Lbsqlcmb, StdCtrls, Buttons,
-  BMPBtn, DB,TSQLCLS,DBTables,SqlGrid,Tadjform,ComCtrls;
+  BMPBtn, DB,TSQLCLS,DBTables,SqlGrid,Tadjform,ComCtrls, EntrySec;
 
 type
   TFormPaySheet = class(TForm)
@@ -44,7 +44,7 @@ begin
 LabelEditDate1.Text:=FormatDateTime('dd.mm.yyyy',now);
 if showModal=mrOk then
 begin
-l:=sql.FindNextInteger('Ident','PaySheet','',MaxLongint);
+l:=sql.FindNextInteger('Ident',EntrySec.paysheet_table {'PaySheet'},'',MaxLongint);
 str:=IntToStr(L);
 str:=str+','+Sql.MakeStr(FormatDateTime('yyyy-mm-dd',StrToDate(LabelEditDate1.Text)));
 if  eSum.text<>'' then
@@ -57,7 +57,7 @@ if  eNumber.text<>'' then
  str:=str+','+sql.MakeStr(eNumber.text)
  else str:=str+',NULL';
 
-if sql.InsertString('PaySheet','Ident,Dat,Sum,Client_Ident,Number',str)<>0 then
+if sql.InsertString(EntrySec.paysheet_table {'PaySheet'},'Ident,Dat,Sum,Client_Ident,Number',str)<>0 then
 AddRecord:=0
 else Addrecord:=l;
 end else AddRecord:=0;
@@ -85,7 +85,7 @@ if  eNumber.text<>'' then
  str:=str+',Number='+sql.MakeStr(eNumber.text)
  else str:=str+',Number=NULL';
 
-if sql.UpdateString('PaySheet',str,'Ident='+IntToStr(Id))<>0
+if sql.UpdateString(EntrySec.paysheet_table {'PaySheet'},str,'Ident='+IntToStr(Id))<>0
 then EditRecord:=0 else EditRecord:=ID;
 end else EditRecord:=Id;
 end;

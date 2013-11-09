@@ -6,7 +6,7 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, toolbtn, StdCtrls, Buttons, BMPBtn, ToolWin, ComCtrls, Sqlctrls,
   LblCombo,Printers, LblEdtDt, ExtCtrls,TSQLCLS,SqlGrid, DB,StrUtils,FunChar,
-  DBTables, Lbsqlcmb, OleServer, Word2000,XMLDOM, DBClient, MConnect;
+  DBTables, Lbsqlcmb, OleServer, Word2000,XMLDOM, DBClient, MConnect, EntrySec;
 
 type
   TFUnload = class(TForm)
@@ -317,7 +317,7 @@ TempList4 := TStringList.Create;
 {-------------------------------------------------------}
 
 {11 Выгружаем данные из таблицы 'Order' при условии все 'DatNow><'}
-TabName:='`Order`';
+TabName:=EntrySec.order_table {'`Order`'};
 Cond:= '(Dat>='''+FormatDateTime('yyyy-mm-dd',StrToDate(DatStar))+''' and '+
 'Dat<='''+FormatDateTime('yyyy-mm-dd',StrToDate(DatFin))+''')' ;
 Ord:='Ident';
@@ -367,7 +367,7 @@ TempList4 := TStringList.Create;
 {-------------------------------------------------------}
 
 {13 Выгружаем данные из таблицы 'Send' при условии все 'Start><'}
-TabName:='`Send`';
+TabName:=EntrySec.send_table {'Send'};
 Cond:= '(`start`>='''+FormatDateTime('yyyy-mm-dd',StrToDate(DatStar))+''' and '+
 '`Start`<='''+FormatDateTime('yyyy-mm-dd',StrToDate(DatFin))+''')' ;
 Ord:='Ident';

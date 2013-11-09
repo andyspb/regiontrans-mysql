@@ -150,7 +150,7 @@ begin
     IDYES:
     begin
       sql.StartTransaction;
-      if sql.Delete('Send','Ident='+ IntToStr(sqlGrid1.FieldByName('Ident').asInteger))<>0 then
+      if sql.Delete(EntrySec.send_table {'Send'},'Ident='+ IntToStr(sqlGrid1.FieldByName('Ident').asInteger))<>0 then
       begin
         Application.MessageBox('Отправка не подлежит удалению!','Ошибка',0);
         sql.rollback;
@@ -294,7 +294,7 @@ begin
       s:=SendStr.DataDMstrY(StrToDate(SQLGRID1.Query.FieldByName('DateSend').Asstring));
     ReportMakerWP.AddParam('28='+s );
     s:='';
-    dateDel:= sql.SelectString('Send','DateDelFirst','Ident='+SQLGRID1.Query.FieldByName('ident').Asstring) ;
+    dateDel:= sql.SelectString(EntrySec.send_table {'Send'},'DateDelFirst','Ident='+SQLGRID1.Query.FieldByName('ident').Asstring) ;
     if Datedel<>'' then
       s:=SendStr.DataDMstrY(StrToDate(dateDel));
     if s<>'' then
@@ -304,7 +304,7 @@ begin
       ReportMakerWP.AddParam('30='+SQLGRID1.Query.FieldByName('AddServStr').Asstring );
       ReportMakerWP.AddParam('31='+StrTo00(SQLGRID1.Query.FieldByName('AddServSum').Asstring)+' руб' );
     end;
-    if sql.SelectInteger(''+ send_str + '','TypeGood_Ident3','Ident='+IntToStr(IdSend))=1 then
+    if sql.SelectInteger(''+ send_table + '','TypeGood_Ident3','Ident='+IntToStr(IdSend))=1 then
       ReportMakerWP.AddParam('32='+'Упаковка груза не соответствует условиям перевозки.'+
                                  ' Без ответственности за механические повреждения.' )
     else

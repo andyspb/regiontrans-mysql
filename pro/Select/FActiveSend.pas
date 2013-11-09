@@ -70,15 +70,7 @@ uses makerepp ;
 procedure TFormActiveSend.FormCreate(Sender: TObject);
 begin
   Caption := 'Активные отправки ( ' + EntrySec.period + ' )';
-  if EntrySec.bAllData then
-  begin
-    sends_view := 'sends_all';
-  end
-  else
-  begin
-    sends_view := 'sends';
-  end;
-
+  sends_view := iff (EntrySec.bAllData, 'sends_all', 'sends');
 
   Query1.Close;
   Query1.DatabaseName:=sql.DataBaseName;

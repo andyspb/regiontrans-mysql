@@ -30,7 +30,7 @@ type
 
 var
   FormAccountTekBox: TFormAccountTekBox;
-  accounttekvew_str: string;
+  accounttekvew_view: string;
 implementation
 
 uses FAccount, FAccountTek;
@@ -41,17 +41,9 @@ procedure TFormAccountTekBox.FormCreate(Sender: TObject);
 begin
   SQLGrid1.Section:='AccountTEKView' ;
   Caption:='Счета-ТЭК ( ' + EntrySec.period + ' )';
-  if EntrySec.bAllData then
-    begin
-      accounttekvew_str:='AccountTEKView_all';
-      BAdd.Enabled:=False;
-    end
-  else
-    begin
-      accounttekvew_str:='AccountTEKView';
-      BAdd.Enabled:=True;
-   end;
-  SQLGrid1.ExecTable(accounttekvew_str);
+  accounttekvew_view:= iff (EntrySec.bAllData, 'AccountTEKView_all', 'AccountTEKView');
+  BAdd.Enabled:=iff (EntrySec.bAllData,  False, True);
+  SQLGrid1.ExecTable(accounttekvew_view);
   if SQLGrid1.Query.eof then
   begin
     SQLGrid1.visible:=false;
@@ -94,7 +86,7 @@ begin
   if l<>0 then
   begin
     sql.Commit;
-    SQLGrid1.execTable(accounttekvew_str);
+    SQLGrid1.execTable(accounttekvew_view);
     SQLGrid1.LoadPoint('Ident',l);
   end
   else
@@ -114,7 +106,7 @@ begin
   if l<>0 then
   begin
     sql.Commit;
-    SQLGrid1.execTable(accounttekvew_str);
+    SQLGrid1.execTable(accounttekvew_view);
     SQLGrid1.LoadPoint('Ident',l);
   end
   else
@@ -126,35 +118,27 @@ procedure TFormAccountTekBox.BDelClick(Sender: TObject);
 var
   ident: longint;
   ident_str: string;
-  table_str: string;
-  other_table_str: string;
+  accounttek_table: string;
+  accounttek_other_table: string;
   del_thread: TDeleteThread;
 begin
   sql.StartTransaction;
   ident:=SQLGrid1.Query.FieldByName('Ident').AsInteger;
   SQLGrid1.saveNextPoint('Ident');
   ident_str := IntToStr(ident);
-  if EntrySec.bAllData then
-  begin
-    table_str:='`AccountTek_all`';
-    other_table_str:='`AccountTek`';
-  end
-  else
-  begin
-    table_str:='`AccountTek`';
-    other_table_str:='`AccountTek_all`';
-  end;
+  accounttek_table:=iff(EntrySec.bAllData, '`AccountTek_all`', '`AccountTek`');
+  accounttek_other_table:=iff(EntrySec.bAllData, '`AccountTek`', '`AccountTek_all`');
 
-  if sql.Delete('`AccountTek`','Ident='+IntToStr(Id))=0 then
+  if sql.Delete(accounttek_table,'Ident='+IntToStr(Id))=0 then
   begin
     case Application.MessageBox('Удалить!',
                             'Предупреждение!',MB_YESNO+MB_ICONQUESTION) of
       IDYES:
       begin
         sql.Commit;
-        SQLGrid1.ExecTable(accounttekvew_str);
+        SQLGrid1.ExecTable(accounttekvew_view);
         SQLGrid1RowChange(Sender);
-        del_thread := TDeleteThread.Create(True, other_table_str, ident_str);
+        del_thread := TDeleteThread.Create(True, accounttek_other_table, ident_str);
         del_thread.Resume();
     end;
       IDNO:

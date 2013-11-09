@@ -7,7 +7,7 @@ uses
   Dialogs, Lbsqlcmb, Sqlctrls, LblEdtDt, ExtCtrls, OleServer, Word2000,
   toolbtn, StdCtrls, Buttons, BMPBtn, ToolWin, ComCtrls, Printers,
   TSQLCLS,SqlGrid, DB, DBTables, XMLDOM, DBClient, MConnect,Menu,LblCombo,
-  Lbledit,Tadjform, Grids, DBGrids,Sqlcombo;
+  Lbledit,Tadjform, Grids, DBGrids,Sqlcombo, EntrySec;
 
 
  //Tadjform, Grids,   DBGrids,
@@ -96,13 +96,13 @@ IFerry:=cbZak.SQLComboBox.GetData;
 ICity:=cbCity.SQLComboBox.GetData;
 Dat:=StrToDate(LabelEditDate1.Text);
 if ctrax=0 then
- q:=sql.Select('Send','','ContractType_Ident=2 and `Check`=0 and '+
+ q:=sql.Select(EntrySec.send_table {'Send'},'','ContractType_Ident=2 and `Check`=0 and '+
                ' cast (InsuranceSum as float) <> 0 and '  +
                ' DateSend='''+FormatDateTime('yyyy-mm-dd',StrToDate(LabelEditDate1.Text))+
                ''' and City_Ident='+IntToStr(cbCity.SQLComboBox.GetData),'Namber')
 
 else
- q:=sql.Select('Send','','ContractType_Ident=2 and `Check`=0 and '+
+ q:=sql.Select(EntrySec.send_table {'Send'},'','ContractType_Ident=2 and `Check`=0 and '+
                ' cast (InsuranceSum as float) = 0 and '+
                ' DateSend='''+FormatDateTime('yyyy-mm-dd',StrToDate(LabelEditDate1.Text))+
                ''' and City_Ident='+IntToStr(cbCity.SQLComboBox.GetData),'Namber');

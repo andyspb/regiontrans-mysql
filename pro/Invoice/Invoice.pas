@@ -3,7 +3,7 @@ unit Invoice;
 interface
 uses
   Windows, Messages, SysUtils, Variants,Controls,DateUtils,SqlGrid,Dialogs,
-  DB,DBTables,TSQLCLS;
+  DB,DBTables,TSQLCLS, EntrySec;
 
 function InvoiceCount(Id:longint;strId:string;NewNalog:integer):integer;
 function AftoSumCount(Id:longint):real;
@@ -25,7 +25,7 @@ var Typ:integer;
     perc:integer;
     Country:string;
 begin
-q:=sql.Select('Sends','','Ident in ('+strId+')','');//+
+q:=sql.Select(EntrySec.sends_view {'Sends'},'','Ident in ('+strId+')','');//+
              { ' and NumberCountPattern is NULL and( (ContractType_Ident=2 and '+
               'DateSupp is not NULL) or (ContractType_Ident=2 and '+
               'DateSupp is not NULL and SumWay is not NULL and '+
@@ -299,7 +299,7 @@ var
     l,i:longint;
     str,str1:string;
 begin
-q:=sql.Select('Sends','','Ident in ('+strId+')','');
+q:=sql.Select(EntrySec.sends_view {'Sends'},'','Ident in ('+strId+')','');
 if not q.eof then
 begin
 Sql.Delete('PrintInvoice','Send_Ident in ('+strId+')');
@@ -366,7 +366,7 @@ if  PT = 1 then
 begin
 q1:=sql.select('Clientstek','Acronym','Ident='+IntToStr(Id),'');
  if q1.eof then
- q:=sql.Select('Send','DateSupp,Ident,CountInvoice','Client_Ident='+IntToStr(Id)+
+ q:=sql.Select(EntrySec.send_table {'Send'},'DateSupp,Ident,CountInvoice','Client_Ident='+IntToStr(Id)+
               ' and NumberCountPattern is NULL and( (ContractType_Ident=2 and '+
               'DateSupp is not NULL) or (ContractType_Ident=1 and '+
               'DateSupp is not NULL and SumWay is not NULL and '+
@@ -374,7 +374,7 @@ q1:=sql.select('Clientstek','Acronym','Ident='+IntToStr(Id),'');
               sql.MakeStr(FormatDateTime('yyyy-mm-dd',D))+
               ' and CountInvoice is not NULL','DateSupp')
  else
- q:=sql.Select('Send','DateSupp,Ident,CountInvoice','Client_Ident='+IntToStr(Id)+
+ q:=sql.Select(EntrySec.send_table {'Send'},'DateSupp,Ident,CountInvoice','Client_Ident='+IntToStr(Id)+
               ' and AktTek_Ident is NULL and( (ContractType_Ident=2 and '+
               'DateSupp is not NULL) or (ContractType_Ident=1 and '+
               'DateSupp is not NULL and SumWay is not NULL and '+
@@ -430,7 +430,7 @@ var
     label T;
 begin
 
- qIn:=sql.Select('Invoice','','','Ident');
+ qIn:=sql.Select(EntrySec.invoice_table {'Invoice'},'','','Ident');
 
 T: while  (not qIn.eof) do
  begin
@@ -443,7 +443,7 @@ T: while  (not qIn.eof) do
                 CloseFile(m);
    strIdSend:='';
    NEWN:=1;
-       q:=sql.Select('Sends','DateSupp,Ident,CountInvoice','Invoice_Ident='+
+       q:=sql.Select(EntrySec.sends_view {'Sends'},'DateSupp,Ident,CountInvoice','Invoice_Ident='+
               qIn.fieldByName('Ident').asString,'DateSupp');
        if not q.Eof then
        begin
@@ -628,7 +628,7 @@ q:=sql.Select('PrintInvoice','Sum,SumNDS,NDS','Send_Ident in ('+strIdSend+')',''
  s:=s+', Fee = '+sql.MakeStr(StrTo00(FloatToStr(Fee)));
 
 
- if sql.UpdateString('Invoice',s,'Ident='+IntToStr(qIn.fieldByName('Ident').asInteger))<>0
+ if sql.UpdateString(EntrySec.invoice_table {'Invoice'},s,'Ident='+IntToStr(qIn.fieldByName('Ident').asInteger))<>0
   then begin
        sql.Rollback;
        ShowMessage('В заполнении произошел збой на номере '+
@@ -742,7 +742,7 @@ if not FileExists(systemdir+'NumberINV') then
                CloseFile(j);
 //------------------------------
 
- qIn:=sql.Select('InvoiceView','','Data > ''2003-12-31''','Num');
+ qIn:=sql.Select(EntrySec.invoiceview_view {'InvoiceView'},'','Data > ''2003-12-31''','Num');
 Num2:=0;
 //if not qIn.eof  then Num2:=1;
 T: while  (not qIn.eof) do
@@ -765,7 +765,7 @@ T: while  (not qIn.eof) do
    strIdSend:='';
    NEWN:=1;
 
-       q:=sql.Select('Sends','DateSupp,Ident,CountInvoice,Client_Ident,Namber,ClientAcr','Invoice_Ident='+
+       q:=sql.Select(EntrySec.sends_view {'Sends'},'DateSupp,Ident,CountInvoice,Client_Ident,Namber,ClientAcr','Invoice_Ident='+
               qIn.fieldByName('Ident').asString,'DateSupp');
        if not q.Eof then
        begin
@@ -1058,7 +1058,7 @@ var Typ:integer;
     perc:integer;
     Country:string;
 begin
-q:=sql.Select('Send','','Ident ='+ IntToStr(Id),'');//+
+q:=sql.Select(EntrySec.send_table {'Send'},'','Ident ='+ IntToStr(Id),'');//+
 if not q.eof then
 begin
 F1:=0;  {стоимость перевозки авто трансп}

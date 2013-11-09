@@ -6,7 +6,7 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, Lbledit, LblEdtDt, Sqlctrls, Lbsqlcmb, StdCtrls, Buttons,
   BMPBtn, ComCtrls,DB,TSQLCLS,DBTables,Tadjform, SqlGrid, OleServer,
-  Word2000,Printers, QDialogs;
+  Word2000,Printers, QDialogs, EntrySec;
 
 type
   TFormAccount = class(TForm)
@@ -63,7 +63,7 @@ Ident:=0;
 LabelEditDate1.Text:=FormatDateTime('dd.mm.yyyy',now);
 if showModal=mrOk then
 begin
-l:=sql.FindNextInteger('Ident','`Account`','',MaxLongint);
+l:=sql.FindNextInteger('Ident',EntrySec.account_table {'`Account`'},'',MaxLongint);
 str:=IntToStr(L);
 str:=str+','+Sql.MakeStr(FormatDateTime('yyyy-mm-dd',StrToDate(LabelEditDate1.Text)));
 if  eSumNDS.text<>'' then
@@ -75,7 +75,7 @@ if cbClient.GetData<>0 then
 Number:=Num;
  str:=str+','+sql.MakeStr(Number);
 
-if sql.insertstring('`Account`','Ident,Dat,SumNDS,Client_Ident,Number',str)=0
+if sql.insertstring(EntrySec.account_table {'`Account`'},'Ident,Dat,SumNDS,Client_Ident,Number',str)=0
 then AddRecord:=l
   else begin
         AddRecord:=0;
@@ -95,7 +95,7 @@ begin
 Enabl:=false;
 FormCreate;
 I:=Iden;
-q:=sql.Select('`Account`','*','Ident='+IntToStr(Iden),'');
+q:=sql.Select(EntrySec.account_table {'`Account`'},'*','Ident='+IntToStr(Iden),'');
 Number:=q.fieldByName('Number').asString;
 LabelEditDate1.SetValue(q);
 //cbClient.SetValue(q);
@@ -166,21 +166,24 @@ Next1:
 end;
 
 Function TFormAccount.Num:string;
-var q:TQuery;
-    Year, Month, Day: Word;
-    Num1,Num2:string;
-    N1,N2:integer;
+var
+  q:TQuery;
+  Year, Month, Day: Word;
+  Num1,Num2:string;
+  N1,N2:integer;
 begin
-if LabelEditDate1.text<>'  .  .    '  then
-DecodeDate(StrToDate(LabelEditDate1.text), Year, Month, Day)
-else begin
+  if LabelEditDate1.text<>'  .  .    '  then
+    DecodeDate(StrToDate(LabelEditDate1.text), Year, Month, Day)
+  else
+  begin
     Application.MessageBox('Введите дату составления!','Ошибка!',0);
     exit
-    end;
-q:=sql.select('`AccountView`','Number,`Year`','`Year`='+IntToStr(Year),'');
-if q.eof then Num:='1/'+FormatDateTime('yy',StrToDate(LabelEditDate1.text))
-     else
-     begin
+  end;
+  q:=sql.select(EntrySec.accountview_view {'`AccountView`'},'Number,`Year`','`Year`='+IntToStr(Year),'');
+  if q.eof then
+    Num:='1/'+FormatDateTime('yy',StrToDate(LabelEditDate1.text))
+  else
+  begin
       Num1:=q.fieldByName('Number').AsString;
       N1:=pos('/',Num1);
       delete(Num1,N1,Length(Num1)-N1+1) ;

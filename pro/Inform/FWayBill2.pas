@@ -7,7 +7,7 @@ uses
   Dialogs, Lbsqlcmb, Sqlctrls, LblEdtDt, ExtCtrls, OleServer, Word2000,
   toolbtn, StdCtrls, Buttons, BMPBtn, ToolWin, ComCtrls, Printers,
   TSQLCLS,SqlGrid, DB, DBTables, XMLDOM, DBClient, MConnect,Menu,LblCombo,
-  Lbledit,Tadjform, Grids, DBGrids,Sqlcombo;
+  Lbledit,Tadjform, Grids, DBGrids,Sqlcombo,EntrySec;
 
 type
   TFormWayBill2 = class(TForm)
@@ -167,7 +167,7 @@ if  (LNameGood2.SQLComboBox.GetData<>0) and
     end
     else   Good1:=100;
 
- q:=sql.Select('Send','','ContractType_Ident=2 and `Check`=0 and '+
+ q:=sql.Select(EntrySec.send_table {'Send'},'','ContractType_Ident=2 and `Check`=0 and '+
                 ' DateSend='''+FormatDateTime('yyyy-mm-dd',StrToDate(LabelEditDate1.Text))+
                 ''' and City_Ident='+IntToStr(cbCity.SQLComboBox.GetData),'Namber');
 

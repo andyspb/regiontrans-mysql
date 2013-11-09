@@ -6,7 +6,7 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, LblEdtDt, Sqlctrls, Lbsqlcmb, StdCtrls, Buttons, BMPBtn,
   ComCtrls,DB,TSQLCLS,DBTables,Tadjform, SqlGrid, OleServer,
-  Word2000, Menus, Lbledit,DateUtils,QDialogs;
+  Word2000, Menus, Lbledit,DateUtils,QDialogs,EntrySec;
 
 type
   TFormAkt = class(TForm)
@@ -122,7 +122,7 @@ Code:=2;
 if showModal=mrOk then
 begin
       strIdSend:='';
-       q:=sql.Select('Send','DateSupp,Ident,CountInvoice','Akttek_Ident='+IntToStr(IdInv)
+       q:=sql.Select(EntrySec.send_table {'Send'},'DateSupp,Ident,CountInvoice','Akttek_Ident='+IntToStr(IdInv)
              ,'DateSupp');
        if not q.Eof then
        begin
@@ -183,7 +183,7 @@ q:=sql.Select('PrintInvoice','SumNDS','Send_Ident in ('+StrIdSend+')','');
        exit
        end;
 if NumberChange<>'' then Number:=NumberChange;
-if sql.UpdateString('Send','Akttek_Ident='+IntToStr(IdInv),
+if sql.UpdateString(EntrySec.send_table {'Send'},'Akttek_Ident='+IntToStr(IdInv),
                     'Ident in ('+StrIdSend+')')<>0 then begin
                                                         sql.Rollback;
                                                         EditRecord:=0;
@@ -235,7 +235,7 @@ end;
 if (Code=0) or (Code=1) then  {создаем новую}
 begin
 test:=false;
-q:=sql.Select('Send','DateSupp,Ident,CountInvoice','Client_Ident='+IntToStr(Ident)+
+q:=sql.Select(EntrySec.send_table {'Send'},'DateSupp,Ident,CountInvoice','Client_Ident='+IntToStr(Ident)+
              ' and AktTek_Ident is NULL and( (ContractType_Ident=2 and '+
               'DateSupp is not NULL) or (ContractType_Ident=1 and '+
               'DateSupp is not NULL and SumWay is not NULL and '+
@@ -290,7 +290,7 @@ if StrIdSend<>'' then
 begin
 if (Pos(',',strIdSend)=1) then
             Delete(strIdSend,1,1);
-q:=sql.Select('Send','DateSupp','Ident in ('+StrIdSend+')','DateSupp') ;
+q:=sql.Select(EntrySec.send_table {'Send'},'DateSupp','Ident in ('+StrIdSend+')','DateSupp') ;
 DateS:=0;
 if not q.eof then
 DateS :=q.FieldByName('DateSupp').AsDateTime;
@@ -333,7 +333,7 @@ end
 else if Code=2 then      {исправляем уже существующую}
      begin
        strIdSend:='';
-       q:=sql.Select('Send','DateSupp,Ident,CountInvoice','Akttek_Ident='+IntToStr(IdInv)
+       q:=sql.Select(EntrySec.send_table {'Send'},'DateSupp,Ident,CountInvoice','Akttek_Ident='+IntToStr(IdInv)
              ,'DateSupp');
        if not q.Eof then
        begin
@@ -528,7 +528,7 @@ if sql.InsertString('AktTek','Ident,Data,Clients_Ident,Sum,'+
                                                         sql.Rollback;
                                                         exit;
                                                         end;
-if sql.UpdateString('Send','Akttek_Ident='+IntToStr(l),
+if sql.UpdateString(EntrySec.send_table {'Send'},'Akttek_Ident='+IntToStr(l),
                     'Ident in ('+StrIdSend+')')<>0 then begin
                                                         sql.Rollback;
                                                         exit;
@@ -549,7 +549,7 @@ else begin
     Application.MessageBox('Введите дату составления!','Ошибка!',0);
     exit
     end;
-q:=sql.select('AktTekView','Number,`Year`','`Year`='+IntToStr(Year),'');
+q:=sql.select(EntrySec.akttekview_view {'AktTekView'},'Number,`Year`','`Year`='+IntToStr(Year),'');
 if q.eof then Num:='1/'+FormatDateTime('yy',StrToDate(Dat))
      else
      begin

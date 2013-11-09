@@ -29,7 +29,6 @@ type
 
 var
   FormAccountBox: TFormAccountBox;
-  accountvew_str: string;
 
 
 implementation
@@ -41,19 +40,10 @@ uses FAccount;
 procedure TFormAccountBox.FormCreate(Sender: TObject);
 begin
   Caption:='—чета (' + EntrySec.period + ' )';
-  SQLGrid1.Section:='Account' ;
-  if EntrySec.bAllData then
-    begin
-      accountvew_str:='AccountView_all';
-      BAdd.Enabled:=False;
-    end
-  else
-    begin
-      accountvew_str:='AccountView';
-      BAdd.Enabled:=True;
-    end;
+  SQLGrid1.Section:='Account';
+  BAdd.Enabled:=iff (EntrySec.bAllData, False, True);
 
-  SQLGrid1.ExecTable(accountvew_str);
+  SQLGrid1.ExecTable(EntrySec.accountview_view);
   if SQLGrid1.Query.eof then
   begin
     SQLGrid1.visible:=false;
@@ -96,7 +86,7 @@ begin
   if l<>0 then
   begin
     sql.Commit;
-    SQLGrid1.execTable(accountvew_str);
+    SQLGrid1.execTable(EntrySec.accountview_view);
     SQLGrid1.LoadPoint('Ident',l);
   end
   else
@@ -115,7 +105,7 @@ begin
   if l<>0 then
   begin
     sql.Commit;
-    SQLGrid1.execTable(accountvew_str);
+    SQLGrid1.execTable(EntrySec.accountview_view);
     SQLGrid1.LoadPoint('Ident',l);
   end
   else
@@ -134,16 +124,8 @@ begin
   ident := SQLGrid1.Query.FieldByName('Ident').AsInteger;
   SQLGrid1.saveNextPoint('Ident');
   ident_str := IntToStr(ident);
-  if EntrySec.bAllData then
-  begin
-    table_str:='`Account_all`';
-    other_table_str:='`Account`';
-  end
-  else
-  begin
-    table_str:='`Account`';
-    other_table_str:='`Account_all`';
-  end;
+  table_str:=iff (EntrySec.bAllData, '`Account_all`', '`Account`');
+  other_table_str:=iff (EntrySec.bAllData, '`Account`', '`Account_all`');
 
   if sql.Delete(table_str,'Ident='+IntToStr(ident))=0 then
   begin
@@ -153,7 +135,7 @@ begin
       IDYES:
       begin
         sql.Commit;
-        SQLGrid1.ExecTable(accountvew_str);
+        SQLGrid1.ExecTable(EntrySec.accountview_view);
         SQLGrid1RowChange(Sender);
         del_thread := TDeleteThread.Create(True, other_table_str, ident_str);
         del_thread.Resume();

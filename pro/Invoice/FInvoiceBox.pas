@@ -29,7 +29,6 @@ type
 
 var
   FormInvoiceBox: TFormInvoiceBox;
-  invoiceview_str: string;
 
 implementation
 
@@ -53,7 +52,7 @@ begin
   if l<>0 then
   begin
     sql.Commit;
-    SQLGrid1.execTable(invoiceview_str);
+    SQLGrid1.execTable(EntrySec.invoiceview_view);
     SQLGrid1.LoadPoint('Ident',l);
   end
   else
@@ -82,20 +81,11 @@ begin
   SQLGrid1.Section:='InvoiceView' ;
   // krutogolov
   Caption:='Счет-Фактры ( ' + EntrySec.period + ' )';
-  if EntrySec.bAllData then
-    begin
-      invoiceview_str:='InvoiceView_all';
-      BAdd.Enabled:= False;
-    end
-  else
-    begin
-      BAdd.Enabled:= True;
-      invoiceview_str:='InvoiceView';
-    end;
+  BAdd.Enabled:= iff(EntrySec.bAllData, False, True);
   // delete
-  Caption:='Счет-Фактры ( ' + EntrySec.period + ' ) [' + invoiceview_str  + ']';
+  Caption:='Счет-Фактры ( ' + EntrySec.period + ' )';
 
-  SQLGrid1.ExecTable(invoiceview_str);
+  SQLGrid1.ExecTable(EntrySec.invoiceview_view);
   if SQLGrid1.Query.eof then
   begin
     SQLGrid1.visible:=false;
@@ -124,7 +114,7 @@ begin
 if l<>0 then
 begin
   sql.Commit;
-  SQLGrid1.execTable(invoiceview_str);
+  SQLGrid1.execTable(EntrySec.invoiceview_view);
   SQLGrid1.LoadPoint('Ident',l);
 end
 else
@@ -136,8 +126,8 @@ var
   ident: longint;
   number: string;
   ident_str: string;
-  table_str: string;
-  other_table_str: string;
+  invoice_table: string;
+  invoice_table_other: string;
   del_thread: TDeleteThread;
 
 begin
@@ -145,25 +135,17 @@ begin
   ident_str := IntToStr(ident);
   number := sqlGrid1.Query.FieldByName('Number').AsString;
   sqlGrid1.SaveNextPoint('Ident');
-  if EntrySec.bAllData then
-  begin
-    table_str:='`Invoice_all`';
-    other_table_str:='`Invoice`';
-  end
-  else
-  begin
-    table_str:='`Invoice`';
-    other_table_str:='`Invoice_all`';
-  end;
+  invoice_table:=iff(EntrySec.bAllData, '`Invoice_all`', '`Invoice`');
+  invoice_table_other:=iff(EntrySec.bAllData, '`Invoice`', '`Invoice_all`');
 
   Sql.StartTransaction;
-  if sql.Delete(table_str,'Ident='+IntToStr(ident))<>0 then
+  if sql.Delete(invoice_table,'Ident='+IntToStr(ident))<>0 then
   begin
     application.MessageBox('Запись не подлежит удалению!','Ошибка!',0);
     sql.Rollback;
     exit
   end;
-  if sql.UpdateString('Send','NumberCountPattern=NULL','NumberCountPattern='+sql.MakeStr(number))<>0 then
+  if sql.UpdateString(EntrySec.send_table {'Send'},'NumberCountPattern=NULL','NumberCountPattern='+sql.MakeStr(number))<>0 then
   begin
     application.MessageBox('Запись не подлежит удалению!','Ошибка!',0);
     sql.Rollback;
@@ -176,7 +158,7 @@ begin
       sql.Commit;
       SQLGrid1.exec;
       SQLGrid1RowChange(Sender);
-      del_thread := TDeleteThread.Create(True, other_table_str, ident_str);
+      del_thread := TDeleteThread.Create(True, invoice_table_other, ident_str);
       del_thread.Resume();
     end;
     IDNO:

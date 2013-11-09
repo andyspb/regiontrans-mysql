@@ -6,7 +6,7 @@ uses
  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, Lbledit, LblEdtDt, Sqlctrls, Lbsqlcmb, StdCtrls, Buttons,
   BMPBtn, ComCtrls,DB,TSQLCLS,DBTables,Tadjform, SqlGrid, OleServer,
-  Word2000,Printers,QDialogs;
+  Word2000,Printers,QDialogs, EntrySec;
 
 type
   TFormAccountTEK = class(TForm)
@@ -156,18 +156,20 @@ Next1:
 end;
 
 Function TFormAccountTEK.Num:string;
-var q:TQuery;
-    Year, Month, Day: Word;
-    Num1,Num2:string;
-    N1,N2:integer;
+var
+  q:TQuery;
+  Year, Month, Day: Word;
+  Num1,Num2:string;
+  N1,N2:integer;
 begin
-if LabelEditDate1.text<>'  .  .    '  then
-DecodeDate(StrToDate(LabelEditDate1.text), Year, Month, Day)
-else begin
+  if LabelEditDate1.text<>'  .  .    '  then
+    DecodeDate(StrToDate(LabelEditDate1.text), Year, Month, Day)
+  else
+  begin
     Application.MessageBox('Введите дату составления!','Ошибка!',0);
     exit
-    end;
-q:=sql.select('`AccountTEKView`','Number,`Year`','`Year`='+IntToStr(Year),'');
+   end;
+  q:=sql.select(EntrySec.accounttekview_view {'`AccountTEKView`'},'Number,`Year`','`Year`='+IntToStr(Year),'');
 if q.eof then Num:='1/'+FormatDateTime('yy',StrToDate(LabelEditDate1.text))
      else
      begin

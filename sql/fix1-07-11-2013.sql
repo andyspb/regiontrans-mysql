@@ -1,17 +1,13 @@
----------
-drop procedure `severtrans`.`update_tables_all`;
---------
 USE `severtrans`;
 
-DROP procedure IF EXISTS `update_tables_all`;
+DROP procedure IF EXISTS `update_tables_all_6m`;
 
 DELIMITER $$
 
 USE `severtrans`$$
-CREATE DEFINER=`dba`@`localhost` PROCEDURE `update_tables_all`()
+CREATE DEFINER=`dba`@`localhost` PROCEDURE `update_tables_all_6m`()
 
 BEGIN
---replace into invoice_all select * from invoice;
 insert into invoice_all select * from invoice ON DUPLICATE KEY UPDATE  
 invoice_all.`Number`=invoice.`Number`,
 invoice_all.`Data`=invoice.`Data`,
@@ -36,25 +32,22 @@ invoice_all.`SumStAg`=invoice.`SumStAg`,
 invoice_all.`NDSStAg`=invoice.`NDSStAg`;
 delete from invoice where `Data` < (select CURDATE()  - interval 6 month );
 
---replace into account_all select * from account;
 insert into account_all select * from account ON DUPLICATE KEY UPDATE  
-account_all.`Clients_Ident`=account.`Clients_Ident`,
+account_all.`Client_Ident`=account.`Client_Ident`,
 account_all.`Dat`=account.`Dat`,
 account_all.`SumNDS`=account.`SumNDS`,
 account_all.`Number`=account.`Number`;
 delete from account where `Dat` < (select CURDATE()  - interval 6 month );
 
---replace into accounttek_all select * from accounttek;
 insert into accounttek_all select * from accounttek ON DUPLICATE KEY UPDATE  
-accounttek_all.`Clients_Ident`=accounttek.`Clients_Ident`,
+accounttek_all.`Number`=accounttek.`Number`,
 accounttek_all.`Dat`=accounttek.`Dat`,
-accounttek_all.`SumNDS`=accounttek.`SumNDS`,
-accounttek_all.`Number`=accounttek.`Number`;
+accounttek_all.`Client_Ident`=accounttek.`Client_Ident`,
+accounttek_all.`Sum`=accounttek.`Sum`;
 delete from accounttek where `Dat` < (select CURDATE()  - interval 6 month );
 
---replace into order_all select * from `order`;
 insert into order_all select * from `order` ON DUPLICATE KEY UPDATE  
-order_all.`Clients_Ident`=`order`.`Clients_Ident`,
+order_all.`Client_Ident`=`order`.`Client_Ident`,
 order_all.`Number`=`order`.`Number`,
 order_all.`Dat`=`order`.`Dat`,
 order_all.`Sum`=`order`.`Sum`,
@@ -64,24 +57,21 @@ order_all.`NSP`=`order`.`NSP`,
 order_all.`DatNow`=`order`.`DatNow`;
 delete from `order` where `Dat` < (select CURDATE()  - interval 6 month );
 
--- replace into akttek_all select * from akttek;
 insert into akttek_all select * from akttek ON DUPLICATE KEY UPDATE  
 akttek_all.`Number`= akttek.`Number`, 
 akttek_all.`Data`= akttek.`Data`, 
-akttek_all.Clients_Ident = akttek.Clients_Ident, 
+akttek_all.`Clients_Ident` = akttek.`Clients_Ident`, 
 akttek_all.`Sum`= akttek.`Sum`, 
-akttek_all.ReportReturn = akttek.ReportReturn;
+akttek_all.`ReportReturn` = akttek.`ReportReturn`;
 delete from akttek where `Data` < (select CURDATE()  - interval 6 month );
 
---replace into paysheet_all select * from paysheet;
 insert into paysheet_all select * from paysheet ON DUPLICATE KEY UPDATE  
-paysheet_all.`Clients_Ident`= paysheet.`Clients_Ident`, 
+paysheet_all.`Client_Ident`= paysheet.`Client_Ident`, 
 paysheet_all.`Number`= paysheet.`Number`,
 paysheet_all.`Dat`= paysheet.`Dat`, 
-paysheet_all.`Sum`= paysheet.`Sum`,
+paysheet_all.`Sum`= paysheet.`Sum`;
 delete from paysheet where `Dat` < (select CURDATE()  - interval 6 month );
 
---replace into send_all select * from send;
 insert into send_all select * from send ON DUPLICATE KEY UPDATE  
 send_all.`Start`= send.`Start`,
 send_all.`Inspector_Ident`= send.`Inspector_Ident`,
@@ -95,7 +85,6 @@ send_all.`DateSend`= send.`DateSend`,
 send_all.`Acceptor_Ident`= send.`Acceptor_Ident`,
 send_all.`Forwarder_Ident`= send.`Forwarder_Ident`,
 send_all.`Rollout_Ident`= send.`Rollout_Ident`,
-
 send_all.`Namegood_Ident`= send.`Namegood_Ident`,
 send_all.`Typegood_Ident`= send.`Typegood_Ident`,
 send_all.`Weight`= send.`Weight`,
@@ -104,7 +93,6 @@ send_all.`CountWeight`= send.`CountWeight`,
 send_all.`Tariff`= send.`Tariff`,
 send_all.`Fare`= send.`Fare`,
 send_all.`PackTarif`= send.`PackTarif`,
-
 send_all.`AddServiceExp`= send.`AddServiceExp`,
 send_all.`AddServicePack`= send.`AddServicePack`,
 send_all.`AddServiceProp`= send.`AddServiceProp`,
@@ -150,13 +138,11 @@ send_all.`AddServSum`= send.`AddServSum`,
 send_all.`Typegood_Ident3`= send.`Typegood_Ident3`,
 send_all.`PrivilegedTariff`= send.`PrivilegedTariff`,
 send_all.`CutTarif`= send.`CutTarif`,
-send_all.`DateDelFirst`= send.`DateDelFirst`;,
+send_all.`DateDelFirst`= send.`DateDelFirst`;
 delete from send where `start` < (select CURDATE()  - interval 6 month );
 
 END
 $$
-
-DELIMITER ;
 
 
 

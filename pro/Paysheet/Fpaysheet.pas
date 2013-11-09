@@ -29,7 +29,6 @@ type
 
 var
   FormPaysheetBox: TFormPaysheetBox;
-  paysheet_str: string;
 
 implementation
 
@@ -38,21 +37,14 @@ uses Fpaysheetu;
 {$R *.dfm}
 
 procedure TFormPaysheetBox.FormCreate(Sender: TObject);
+var
+  all: boolean;
 begin
   SQLGrid1.Section:='PaySheetView' ;
   Caption:='Платежки ( '+ EntrySec.period+ ' )';
-  if EntrySec.bAllData then
-  begin
-    paysheet_str := 'PaySheetView_all';
-    BAdd.Enabled:=False;
-  end
-  else
-  begin
-    paysheet_str := 'PaySheetView';
-    BAdd.Enabled:=True;
-  end;
+  BAdd.Enabled:= iff (EntrySec.bAllData, False, True);
 
-  SQLGrid1.ExecTable(paysheet_str);
+  SQLGrid1.ExecTable(EntrySec.paysheetview_view);
   if SQLGrid1.Query.eof then
   begin
     SQLGrid1.visible:=false;
@@ -79,7 +71,7 @@ begin
   if l<>0 then
   begin
   sql.Commit;
-  SQLGrid1.exectable(paysheet_str);
+  SQLGrid1.exectable(EntrySec.paysheetview_view);
   SQLGrid1.LoadPoint('Ident',l);
 end
 else
@@ -99,7 +91,7 @@ begin
   if l<>0 then
   begin
     sql.Commit;
-    SQLGrid1.exectable(paysheet_str);
+    SQLGrid1.exectable(EntrySec.paysheetview_view);
     SQLGrid1.LoadPoint('Ident',l);
   end
   else

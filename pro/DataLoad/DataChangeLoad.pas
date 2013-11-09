@@ -5,7 +5,7 @@ uses
  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, toolbtn, StdCtrls, Buttons, BMPBtn, ToolWin, ComCtrls, Sqlctrls,
   LblCombo,Printers, LblEdtDt, ExtCtrls,TSQLCLS,SqlGrid, DB,StrUtils,FunChar,
-   DBTables, Lbsqlcmb, OleServer, Word2000,XMLDOM, DBClient, MConnect;
+   DBTables, Lbsqlcmb, OleServer, Word2000,XMLDOM, DBClient, MConnect, EntrySec;
 
 function ReadFiles1(strId: string):TStrings;
 function WriteFiles(s: string;TempL1:TStrings): integer;
@@ -389,9 +389,9 @@ ChangeOtheFile(0,'Address',fs1,fs);
 ChangeOtheFile(0,'Contact',fs1,fs);
 ChangeOtheFile(0,'Contract',fs1,fs);
 ChangeOtheFile(2,'Forwarder',fs1,fs);
-ChangeOtheFile(1,'`Order`',fs1,fs);
-ChangeOtheFile(1,'`Send`',fs1,fs);
-ChangeOtheFile(2,'`Send`',fs1,fs);
+ChangeOtheFile(1,EntrySec.order_table {'`Order`'},fs1,fs);
+ChangeOtheFile(1,EntrySec.send_table {'`Send`'},fs1,fs);
+ChangeOtheFile(2,EntrySec.send_table {'`Send`'},fs1,fs);
  if indic = 0 then
    TempList11.Strings[i]:= FindReplaceStr(0,s1,fs1,fs)
  else
@@ -464,7 +464,7 @@ if i<>0 then
 TempList11.Clear;
 {End Forwarder--------------------------------------------------------------------------}
 {"Order"---------------------------------------------------------------}
-s:='`Order`';  {меняем только идент}
+s:=EntrySec.order_table {'`Order`'};  {меняем только идент}
 TempList11:=ReadFiles1(s) ;
 i:=0;
 fs1:=IntToStr(sql.FindNextInteger('Ident',s,'',MaxLongint));   {берем максимальный идент из базы}
@@ -699,7 +699,7 @@ begin
 {END Forwarder-----------------------------------}
 
 {"Order"---------------------------------------}
- Tabl:='`Order`';
+ Tabl:=EntrySec.order_table {'`Order`'};
 // TempList11.Create;
  TempList11:=ReadFiles1(Tabl);
  i:=0;
@@ -1105,7 +1105,7 @@ begin
      year1:=copy(dat1,4,2);
 
 
-q:=sql.select('`Orders`','Number,`Year`','`Year`=Year('+dat1+')','');
+q:=sql.select(EntrySec.orders_view {'`Orders`'},'Number,`Year`','`Year`=Year('+dat1+')','');
 if q.eof then OrderNum:='1/'+year1
      else
      begin
@@ -1144,7 +1144,7 @@ begin
      month1:= copy(s3,1,j-1);
      day1:=copy(s3,j+1,length(s3)-j-1);
 
- q:=sql.Select('Send','Namber','`Start`='+ dat1,'');
+ q:=sql.Select(EntrySec.send_table {'Send'},'Namber','`Start`='+ dat1,'');
 
  if  q.Eof then SendNum:='1/' + day1 + month1 + year1
   else

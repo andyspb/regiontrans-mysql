@@ -6,7 +6,7 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, Lbledit, Lbsqlcmb, Sqlctrls, LblEdtDt, StdCtrls, Buttons,SqlGrid,
   DB,TSQLCLS,DBTables,Tadjform,  BMPBtn, ComCtrls, OleServer, Word2000,
-  ExtCtrls;
+  ExtCtrls, EntrySec;
 
 type
   TFormOrderBox = class(Tform)
@@ -79,7 +79,7 @@ CheckBox2.Visible:=false;
 
 if showModal=mrOk then
 begin
-l:=sql.FindNextInteger('Ident','`Order`','',MaxLongint);
+l:=sql.FindNextInteger('Ident',EntrySec.order_table,'',MaxLongint);
 str:=IntToStr(L);
 str:=str+','+Sql.MakeStr(FormatDateTime('yyyy-mm-dd',StrToDate(LabelEditDate1.Text)));
 if  eSumNDS.text<>'' then
@@ -104,7 +104,7 @@ if (eNSP.text<>'')and (eNSP.visible) then
 
  str:=str+','+sql.MakeStr(FormatDateTime('yyyy-mm-dd',now));
 
-if sql.insertstring('`order`','Ident,Dat,SumNDS,NDS,Sum,Client_Ident,Number,NSP,DatNow',str)=0
+if sql.insertstring(EntrySec.order_table {'`Order`'},'Ident,Dat,SumNDS,NDS,Sum,Client_Ident,Number,NSP,DatNow',str)=0
 then begin
        AddRecord:=l;
        Print;
@@ -125,7 +125,7 @@ Enabl:=false;
 FormCreate;
 I:=Iden;
 NSP:=0;
-q:=sql.Select('`Order`','*','Ident='+IntToStr(I),'');
+q:=sql.Select(EntrySec.order_table {'`Order`'},'*','Ident='+IntToStr(I),'');
 Number:=q.fieldByName('Number').asString;
 eNumber.Text:=Number;
 eNumber.enabled:=false;
@@ -190,7 +190,7 @@ begin
         exit;
       end;
 
-      q:=sql.select('`OrdersTek`','Number','`Number`='+sql.MakeStr(Number),'');
+      q:=sql.select(EntrySec.orderstek_view {'`OrdersTek`'},'Number','`Number`='+sql.MakeStr(Number),'');
 
       if (not q.Eof) then
       begin
@@ -316,7 +316,7 @@ else begin
     Application.MessageBox('Введите дату составления!','Ошибка!',0);
     exit
     end;
-q:=sql.select('`OrdersTek`','Number,`Year`','`Year`='+IntToStr(Year),'');
+q:=sql.select(EntrySec.orderstek_view {'`OrdersTek`'},'Number,`Year`','`Year`='+IntToStr(Year),'');
 if q.eof then Num:='1/'+FormatDateTime('yy',StrToDate(LabelEditDate1.text))
      else
      begin

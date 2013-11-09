@@ -112,7 +112,7 @@ IdInv:=0;
 Number:='';
 NumberChange:='';
 IdInv:=Iden;
-q:=sql.Select('Invoice','','Ident='+IntToStr(IdInv),'') ;
+q:=sql.Select(EntrySec.invoice_table {'Invoice'},'','Ident='+IntToStr(IdInv),'') ;
 Number:=q.FieldByName('Number').AsString;
 NumberChange:=q.FieldByName('Number').AsString;
 eNumber.Text:=q.FieldByName('Number').AsString;
@@ -131,7 +131,7 @@ Code:=2;
 if showModal=mrOk then
 begin
       strIdSend:='';
-       q:=sql.Select('Sends','DateSupp,Ident,CountInvoice','Invoice_Ident='+IntToStr(IdInv)
+       q:=sql.Select(EntrySec.sends_view {'Sends'},'DateSupp,Ident,CountInvoice','Invoice_Ident='+IntToStr(IdInv)
              ,'DateSupp');
        if not q.Eof then
        begin
@@ -304,14 +304,14 @@ q:=sql.Select('PrintInvoice','Sum,SumNDS,NDS','Send_Ident in ('+StrIdSend+')',''
  s:=s+',NDSStAg='+sql.MakeStr(StrTo00(FloatToStr(NDSStAg)));
 
 
- if sql.UpdateString('Invoice',s,'Ident='+IntToStr(IdInv))<>0
+ if sql.UpdateString(EntrySec.invoice_table {'Invoice'},s,'Ident='+IntToStr(IdInv))<>0
   then begin
        EditRecord:=0;
        sql.Rollback;
        exit
        end;
 if NumberChange<>'' then Number:=NumberChange;
-if sql.UpdateString('Send','NumberCountPattern='+sql.MakeStr(Number)+','+
+if sql.UpdateString(EntrySec.send_table {'Send'},'NumberCountPattern='+sql.MakeStr(Number)+','+
                     'Invoice_Ident='+IntToStr(IdInv),
                     'Ident in ('+StrIdSend+')')<>0 then begin
                                                         sql.Rollback;
@@ -356,7 +356,7 @@ begin
 end;
 NewN:=1;    //Подоходный налог 18% с 01.01.2004 года
 if NumberChange<>'' then
-if sql.SelectString('Invoice','Number','Number='+sql.MakeStr(NumberChange)+
+if sql.SelectString(EntrySec.invoice_table {'Invoice'},'Number','Number='+sql.MakeStr(NumberChange)+
                       ' and Ident <> '+IntToStr(IdInv))<>'' then
   begin
     Application.MessageBox('Счет фактура с таким номером уже заведена,'+
@@ -375,7 +375,7 @@ end;
 if (Code=0) or (Code=1) then  {создаем новую}
 begin
   test:=false;
-  q:=sql.Select('Sends','DateSupp,Ident,CountInvoice','Client_Ident='+IntToStr(Ident)+
+  q:=sql.Select(EntrySec.sends_view {'Sends'},'DateSupp,Ident,CountInvoice','Client_Ident='+IntToStr(Ident)+
              ' and NumberCountPattern is NULL and( (ContractType_Ident=2 and '+
               'DateSupp is not NULL) or (ContractType_Ident=1 and '+
               'DateSupp is not NULL and SumWay is not NULL and '+
@@ -431,7 +431,7 @@ if StrIdSend<>'' then
 begin
 if (Pos(',',strIdSend)=1) then
             Delete(strIdSend,1,1);
-q:=sql.Select('Send','DateSupp','Ident in ('+StrIdSend+')','DateSupp') ;
+q:=sql.Select(EntrySec.send_table {'Send'},'DateSupp','Ident in ('+StrIdSend+')','DateSupp') ;
 DateS:=0;
 if not q.eof then
 DateS :=q.FieldByName('DateSupp').AsDateTime;
@@ -488,7 +488,7 @@ end
 else if Code=2 then      {исправляем уже существующую}
      begin
        strIdSend:='';
-       q:=sql.Select('Sends','DateSupp,Ident,CountInvoice','Invoice_Ident='+IntToStr(IdInv)
+       q:=sql.Select(EntrySec.sends_view {'Sends'},'DateSupp,Ident,CountInvoice','Invoice_Ident='+IntToStr(IdInv)
              ,'DateSupp');
        if not q.Eof then
        begin
@@ -983,7 +983,7 @@ begin
    q.Free;
  //----------------
 
-l:=sql.FindNextInteger('Ident','Invoice','',MaxLongint);
+l:=sql.FindNextInteger('Ident',EntrySec.invoice_table {'Invoice'},'',MaxLongint);
 str:=IntToStr(l);
 str:=str+','+sql.MakeStr(FormatDateTime('yyyy-mm-dd',StrToDate(Dat)));
 str:=str+','+IntToStr(Ident);
@@ -1006,7 +1006,7 @@ str:=str+','+sql.MakeStr(StrTo00(FloatToStr(NDSSt)));
 str:=str+','+sql.MakeStr(StrTo00(FloatToStr(SumStAg)));
 str:=str+','+sql.MakeStr(StrTo00(FloatToStr(NDSStAg)));
 control:
-if sql.SelectString('Invoice','Number','Number='+sql.MakeStr(Number))<>''
+if sql.SelectString(EntrySec.invoice_table {'Invoice'},'Number','Number='+sql.MakeStr(Number))<>''
 then begin
      if NumberChange<>'' then
      begin
@@ -1020,7 +1020,7 @@ then begin
      end
       else goto Ins;
 Ins: str:=str+','+sql.MakeStr(Number);
-if sql.InsertString('Invoice','Ident,Data,Clients_Ident,Sum,'+
+if sql.InsertString(EntrySec.invoice_table {'Invoice'},'Ident,Data,Clients_Ident,Sum,'+
                     'NDS,Fee,ReportReturn,SumGD,NDSGd,SumAvt,NDSAvt,'+
                     'SumAg,NDSAg,SumPak,NDSPak,SumPakAg,NDSPakAg,SumSt,'+
                     'NDSSt,SumStag,NDSStAg,Number',str)<>0 then
@@ -1028,7 +1028,7 @@ if sql.InsertString('Invoice','Ident,Data,Clients_Ident,Sum,'+
                                                         sql.Rollback;
                                                         exit;
                                                         end;
-if sql.UpdateString('Send','NumberCountPattern='+sql.MakeStr(Number)+','+
+if sql.UpdateString(EntrySec.send_table {'Send'},'NumberCountPattern='+sql.MakeStr(Number)+','+
                     'Invoice_Ident='+IntToStr(l),
                     'Ident in ('+StrIdSend+')')<>0 then begin
                                                         sql.Rollback;
@@ -1048,7 +1048,7 @@ else begin
     Application.MessageBox('Введите дату составления!','Ошибка!',0);
     exit
     end;
-q:=sql.select('InvoiceView','Number,`Year`','`Year`='+IntToStr(Year),'');
+q:=sql.select(EntrySec.invoiceview_view {'InvoiceView'},'Number,`Year`','`Year`='+IntToStr(Year),'');
 if q.eof then Num:='1/'+FormatDateTime('yy',StrToDate(Dat))
      else
      begin
@@ -1103,7 +1103,7 @@ begin
   exit;
 end;
 
-if sql.SelectString('Invoice','Number','Number='+sql.MakeStr(NumberChange)+
+if sql.SelectString(EntrySec.invoice_table {'Invoice'},'Number','Number='+sql.MakeStr(NumberChange)+
                       ' and Ident <> '+IntToStr(IdInv))<>'' then
   begin
     Application.MessageBox('Счет фактура с таким номером уже заведена,'+

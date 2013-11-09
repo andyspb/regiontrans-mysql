@@ -41,16 +41,8 @@ procedure TFormOrder.FormCreate(Sender: TObject);
 begin
   SQLGrid1.Section:='Orders' ;
   Caption:='Приходные кассоввые ордера ( ' + EntrySec.period + ' )';
-  if EntrySec.bAllData then
-    begin
-      SQLGrid1.ExecTable('Orders_all');
-      BAdd.Enabled:=False;
-    end
-  else
-    begin
-      SQLGrid1.ExecTable('Orders');
-      BAdd.Enabled:=True;
-    end;
+  BAdd.Enabled:=iff(EntrySec.bAllData, False, True);
+  SQLGrid1.ExecTable(EntrySec.orders_view{'Orders'});
 
   if SQLGrid1.Query.eof then
   begin
@@ -84,10 +76,7 @@ begin
   if l<>0 then
   begin
     sql.Commit;
-    if EntrySec.bAllData then
-      SQLGrid1.exectable('Orders_all')
-    else
-      SQLGrid1.exectable('Orders');
+    SQLGrid1.exectable(EntrySec.orders_view {'Orders'});
     SQLGrid1.LoadPoint('Ident',l);
   end
   else
@@ -114,26 +103,18 @@ procedure TFormOrder.BDelClick(Sender: TObject);
 var
   ident: longint;
   ident_str: string;
-  table_str: string;
-  other_table_str: string;
+  order_table: string;
+  order_table_other: string;
   del_thread: TDeleteThread;
 begin
   sql.StartTransaction;
   ident:=SQLGrid1.Query.FieldByName('Ident').AsInteger;
   ident_str := IntToStr(ident);
   SQLGrid1.saveNextPoint('Ident');
-  if EntrySec.bAllData then
-    begin
-      table_str:='`Order_all`';
-      other_table_str:='`Order`';
-    end
-  else
-    begin
-      table_str:='`Order`';
-      other_table_str:='`Order_all`';
-    end;
+  order_table:= iff(EntrySec.bAllData, '`Order_all`', '`Order`');
+  order_table_other:=iff(EntrySec.bAllData, '`Order`', '`Order_all`');
 
-  if sql.Delete(table_str,'Ident='+IntToStr(ident))=0 then
+  if sql.Delete(order_table,'Ident='+IntToStr(ident))=0 then
   begin
     case Application.MessageBox('Удалить!',
                             'Предупреждение!',MB_YESNO+MB_ICONQUESTION) of
@@ -142,7 +123,7 @@ begin
         sql.Commit;
         SQLGrid1.Exec;
         SQLGrid1RowChange(Sender);
-        del_thread := TDeleteThread.Create(True, other_table_str, ident_str);
+        del_thread := TDeleteThread.Create(True, order_table_other, ident_str);
         del_thread.Resume();
       end;
     IDNO:
@@ -170,11 +151,7 @@ begin
   if l<>0 then
   begin
     sql.Commit;
-    if EntrySec.bAllData then 
-      SQLGrid1.exectable('Orders_all')
-    else
-      SQLGrid1.exectable('Orders');
-
+    SQLGrid1.exectable(EntrySec.orders_view {'Orders'});
     SQLGrid1.LoadPoint('Ident',l);
   end
   else

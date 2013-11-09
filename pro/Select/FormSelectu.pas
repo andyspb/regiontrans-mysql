@@ -68,52 +68,33 @@ uses SendStr,makerepp,Invoice;
 {$R *.dfm}
 
 procedure TFormSelect.FormCreate(Sender: TObject);
+var
+  all: boolean;
 begin
   Caption := 'Списки ( Период: ' + EntrySec.period + ' )';
-  if EntrySec.bAllData then
-  begin
-    sends_view := 'sends_all';
-    order_table := '`Order_all`';
-    paysheet_table := 'PaySheet_all';
-    send_table := 'Send_all';
-	  invoice_table := 'invoice_all';
-    vs1_view := 'vs1_all';
-    vs2_view := 'vs2_all';
-    orders_view := 'orders_all';
-    sends_no_invoice_ini := 'SendsNoInvoice_all';
-    finance_costs_ini := 'SendsNoInvoice_all';
-    pay_receipt_ini := 'PayReceipt_all';
-    pay_receipt1_ini := 'PayReceipt1_all';
-    svzaktek_ini := 'SVZakTek_all';
-    svzak_ini := 'SVZak_all';
-    sendgd_ini := 'SendGD_all';
-    volume_invoice_ini := 'VolumeInvoice_all';
-    paysheets_ini := 'PaySheets_all';
-    svpayreceipt_ini := 'SVPayReceipt_all';
-    sendsppway_ini := 'SendsPPWay_all';
-  end
-  else
-  begin
-    sends_view := 'sends';
-    order_table := '`Order`';
-    paysheet_table := 'PaySheet';
-    send_table := 'Send';
-	  invoice_table := 'invoice';
-    vs1_view := 'vs1';
-    vs2_view := 'vs2';
-    orders_view := 'orders';
-    sends_no_invoice_ini := 'SendsNoInvoice';
-    finance_costs_ini := 'SendsNoInvoice';
-    pay_receipt_ini := 'PayReceipt';
-    pay_receipt1_ini := 'PayReceipt1';
-    svzaktek_ini := 'SVZakTek';
-    svzak_ini := 'SVZak';
-    sendgd_ini := 'SendGD';
-    volume_invoice_ini := 'VolumeInvoice';
-    paysheets_ini := 'PaySheets';
-    svpayreceipt_ini := 'SVPayReceipt';
-    sendsppway_ini := 'SendsPPWay_all';
-  end;
+  all := EntrySec.bAllData;
+  // tables
+  order_table := iff(all, '`Order_all`', '`Order`');
+  paysheet_table := iff(all, 'PaySheet_all', 'PaySheet');
+  send_table := iff(all, 'Send_all', 'Send');
+	invoice_table := iff(all, 'invoice_all', 'invoice');
+  // views
+  sends_view := iff(all, 'sends_all', 'sends');
+  vs1_view := iff(all, 'vs1_all', 'vs1');
+  vs2_view := iff(all, 'vs2_all', 'vs2');
+  orders_view := iff(all, 'orders_all', 'orders');
+  // ini files
+  sends_no_invoice_ini := iff(all, 'SendsNoInvoice_all', 'SendsNoInvoice');
+  finance_costs_ini := iff(all, 'SendsNoInvoice_all', 'SendsNoInvoice');
+  pay_receipt_ini := iff(all, 'PayReceipt_all', 'PayReceipt');
+  pay_receipt1_ini := iff(all, 'PayReceipt1_all', 'PayReceipt1');
+  svzaktek_ini := iff(all, 'SVZakTek_all', 'SVZakTek');
+  svzak_ini := iff(all, 'SVZak_all', 'SVZak');
+  sendgd_ini := iff(all, 'SendGD_all', 'SendGD');
+  volume_invoice_ini := iff(all, 'VolumeInvoice_all', 'VolumeInvoice');
+  paysheets_ini := iff(all, 'PaySheets_all', 'PaySheets');
+  svpayreceipt_ini := iff(all, 'SVPayReceipt_all', 'SVPayReceipt');
+  sendsppway_ini := iff(all, 'SendsPPWay_all', 'SendsPPWay');
 
   cbxList.ComboBox.DropDownCount:=30;
 
@@ -782,7 +763,7 @@ begin
     else
       ReportMakerWP.AddParam('4='+ '');
     //---------------------
-    q:=sql.select('PaySheet','Sum',cond,'');
+    q:=sql.select(EntrySec.paysheet_table {'PaySheet'},'Sum',cond,'');
     Sum:=0;
     i:=0;
     while (not q.eof) do
@@ -880,7 +861,7 @@ begin
       if ((L=11) {or (L=27)}) then {выбираем только те отправки на которые выставлены счет фактуры в указанный период}
       begin
         q:=sql.Select(send_table, 'SumCount',
-          'Invoice_ident in (Select Ident from ' + invoice_table+ ' where Data>=' +
+          'Invoice_ident in (Select Ident from ' + EntrySec.invoice_table+ ' where Data>=' +
           sql.MakeStr(FormatDateTime('yyyy-mm-dd',StrToDate(LabelEditDate1.Text)))+
           ' and Data<='+sql.MakeStr(FormatDateTime('yyyy-mm-dd',StrToDate(LabelEditDate2.Text)))+
           ' and Clients_Ident='+IntToStr(CLI)+' ) ','')
@@ -1425,7 +1406,7 @@ begin
     ReportMakerWP.AddParam('4='+'по '+
                             SendStr.DataDMstrY(StrToDate(LabelEditDate2.text)));
     cond:='';
-    vs:='Sends';
+    vs:=EntrySec.sends_view {'Sends'};
     if l=17 then
       cond :='CitySklad1';
     if l=18 then
