@@ -116,18 +116,18 @@ procedure TFormAccountBox.BDelClick(Sender: TObject);
 var
   ident: longint;
   ident_str: string;
-  table_str: string;
-  other_table_str: string;
+  account_table: string;
+  account_table_other: string;
   del_thread: TDeleteThread;
 begin
   sql.StartTransaction;
   ident := SQLGrid1.Query.FieldByName('Ident').AsInteger;
   SQLGrid1.saveNextPoint('Ident');
   ident_str := IntToStr(ident);
-  table_str:=iff (EntrySec.bAllData, '`Account_all`', '`Account`');
-  other_table_str:=iff (EntrySec.bAllData, '`Account`', '`Account_all`');
+  account_table:=iff (EntrySec.bAllData, '`Account_all`', '`Account`');
+  account_table_other:=iff (EntrySec.bAllData, '`Account`', '`Account_all`');
 
-  if sql.Delete(table_str,'Ident='+IntToStr(ident))=0 then
+  if sql.Delete(account_table,'Ident='+IntToStr(ident))=0 then
   begin
     case Application.MessageBox('Удалить!',
                                 'Предупреждение!',
@@ -137,7 +137,7 @@ begin
         sql.Commit;
         SQLGrid1.ExecTable(EntrySec.accountview_view);
         SQLGrid1RowChange(Sender);
-        del_thread := TDeleteThread.Create(True, other_table_str, ident_str);
+        del_thread := TDeleteThread.Create(True, account_table_other, ident_str);
         del_thread.Resume();
       end;
       IDNO:

@@ -191,7 +191,7 @@ if StrToInt(fs1) <> StrToInt(fs) then    {сравниваем новый и старый иденты}
 begin
 ChangeOtheFile(4,'Acceptor',fs1,fs);
 ChangeOtheFile(18,'Clients',fs1,fs);
-ChangeOtheFile(3,'`Send`',fs1,fs);
+ChangeOtheFile(3,EntrySec.send_table {'`Send`'},fs1,fs);
  if indic = 0 then
    TempList11.Strings[i]:= FindReplaceStr(0,s1,fs1,fs)
  else TempList11.Delete(i);   {если такая запись уже есть то удоляем из файла}
@@ -240,7 +240,7 @@ q.free;
 fs:=FindStr(0,s1);  {ищем идент в файле}
 if StrToInt(fs1) <> StrToInt(fs) then    {сравниваем новый и старый иденты}
 begin
-ChangeOtheFile(4,'`Send`',fs1,fs);
+ChangeOtheFile(4,EntrySec.send_table {'`Send`'},fs1,fs);
  if indic = 0 then
    TempList11.Strings[i]:= FindReplaceStr(0,s1,fs1,fs)
  else TempList11.Delete(i);   {если такая запись уже есть то удоляем из файла}
@@ -283,7 +283,7 @@ q.free;
 fs:=FindStr(0,s1);  {ищем идент в файле}
 if StrToInt(fs1) <> StrToInt(fs) then    {сравниваем новый и старый иденты}
 begin
-ChangeOtheFile(6,'`Send`',fs1,fs);
+ChangeOtheFile(6,EntrySec.send_table {'`Send`'},fs1,fs);
  if indic = 0 then
    TempList11.Strings[i]:= FindReplaceStr(0,s1,fs1,fs)
  else TempList11.Delete(i);   {если такая запись уже есть то удоляем из файла}
@@ -327,7 +327,7 @@ q.free;
 fs:=FindStr(0,s1);  {ищем идент в файле}
 if StrToInt(fs1) <> StrToInt(fs) then    {сравниваем новый и старый иденты}
 begin
-ChangeOtheFile(7,'`Send`',fs1,fs);
+ChangeOtheFile(7,EntrySec.send_table {'`Send`'},fs1,fs);
  if indic = 0 then
    TempList11.Strings[i]:= FindReplaceStr(0,s1,fs1,fs)
  else TempList11.Delete(i);   {если такая запись уже есть то удоляем из файла}
@@ -448,7 +448,7 @@ fs:=FindStr(0,s1);  {ищем идент в файле}
 if StrToInt(fs1) <> StrToInt(fs) then    {сравниваем новый и старый иденты}
 begin
 ChangeOtheFile(21,'Clients',fs1,fs);
-ChangeOtheFile(5,'`Send`',fs1,fs);
+ChangeOtheFile(5,EntrySec.send_table {'`Send`'},fs1,fs);
  if indic = 0 then
    TempList11.Strings[i]:= FindReplaceStr(0,s1,fs1,fs)
  else TempList11.Delete(i);   {если такая запись уже есть то удоляем из файла}
@@ -488,7 +488,7 @@ if i<>0 then
 TempList11.Clear;
 {End "Order"--------------------------------------------------------------------------}
 {"Send"---------------------------------------------------------------}
-s:='`Send`';  {меняем только идент}
+s:=EntrySec.send_table {'`Send`'};  {меняем только идент}
 TempList11:=ReadFiles1(s) ;
 i:=0;
 fs1:=IntToStr(sql.FindNextInteger('Ident',s,'',MaxLongint));   {берем максимальный идент из базы}
@@ -738,7 +738,7 @@ begin
 {END "Order"-----------------------------------}
 
 {"Send"---------------------------------------}
- Tabl:='`Send`';
+ Tabl:=EntrySec.send_table {'`Send`'};
 // TempList11.Create;
  TempList11:=ReadFiles1(Tabl);
  i:=0;

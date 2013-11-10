@@ -102,8 +102,8 @@ procedure TFormPaysheetBox.BDelClick(Sender: TObject);
 var
   ident: longint;
   ident_str: string;
-  table_str: string;
-  other_table_str: string;
+  paysheet_table: string;
+  paysheet_table_other: string;
   del_thread: TDeleteThread;
 
 begin
@@ -111,18 +111,9 @@ begin
   ident:=SQLGrid1.Query.FieldByName('Ident').AsInteger;
   ident_str := IntToStr(ident);
   SQLGrid1.saveNextPoint('Ident');
-  if EntrySec.bAllData then
-  begin
-    table_str:='`PaySheet_all`';
-    other_table_str:='`PaySheet`';
-  end
-  else
-  begin
-    table_str:='`PaySheet`';
-    other_table_str:='`PaySheet_all`';
-  end;
-
-  if sql.Delete(table_str,'Ident='+IntToStr(ident))=0 then
+  paysheet_table:= iff (EntrySec.bAllData, '`PaySheet_all`', '`PaySheet`');
+  paysheet_table_other:=iff (EntrySec.bAllData, '`PaySheet`', '`PaySheet_all`');
+  if sql.Delete(paysheet_table,'Ident='+IntToStr(ident))=0 then
   begin
     case Application.MessageBox('Удалить!',
                             'Предупреждение!',MB_YESNO+MB_ICONQUESTION) of
@@ -131,7 +122,7 @@ begin
         sql.Commit;
         SQLGrid1.Exec;
         SQLGrid1RowChange(Sender);
-        del_thread := TDeleteThread.Create(True, other_table_str, ident_str);
+        del_thread := TDeleteThread.Create(True, paysheet_table_other, ident_str);
         del_thread.Resume();
       end;
       IDNO:

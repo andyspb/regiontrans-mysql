@@ -59,7 +59,7 @@ Ident:=0;
 LabelEditDate1.Text:=FormatDateTime('dd.mm.yyyy',now);
 if showModal=mrOk then
 begin
-l:=sql.FindNextInteger('Ident','`AccountTEK`','',MaxLongint);
+l:=sql.FindNextInteger('Ident',EntrySec.accounttek_table {'`AccountTEK`'},'',MaxLongint);
 str:=IntToStr(L);
 str:=str+','+Sql.MakeStr(FormatDateTime('yyyy-mm-dd',StrToDate(LabelEditDate1.Text)));
 if  eSumNDS.text<>'' then
@@ -71,7 +71,7 @@ if cbClient.GetData<>0 then
 Number:=Num;
  str:=str+','+sql.MakeStr(Number);
 
-if sql.insertstring('`AccountTEK`','Ident,Dat,Sum,Client_Ident,Number',str)=0
+if sql.insertstring(EntrySec.accounttek_table {'`AccountTEK`'},'Ident,Dat,Sum,Client_Ident,Number',str)=0
 then AddRecord:=l
   else begin
         AddRecord:=0;
@@ -91,7 +91,7 @@ begin
 Enabl:=false;
 FormCreate;
 I:=Iden;
-q:=sql.Select('`AccountTEK`','*','Ident='+IntToStr(Iden),'');
+q:=sql.Select(EntrySec.accounttek_table {'`AccountTEK`'},'*','Ident='+IntToStr(Iden),'');
 Number:=q.fieldByName('Number').asString;
 LabelEditDate1.SetValue(q);
 //cbClient.SetValue(q);
