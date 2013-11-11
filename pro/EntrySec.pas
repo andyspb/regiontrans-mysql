@@ -65,6 +65,27 @@ var
   vs1_view: string;
   vs2_view: string;
 
+  // other tables
+  account_table_other: string;
+  accounttek_table_other: string;
+  akttek_table_other: string;
+  invoice_table_other: string;
+  order_table_other: string;
+  paysheet_table_other: string;
+  send_table_other: string;
+
+  // other views
+  accountview_view_other: string;
+  accounttekview_view_other: string;
+  akttekview_view_other: string;
+  invoiceview_view_other: string;
+  orders_view_other: string;
+  orderstek_view_other: string;
+  paysheetview_view_other: string;
+  sends_view_other: string;
+  svpayreceipt_view_other: string;
+  vs1_view_other: string;
+  vs2_view_other: string;
 
 type
   TTestThread = class(TThread)
@@ -86,6 +107,37 @@ type
     table: string;
     ident: string;
   end;
+
+type
+  TInsertThread = class(TThread)
+  public
+     Constructor Create(CreateSuspended: boolean;
+                              table_str: string;
+                              field_str: string;
+                              value_str: string);
+  protected
+    procedure Execute; override;
+  private
+    table: string;
+    field: string;
+    value: string;
+  end;
+
+type
+  TUpdateThread = class(TThread)
+  public
+     Constructor Create(CreateSuspended: boolean;
+                              table_str: string;
+                              value_str: string;
+                              key_str: string);
+  protected
+    procedure Execute; override;
+  private
+    table: string;
+    value: string;
+    key: string;
+  end;
+
 
 implementation
 
@@ -139,6 +191,46 @@ begin
   end;
 end;
 
+constructor TInsertThread.Create(CreateSuspended: boolean;
+                                       table_str: string;
+                                       field_str: string;
+                                       value_str: string);
+begin
+  table :=table_str;
+  field :=field_str;
+  value :=value_str;
+  FreeOnTerminate := True;
+  inherited Create(CreateSuspended);
+end;
+
+procedure TInsertThread.Execute;
+begin
+  if not Terminated then
+  begin
+    sql.InsertString(table, field, value);
+  end;
+end;
+
+constructor TUpdateThread.Create(CreateSuspended: boolean;
+                                       table_str: string;
+                                       value_str: string;
+                                       key_str: string);
+begin
+  table := table_str;
+  value := value_str;
+  key := key_str;
+  FreeOnTerminate := True;
+  inherited Create(CreateSuspended);
+end;
+
+procedure TUpdateThread.Execute;
+begin
+  if not Terminated then
+  begin
+    sql.UpdateString(table, value, key);
+  end;
+end;
+
 
 procedure TEntrySecurity.btOKClick(Sender: TObject);
 var
@@ -162,6 +254,27 @@ begin
   FMenu.CurrentUserName:=eShortName.text;
   bAllData := ChBoxAll.Checked;
   period:=iff(bAllData, 'ÂÑÅ ÂÐÅÌß', '6 Måñÿöåâ');
+  // other tables
+  account_table_other:=iff(not bAllData, 'account_all', 'account');
+  accounttek_table_other:=iff(not bAllData, 'accounttek_all', 'accounttek');
+  akttek_table_other:=iff(not bAllData, 'akttek_all', 'akttek');
+  invoice_table_other:=iff(not bAllData, 'invoice_all', 'invoice');
+  order_table_other:=iff(not bAllData, 'order_all', '`order`');
+  paysheet_table_other:=iff(not bAllData, 'paysheet_all', 'paysheet');
+  send_table_other:=iff(not bAllData, 'send_all', 'send');
+  // strings for views
+  accountview_view_other:=iff(not bAllData, 'accountview_all', 'accountview');
+  accounttekview_view_other:=iff(not bAllData, 'accounttekview_all', 'accounttekview');
+  akttekview_view_other:=iff(not bAllData, 'akttekview_all', 'akttekview');
+  invoiceview_view_other:=iff(not bAllData, 'invoiceview_all', 'invoiceview');
+  orders_view_other:=iff(not bAllData, 'orders_all', 'orders');
+  orderstek_view_other:=iff(not bAllData, 'orderstek_all', 'orderstek');
+  paysheetview_view_other:=iff(not bAllData, 'paysheetview_all', 'paysheetview');
+  sends_view_other:=iff(not bAllData, 'sends_all', 'sends');
+  svpayreceipt_view_other:=iff(not bAllData, 'svpayreceipt_all', 'svpayreceipt');
+  vs1_view_other:=iff(not bAllData, 'vs1_all', 'vs1');
+  vs2_view_other:=iff(not bAllData, 'vs2_all', 'vs2');
+
   // tables
   account_table:=iff(bAllData, 'account_all', 'account');
   accounttek_table:=iff(bAllData, 'accounttek_all', 'accounttek');

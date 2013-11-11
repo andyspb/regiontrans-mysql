@@ -42,7 +42,7 @@ var
 begin
   SQLGrid1.Section:='PaySheetView' ;
   Caption:='Платежки ( '+ EntrySec.period+ ' )';
-  BAdd.Enabled:= iff (EntrySec.bAllData, False, True);
+  // BAdd.Enabled:= iff (EntrySec.bAllData, False, True);
 
   SQLGrid1.ExecTable(EntrySec.paysheetview_view);
   if SQLGrid1.Query.eof then
@@ -102,8 +102,6 @@ procedure TFormPaysheetBox.BDelClick(Sender: TObject);
 var
   ident: longint;
   ident_str: string;
-  paysheet_table: string;
-  paysheet_table_other: string;
   del_thread: TDeleteThread;
 
 begin
@@ -111,9 +109,7 @@ begin
   ident:=SQLGrid1.Query.FieldByName('Ident').AsInteger;
   ident_str := IntToStr(ident);
   SQLGrid1.saveNextPoint('Ident');
-  paysheet_table:= iff (EntrySec.bAllData, '`PaySheet_all`', '`PaySheet`');
-  paysheet_table_other:=iff (EntrySec.bAllData, '`PaySheet`', '`PaySheet_all`');
-  if sql.Delete(paysheet_table,'Ident='+IntToStr(ident))=0 then
+  if sql.Delete(EntrySec.paysheet_table,'Ident='+IntToStr(ident))=0 then
   begin
     case Application.MessageBox('Удалить!',
                             'Предупреждение!',MB_YESNO+MB_ICONQUESTION) of
@@ -122,7 +118,7 @@ begin
         sql.Commit;
         SQLGrid1.Exec;
         SQLGrid1RowChange(Sender);
-        del_thread := TDeleteThread.Create(True, paysheet_table_other, ident_str);
+        del_thread := TDeleteThread.Create(True, EntrySec.paysheet_table_other, ident_str);
         del_thread.Resume();
       end;
       IDNO:

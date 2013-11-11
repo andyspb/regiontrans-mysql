@@ -243,7 +243,7 @@ begin
   all := EntrySec.bAllData;
   btOk.Enabled := Iff(all, False, True);
   sends_view := iff(all, '`sends_all`', '`sends`');
-  send_table := iff(all, '`send_all`', '`sends`');
+  send_table := iff(all, '`send_all`', '`send`');
 end;
 
 function TFormSend.AddRecord:longint;

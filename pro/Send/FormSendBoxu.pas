@@ -72,7 +72,7 @@ begin
   Caption := 'Картотека отправок ( ' + EntrySec.period + ' )';
   all:=EntrySec.bAllData;
   sends_view := iff(all, '`sends_all`', '`sends`');
-  send_table := iff(all, '`send_all`', '`sends`');
+  send_table := iff(all, '`send_all`', '`send`');
   akttek_table := iff(all, '`akttek_all`', '`akttek`');
   invoice_table := iff(all, '`invoice_all`', '`invoice`');
   eCreate.Enabled := iff(all,False,True);

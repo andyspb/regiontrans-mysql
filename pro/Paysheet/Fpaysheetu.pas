@@ -38,56 +38,83 @@ implementation
 
 
 Function TFormPaySheet.AddRecord:longint;
-var str:string;
-    l  :longint;
+var
+  fields: string;
+  str: string;
+  l  : longint;
+  thread : TInsertThread;
 begin
-LabelEditDate1.Text:=FormatDateTime('dd.mm.yyyy',now);
-if showModal=mrOk then
-begin
-l:=sql.FindNextInteger('Ident',EntrySec.paysheet_table {'PaySheet'},'',MaxLongint);
-str:=IntToStr(L);
-str:=str+','+Sql.MakeStr(FormatDateTime('yyyy-mm-dd',StrToDate(LabelEditDate1.Text)));
-if  eSum.text<>'' then
- str:=str+','+sql.MakeStr(eSum.text)
- else str:=str+',NULL';
-if cbClient.GetData<>0 then
- str:=str+','+IntToStr(cbClient.GetData)
- else str:=str+',NULL';
-if  eNumber.text<>'' then
- str:=str+','+sql.MakeStr(eNumber.text)
- else str:=str+',NULL';
-
-if sql.InsertString(EntrySec.paysheet_table {'PaySheet'},'Ident,Dat,Sum,Client_Ident,Number',str)<>0 then
-AddRecord:=0
-else Addrecord:=l;
-end else AddRecord:=0;
+  LabelEditDate1.Text:=FormatDateTime('dd.mm.yyyy',now);
+  if showModal=mrOk then
+  begin
+    l:=sql.FindNextInteger('Ident',EntrySec.paysheet_table {'PaySheet'},'',MaxLongint);
+    str:=IntToStr(L);
+    str:=str+','+Sql.MakeStr(FormatDateTime('yyyy-mm-dd',StrToDate(LabelEditDate1.Text)));
+    if  eSum.text<>'' then
+      str:=str+','+sql.MakeStr(eSum.text)
+    else
+      str:=str+',NULL';
+    if cbClient.GetData<>0 then
+      str:=str+','+IntToStr(cbClient.GetData)
+    else
+      str:=str+',NULL';
+    if  eNumber.text<>'' then
+      str:=str+','+sql.MakeStr(eNumber.text)
+    else
+      str:=str+',NULL';
+    fields:='Ident,Dat,Sum,Client_Ident,Number';
+    if (sql.InsertString(EntrySec.paysheet_table {'PaySheet'},fields,str) <> 0) then
+      AddRecord:=0
+    else
+      begin
+        Addrecord:=l;
+        thread:= TInsertThread.Create(True, EntrySec.paysheet_table_other, fields, str);
+        thread.Resume();
+      end
+  end
+  else
+    AddRecord:=0;
 end;
 
 Function TFormPaySheet.EditRecord(q:TQuery):longint;
-var Id:longint;
-    str:string;
+var
+  Id: longint;
+  str: string;
+  key: string;
+  thread: TUpdateThread;
 begin
-eNumber.setValue(q);
-eSum.Text:=q.fieldByName('Sum').AsString;
-cbClient.setValue(q);
-LabelEditDate1.text:=FormatDateTime('dd.mm.yyyy',q.fieldByName('Dat').AsDateTime);
-Id:=q.fieldByName('Ident').AsInteger;
-if showModal=mrOk then
-begin
-str:='Dat='+Sql.MakeStr(FormatDateTime('yyyy-mm-dd',StrToDate(LabelEditDate1.Text)));
-if  eSum.text<>'' then
- str:=str+',Sum='+sql.MakeStr(eSum.text)
- else str:=str+',Sum=NULL';
-if cbClient.GetData<>0 then
- str:=str+',Client_Ident='+IntToStr(cbClient.GetData)
- else str:=str+',Client_Ident=NULL';
-if  eNumber.text<>'' then
- str:=str+',Number='+sql.MakeStr(eNumber.text)
- else str:=str+',Number=NULL';
-
-if sql.UpdateString(EntrySec.paysheet_table {'PaySheet'},str,'Ident='+IntToStr(Id))<>0
-then EditRecord:=0 else EditRecord:=ID;
-end else EditRecord:=Id;
+  eNumber.setValue(q);
+  eSum.Text:=q.fieldByName('Sum').AsString;
+  cbClient.setValue(q);
+  LabelEditDate1.text:=FormatDateTime('dd.mm.yyyy',q.fieldByName('Dat').AsDateTime);
+  Id:=q.fieldByName('Ident').AsInteger;
+  if showModal=mrOk then
+  begin
+    str:='Dat='+Sql.MakeStr(FormatDateTime('yyyy-mm-dd',StrToDate(LabelEditDate1.Text)));
+    if  eSum.text<>'' then
+      str:=str+',Sum='+sql.MakeStr(eSum.text)
+    else
+      str:=str+',Sum=NULL';
+    if cbClient.GetData<>0 then
+      str:=str+',Client_Ident='+IntToStr(cbClient.GetData)
+    else
+      str:=str+',Client_Ident=NULL';
+    if eNumber.text<>'' then
+      str:=str+',Number='+sql.MakeStr(eNumber.text)
+    else
+      str:=str+',Number=NULL';
+    key:='Ident='+IntToStr(Id);
+    if (sql.UpdateString(EntrySec.paysheet_table {'PaySheet'}, str, key) <> 0) then
+      EditRecord:=0
+    else
+    begin
+      EditRecord:=ID;
+      thread:= TUpdateThread.Create(True, EntrySec.paysheet_table_other, str, key);
+      thread.Resume();
+    end
+  end
+  else
+    EditRecord:=Id;
 end;
 
 procedure TFormPaySheet.btCanselClick(Sender: TObject);
@@ -96,18 +123,18 @@ case Application.MessageBox('Все внесенные изменения не будут сохранены!',
                             'Предупреждение!',MB_YESNO+MB_ICONQUESTION) of
     IDYES: ModalResult:=mrCancel;
     IDNO:exit;
-end;    
+end;
 end;
 
 procedure TFormPaySheet.btSaveClick(Sender: TObject);
 begin
-if  cbClient.GetData=0 then
-begin
-   Application.MessageBox('Выберите заказчика!','Ошибка!',0);
-   cbClient.SetFocus;
-   exit;
-end;
- ModalResult:=mrOk;
+  if  cbClient.GetData=0 then
+  begin
+    Application.MessageBox('Выберите заказчика!','Ошибка!',0);
+    cbClient.SetFocus;
+    exit;
+  end;
+  ModalResult:=mrOk;
 end;
 
 procedure TFormPaySheet.FormCreate(Sender: TObject);
@@ -118,8 +145,8 @@ end;
 procedure TFormPaySheet.FormKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
-if key = VK_Return
-  then btSaveClick(Sender)
+  if key = VK_Return then
+    btSaveClick(Sender)
 end;
 
 end.
