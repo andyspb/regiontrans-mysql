@@ -1170,15 +1170,7 @@ begin
 //cbClient.SQLComboBox.Sorted:=true;
 // krutogolov
 Caption := '—чет фактура ( ' + EntrySec.period+ ' )';
-if EntrySec.bAllData then
-begin
-  cbAktReturn.Enabled := False;
-end
-else
-  cbAktReturn.Enabled := True;
-begin
-end
-
+//cbAktReturn.Enabled := iff (EntrySec.bAllData, False, True);
 end;
 
 procedure TFormInvoice.FormKeyDown(Sender: TObject;
