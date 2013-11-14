@@ -540,6 +540,7 @@ var ReportMakerWP:TReportMakerWP;
     s2, mach:string;
     i1,i2,i3,i4:integer;
     certificate_ini: string;
+    invoice_ini: string;
 label T;
 label T1;
 begin
@@ -677,8 +678,9 @@ try
  ReportMakerWP.AddParam('37='+s);
  s:='Ident in ('+StrIdSend+')';
  ReportMakerWP.AddParam('38='+s);
+ invoice_ini := iff(EntrySec.bAllData, 'Invoice_all.ini', 'Invoice.ini');
  if ReportMakerWP.DoMakeReport(systemdir+'Invoice\Invoice.rtf',
-          systemdir+'Invoice\Invoice.ini', systemdir+'Invoice\out.rtf')<>0 then
+          systemdir+'Invoice\'+invoice_ini, systemdir+'Invoice\out.rtf')<>0 then
                               begin
                               ReportMakerWP.Free;
                              // application.messagebox('Закройте выходной документ в WINWORD!',
