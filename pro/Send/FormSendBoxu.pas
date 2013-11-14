@@ -75,8 +75,10 @@ begin
   send_table := iff(all, '`send_all`', '`send`');
   akttek_table := iff(all, '`akttek_all`', '`akttek`');
   invoice_table := iff(all, '`invoice_all`', '`invoice`');
+  // Карточку создавать только если 6М период
   eCreate.Enabled := iff(all,False,True);
-  eDelete.Enabled := iff(all, False, true);
+  // удалять можно отвсюду
+  // eDelete.Enabled := iff(all, False, true);
 
   cond := '`Start` >=' + FormatDateTime('yyyy-mm-dd',IncMonth(Date,-6));
   sqlGrid1.ExecTableCond(sends_view,cond);
@@ -164,12 +166,9 @@ begin
       sql.commit;
       sqlGrid1.Exec;
       // krutogolov
-      // delete from all as well
-      if not EntrySec.bAllData then
-      begin
-        del_thread := TDeleteThread.Create(True, '`send_all`', ident_str);
-        del_thread.Resume();
-      end;
+      // delete from other table
+      del_thread := TDeleteThread.Create(True, EntrySec.send_table_other {'`send_all`'}, ident_str);
+      del_thread.Resume();
     end;
     IDNO:
     begin

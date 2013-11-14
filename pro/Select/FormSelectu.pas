@@ -398,7 +398,8 @@ begin
       if (trim(cd) <> '') then
       begin
         if (StrTo00(trim(cd))<> '0.00') then
-          ReportMakerWP.AddParam('19='+'Кредит на 01.01.2012: '+StrTo00(cd));
+        //  Лена Ерошова попросила удалить 13-11-2013
+        //  ReportMakerWP.AddParam('19='+'Кредит на 01.01.2012: '+StrTo00(cd));
       end
     end
     else

@@ -42,7 +42,7 @@ begin
   SQLGrid1.Section:='AccountTEKView' ;
   Caption:='Счета-ТЭК ( ' + EntrySec.period + ' )';
   accounttekvew_view:= iff (EntrySec.bAllData, 'AccountTEKView_all', 'AccountTEKView');
-  BAdd.Enabled:=iff (EntrySec.bAllData,  False, True);
+  // BAdd.Enabled:=iff (EntrySec.bAllData,  False, True);
   SQLGrid1.ExecTable(accounttekvew_view);
   if SQLGrid1.Query.eof then
   begin

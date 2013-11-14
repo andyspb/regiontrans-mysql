@@ -49,6 +49,8 @@ Uses makerepp ,SendStr, Menu,Invoice,Finvoice, FAKT;
 Function TFormAccountTEK.AddRecord:longint;
 var  l:longint;
       str:string;
+  fields: string;
+  ins_thread: TInsertThread;
 begin
 
 Enabl:=true;
@@ -71,8 +73,14 @@ if cbClient.GetData<>0 then
 Number:=Num;
  str:=str+','+sql.MakeStr(Number);
 
-if sql.insertstring(EntrySec.accounttek_table {'`AccountTEK`'},'Ident,Dat,Sum,Client_Ident,Number',str)=0
-then AddRecord:=l
+fields:='Ident,Dat,Sum,Client_Ident,Number';
+if sql.insertstring(EntrySec.accounttek_table {'`AccountTEK`'},fields,str)=0
+then begin AddRecord:=l;
+// success
+// update other table
+  ins_thread:= TInsertThread.Create(True, EntrySec.accounttek_table_other, fields, str);
+  ins_thread.Resume();
+end
   else begin
         AddRecord:=0;
         exit;

@@ -80,10 +80,10 @@ procedure TFormInvoiceBox.FormCreate(Sender: TObject);
 begin
   SQLGrid1.Section:='InvoiceView' ;
   // krutogolov
-  Caption:='—чет-‘актры ( ' + EntrySec.period + ' )';
-  BAdd.Enabled:= iff(EntrySec.bAllData, False, True);
+  Caption:='—чет-‘актуры ( ' + EntrySec.period + ' )';
+  // BAdd.Enabled:= iff(EntrySec.bAllData, False, True);
   // delete
-  Caption:='—чет-‘актры ( ' + EntrySec.period + ' )';
+  Caption:='—чет-‘актуры ( ' + EntrySec.period + ' )';
 
   SQLGrid1.ExecTable(EntrySec.invoiceview_view);
   if SQLGrid1.Query.eof then
@@ -129,6 +129,7 @@ var
   invoice_table: string;
   invoice_table_other: string;
   del_thread: TDeleteThread;
+  update_thread: TUpdateThread;
 
 begin
   ident := sqlGrid1.Query.FieldByName('Ident').AsInteger;
@@ -160,6 +161,8 @@ begin
       SQLGrid1RowChange(Sender);
       del_thread := TDeleteThread.Create(True, invoice_table_other, ident_str);
       del_thread.Resume();
+      update_thread := TUpdateThread.Create(True, EntrySec.send_table_other, 'NumberCountPattern=NULL','NumberCountPattern='+sql.MakeStr(number));
+      update_thread.Resume();
     end;
     IDNO:
     begin

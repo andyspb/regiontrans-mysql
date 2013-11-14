@@ -36,7 +36,7 @@ uses FInvoice,Invoice, FAKT;
 procedure TFormAktBox.FormCreate(Sender: TObject);
 begin
   Caption:='Àêòû-ÒÝÊ ( ' + EntrySec.period + ' )';
-  BAdd.Enabled:= iff(EntrySec.bAllData, False, True);
+  // BAdd.Enabled:= iff(EntrySec.bAllData, False, True);
   SQLGrid1.Section:='AktTekView';
   SQLGrid1.ExecTable(EntrySec.akttekview_view);
   if SQLGrid1.Query.eof then

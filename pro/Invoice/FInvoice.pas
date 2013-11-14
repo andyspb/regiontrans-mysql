@@ -106,7 +106,9 @@ var q:TQuery;
     SumStAg:real;    {сумма вознаграждения агента за страхование}
     NDSStAg:real;    {НДС с суммы вознагражд. агента за страх.}
     NEWN:integer;
-
+  fields: string;
+  upd_thread: TUpdateThread;
+  update_thread: TUpdateThread;
 begin
 IdInv:=0;
 Number:='';
@@ -308,16 +310,32 @@ q:=sql.Select('PrintInvoice','Sum,SumNDS,NDS','Send_Ident in ('+StrIdSend+')',''
   then begin
        EditRecord:=0;
        sql.Rollback;
-       exit
-       end;
+       exit;
+       end
+  else
+  begin
+  // success
+  // update other tables
+  upd_thread:= TUpdateThread.Create(True, EntrySec.invoice_table_other, s, 'Ident='+IntToStr(IdInv));
+  upd_thread.Resume();
+  end;
 if NumberChange<>'' then Number:=NumberChange;
-if sql.UpdateString(EntrySec.send_table {'Send'},'NumberCountPattern='+sql.MakeStr(Number)+','+
-                    'Invoice_Ident='+IntToStr(IdInv),
+fields:='NumberCountPattern='+sql.MakeStr(Number)+','+'Invoice_Ident='+IntToStr(IdInv);
+if sql.UpdateString(EntrySec.send_table {'Send'},
+                    fields,
                     'Ident in ('+StrIdSend+')')<>0 then begin
                                                         sql.Rollback;
                                                         EditRecord:=0;
                                                         exit;
-                                                        end;
+                                                        end
+else
+begin
+  // success
+  // update other tables
+  update_thread:= TUpdateThread.Create(True, EntrySec.send_table_other, fields, 'Ident in ('+StrIdSend+')');
+  update_thread.Resume();
+end;
+
 sql.Delete('PrintInvoice','Send_Ident in ('+StrIdSend+')');
  EditRecord:=IdInv;
 end else EditRecord:=IdInv;
@@ -860,9 +878,14 @@ var str: string;
     SumStAg:real;    {сумма вознаграждения агента за страхование}
     NDSStAg:real;    {НДС с суммы вознагражд. агента за страх.}
 
+    upd_thread: TUpdateThread;
+    ins_thread: TInsertThread;
+    insert_fields: string;
+    update_fields: string;
+
     label Ins;
     label Control;
-    
+
 begin
  q:=sql.Select('PrintInvoice','Sum,SumNDS,NDS','Send_Ident in ('+StrIdSend+')','');
   Sum:=0;
@@ -1020,20 +1043,37 @@ then begin
      end
       else goto Ins;
 Ins: str:=str+','+sql.MakeStr(Number);
-if sql.InsertString(EntrySec.invoice_table {'Invoice'},'Ident,Data,Clients_Ident,Sum,'+
+insert_fields:='Ident,Data,Clients_Ident,Sum,'+
                     'NDS,Fee,ReportReturn,SumGD,NDSGd,SumAvt,NDSAvt,'+
                     'SumAg,NDSAg,SumPak,NDSPak,SumPakAg,NDSPakAg,SumSt,'+
-                    'NDSSt,SumStag,NDSStAg,Number',str)<>0 then
+                    'NDSSt,SumStag,NDSStAg,Number';
+if sql.InsertString(EntrySec.invoice_table {'Invoice'},insert_fields,str)<>0 then
                                                         begin
                                                         sql.Rollback;
                                                         exit;
-                                                        end;
-if sql.UpdateString(EntrySec.send_table {'Send'},'NumberCountPattern='+sql.MakeStr(Number)+','+
-                    'Invoice_Ident='+IntToStr(l),
+                                                        end
+else
+begin
+// success
+//update other tables
+  ins_thread:= TInsertThread.Create(True, EntrySec.invoice_table_other, insert_fields, str);
+  ins_thread.Resume();
+
+end;
+
+update_fields:='NumberCountPattern='+sql.MakeStr(Number)+','+
+                    'Invoice_Ident='+IntToStr(l);
+if sql.UpdateString(EntrySec.send_table {'Send'},update_fields,
                     'Ident in ('+StrIdSend+')')<>0 then begin
                                                         sql.Rollback;
                                                         exit;
-                                                        end;
+                                                        end
+else
+begin
+  upd_thread:= TUpdateThread.Create(True, EntrySec.send_table_other, update_fields, 'Ident in ('+StrIdSend+')');
+  upd_thread.Resume();
+end;
+
 end;
 
 Function TFormInvoice.Num:string;

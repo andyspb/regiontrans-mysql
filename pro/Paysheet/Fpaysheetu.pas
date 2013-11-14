@@ -67,7 +67,9 @@ begin
       AddRecord:=0
     else
       begin
+        // seccess
         Addrecord:=l;
+        // update other table
         thread:= TInsertThread.Create(True, EntrySec.paysheet_table_other, fields, str);
         thread.Resume();
       end
@@ -108,7 +110,9 @@ begin
       EditRecord:=0
     else
     begin
+      // success
       EditRecord:=ID;
+      // update other table
       thread:= TUpdateThread.Create(True, EntrySec.paysheet_table_other, str, key);
       thread.Resume();
     end

@@ -220,6 +220,8 @@ var
   all: boolean;
   send_table: string;
   sends_view: string;
+  send_table_other: string;
+  sends_view_other: string;
 
 implementation
 
@@ -244,6 +246,8 @@ begin
   btOk.Enabled := Iff(all, False, True);
   sends_view := iff(all, '`sends_all`', '`sends`');
   send_table := iff(all, '`send_all`', '`send`');
+  sends_view_other := iff(not all, '`sends_all`', '`sends`');
+  send_table_other := iff(not all, '`send_all`', '`send`');
 end;
 
 function TFormSend.AddRecord:longint;
@@ -252,6 +256,8 @@ var
   l: longInt;
   q: TQUEry;
   I: integer;
+  fields: string;
+  thread: TInsertThread;
 label Next1;
 begin
   Number:='';
@@ -611,7 +617,7 @@ begin
     //----------
     str:=str+','+sql.MakeStr(FormatDateTime('yyyy-mm-dd',StrToDate(LabelEditDate4.text)));
     //----------
-    if (sql.InsertString(send_table,'Ident,Check,`Start`,Inspector_Ident,ContractType_Ident,'+
+    fields:= 'Ident,Check,`Start`,Inspector_Ident,ContractType_Ident,'+
                   'Client_Ident,Client_Ident_Sender,City_Ident,DateSend,'+
                   'Acceptor_Ident,Forwarder_Ident,RollOut_Ident,NameGood_Ident,'+
                   'TypeGood_Ident,TypeGood_Ident1,TypeGood_Ident2,TypeGood_Ident3,'+
@@ -625,7 +631,8 @@ begin
                   'StatusSupp_Ident,DateSupp,Supplier_Ident,SuppText,Namber,'+
                   'Contract,Credit,Train_Ident,SumWay,NumberWay,SumServ'+
                   ',NumberServ,PlaceGd,WeightGd,NumberPP,CountInvoice,PlaceC,'+
-                  'PayTypeServ_Ident,PayTypeWay_Ident,CutTarif,DateDelFirst',str)<>0 )
+                  'PayTypeServ_Ident,PayTypeWay_Ident,CutTarif,DateDelFirst';
+    if (sql.InsertString(send_table, fields, str)<>0 )
        {and (sql.UpdateString('SendPack','Send_Ident='+IntToStr(l),'Send_Ident is NULL')<>0) }
     then
     begin
@@ -633,7 +640,12 @@ begin
       exit;
     end
     else
+    begin
+      // success
       Addrecord:=l;
+      thread:= TInsertThread.Create(True, send_table_other, fields, str);
+      thread.Resume();
+    end;
     //----------
     if sql.UpdateString('SendPack','Send_Ident='+IntToStr(l),
                      'Send_Ident is NULL')<>0 then
@@ -713,6 +725,7 @@ var str,s:string;
      q1:Tquery;
      I:integer;
      //l:longint;
+     thread: TUpdateThread;
 label Next1;
 begin
  SendIdent:=q.FieldByName('Ident').asInteger;
@@ -1203,7 +1216,12 @@ if LabelEditDate4.text<>'  .  .    ' then
 
    then EditRecord:=0
  else begin
+  // success
   Editrecord:=SendIdent;
+   // update in other table
+  thread:= TUpdateThread.Create(True, send_table_other, str, 'Ident='+IntToStr(SendIdent));
+  thread.Resume();
+
  str:=sql.SelectString('SendPack','Name','Send_Ident is null and Name=''коробка''');
  if sql.UpdateString('SendPack','Send_Ident='+IntToStr(SendIdent),
                      'Send_Ident is NULL')<>0 then editRecord:=0 ;
@@ -1212,6 +1230,7 @@ if LabelEditDate4.text<>'  .  .    ' then
                   'Ident='+IntToStr(cbZak.GetData))<>0 then editRecord:=0 ;
  if sql.UpdateString('SendPackTariff','Send_Ident='+IntToStr(SendIdent),
                      'Send_Ident is NULL')<>0 then editRecord:=0 ;
+
  end;
  end
  else editRecord:=0 ;

@@ -63,6 +63,8 @@ Uses makerepp ,SendStr, Menu,Invoice,FInvoice;
 Function TFormOrderBox.AddRecord:longint;
 var  l:longint;
       str:string;
+  fields: string;
+  thread: TInsertThread;
 begin
 Enabl:=true;
 FormCreate;
@@ -104,10 +106,15 @@ if (eNSP.text<>'')and (eNSP.visible) then
 
  str:=str+','+sql.MakeStr(FormatDateTime('yyyy-mm-dd',now));
 
-if sql.insertstring(EntrySec.order_table {'`Order`'},'Ident,Dat,SumNDS,NDS,Sum,Client_Ident,Number,NSP,DatNow',str)=0
+fields:='Ident,Dat,SumNDS,NDS,Sum,Client_Ident,Number,NSP,DatNow';
+if sql.insertstring(EntrySec.order_table {'`Order`'}, fields ,str)=0
 then begin
+       // success
        AddRecord:=l;
        Print;
+       // insert into other table
+       thread:= TInsertThread.Create(True, EntrySec.order_table_other, fields, str);
+       thread.Resume();
      end
      else begin
           AddRecord:=0;

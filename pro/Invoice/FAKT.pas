@@ -99,6 +99,8 @@ end;
 Function TFormAkt.EditRecord(Iden:longInt):longint;
 var q:TQuery;
     s:string;
+  update_thread: TUpdateThread;
+  upd_thread: TUpdateThread;
 begin
 IdInv:=0;
 Number:='';
@@ -176,20 +178,34 @@ q:=sql.Select('PrintInvoice','SumNDS','Send_Ident in ('+StrIdSend+')','');
  s:=s+', Number = '+sql.MakeStr(NumberChange)
  else s:=s+', Number = '+sql.MakeStr(Number);
 
- if sql.UpdateString('AktTek',s,'Ident='+IntToStr(IdInv))<>0
+ if sql.UpdateString(EntrySec.akttek_table {'AktTek'},s,'Ident='+IntToStr(IdInv))<>0
   then begin
        EditRecord:=0;
        sql.Rollback;
        exit
-       end;
+       end
+  else
+  begin
+  // success
+  update_thread:= TUpdateThread.Create(True, EntrySec.akttek_table_other, s,'Ident='+IntToStr(IdInv));
+  update_thread.Resume();
+
+  end;
 if NumberChange<>'' then Number:=NumberChange;
 if sql.UpdateString(EntrySec.send_table {'Send'},'Akttek_Ident='+IntToStr(IdInv),
                     'Ident in ('+StrIdSend+')')<>0 then begin
                                                         sql.Rollback;
                                                         EditRecord:=0;
                                                         exit;
-                                                        end;
+                                                        end
+  else
+  begin
+  // success
+  upd_thread:= TUpdateThread.Create(True, EntrySec.send_table_other, 'Akttek_Ident='+IntToStr(IdInv),
+                    'Ident in ('+StrIdSend+')');
+  upd_thread.Resume();
 
+  end;
 
  sql.Delete('PrintInvoice','Send_Ident in ('+StrIdSend+')');
  EditRecord:=IdInv;
@@ -482,6 +498,12 @@ var str: string;
     q:TQuery;
     l:longInt;
     SumNDS: real;
+
+  fields: string;
+  ins_thread: TInsertThread;
+  upd_thread: TUpdateThread;
+
+
     label Ins;
     label Control;
 
@@ -522,17 +544,33 @@ then begin
      end
       else goto Ins;
 Ins: str:=str+','+sql.MakeStr(Number);
-if sql.InsertString('AktTek','Ident,Data,Clients_Ident,Sum,'+
-                    'ReportReturn,Number',str)<>0 then
+fields:= 'Ident,Data,Clients_Ident,Sum,'+ 'ReportReturn,Number';
+if sql.InsertString(EntrySec.akttek_table {'AktTek'}, fields ,str)<>0 then
                                                         begin
                                                         sql.Rollback;
                                                         exit;
-                                                        end;
+                                                        end
+else
+begin
+// success
+// update other tables
+  ins_thread:= TInsertThread.Create(True, EntrySec.akttek_table_other, fields, str);
+  ins_thread.Resume();
+end;
+
 if sql.UpdateString(EntrySec.send_table {'Send'},'Akttek_Ident='+IntToStr(l),
                     'Ident in ('+StrIdSend+')')<>0 then begin
                                                         sql.Rollback;
                                                         exit;
-                                                        end;
+                                                        end
+else
+begin
+// success
+// update other tables
+  upd_thread:= TUpdateThread.Create(True, EntrySec.send_table_other, 'Akttek_Ident='+IntToStr(l), 'Ident in ('+StrIdSend+')');
+  upd_thread.Resume();
+
+end;
 IdInv:=l;
 end;
 
