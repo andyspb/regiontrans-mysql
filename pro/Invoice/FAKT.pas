@@ -381,7 +381,7 @@ var ReportMakerWP:TReportMakerWP;
     s,mach:string;
     q:tQuery;
     i1,i2,i3,i4:integer;
-
+    certificatetek_ini: string;
 label T1;
 begin
 try
@@ -426,8 +426,9 @@ ReportMakerWP:=TReportMakerWP.Create(Application);
  ReportMakerWP.AddParam('35='+s);
  s:='Ident in ('+StrIdSend+')';
  ReportMakerWP.AddParam('38='+s);
+ certificatetek_ini:= iff(EntrySec.bAllData, 'CertificateTEK_all.ini', 'CertificateTEK.ini');
  if ReportMakerWP.DoMakeReport(systemdir+'Invoice\CertificateTEK.rtf',
-          systemdir+'Invoice\CertificateTEK.ini', systemdir+'Invoice\out1.rtf')<>0 then
+          systemdir+'Invoice\' + certificatetek_ini, systemdir+'Invoice\out1.rtf')<>0 then
                               begin
                               ReportMakerWP.Free;
                               //application.messagebox('Закройте выходной документ в WINWORD!',

@@ -100,6 +100,8 @@ var
   rtffile,  inifile: string;
   CWeig, CPlac: integer;
   CVol: real;
+  ActivesendGd1_ini: string;
+  ActivesendAVt_ini: string;
   label T;
 begin
   try
@@ -139,6 +141,9 @@ begin
   ReportMakerWP.AddParam('1='+IntTOStr(CWeig));
   ReportMakerWP.AddParam('2='+IntTOStr(CPlac));
   ReportMakerWP.AddParam('3='+FloatTOStr(CVol));
+
+  ActivesendGd1_ini := iff(EntrySec.bAllData, 'ActivesendGd1_all', 'ActivesendGd1');
+  ActivesendAVt_ini := iff(EntrySec.bAllData, 'ActivesendAVt_all', 'ActivesendAVt');
   if cbTrain.SQLComboBox.GetData<>0 then
     if cbPynkt.SQLComboBox.GetData<>0 then
     begin
@@ -146,21 +151,21 @@ begin
           IntToStr(cbPynkt.SQLComboBox.GetData)+
           ' and Train_Ident='+intToStr(cbTrain.SQLComboBox.getdata);
       rtffile := 'Activesendgd1';
-      inifile:='ActivesendGd1' ;
+      inifile:= ActivesendGd1_ini ;
     end
     else
     begin
       cond:='ContractType_Ident=1 '+
             ' and Train_Ident='+intToStr(cbTrain.SQLComboBox.getdata);
             rtffile:='Activesendgd1';
-            inifile:='ActivesendGd1' ;
+            inifile:=ActivesendGd1_ini ;
     end
     else
     begin
       cond:='ContractType_Ident=2 and City_Ident='+
            IntToStr(cbPynkt.SQLComboBox.GetData);
       rtffile:='ActivesendAvt1';
-      inifile:='ActivesendAVt' ;
+      inifile:=ActivesendAVt_ini;
     end;
     ReportMakerWP.AddParam('4='+cond);
     ReportMakerWP.AddParam('5='+cbPynkt.SQLComboBox.Text);
