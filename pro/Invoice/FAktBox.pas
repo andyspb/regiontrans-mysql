@@ -75,17 +75,9 @@ begin
   number:=sqlGrid1.Query.FieldByName('Number').AsString;
   ident_str := IntToStr(ident);
   sqlGrid1.SaveNextPoint('Ident');
-  if EntrySec.bAllData then
-  begin
-    table_str:='`AktTek_all`';
-    other_table_str:='`AktTek`';
-  end
-  else
-  begin
-    table_str:='`AktTek`';
-    other_table_str:='`AktTek_all`';
-  end;
-
+  table_str:= iff (EntrySec.bAllData, '`AktTek_all`', '`AktTek`');
+  other_table_str:=iff (not EntrySec.bAllData, '`AktTek_all`', '`AktTek`');
+ 
   Sql.StartTransaction;
   if sql.Delete(table_str,'Ident='+IntToStr(ident))<>0 then
   begin

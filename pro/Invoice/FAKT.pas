@@ -106,7 +106,7 @@ IdInv:=0;
 Number:='';
 NumberChange:='';
 IdInv:=Iden;
-q:=sql.Select('AktTek','','Ident='+IntToStr(IdInv),'') ;
+q:=sql.Select(EntrySec.akttek_table {'AktTek'},'','Ident='+IntToStr(IdInv),'') ;
 Number:=q.FieldByName('Number').AsString;
 NumberChange:=q.FieldByName('Number').AsString;
 eNumber.Text:=q.FieldByName('Number').AsString;
@@ -234,7 +234,7 @@ begin
    exit;
 end;
 if NumberChange<>'' then
-if sql.SelectString('AktTek','Number','Number='+sql.MakeStr(NumberChange)+
+if sql.SelectString(EntrySec.akttek_table {'AktTek'},'Number','Number='+sql.MakeStr(NumberChange)+
                       ' and Ident <> '+IntToStr(IdInv))<>'' then
      begin
       Application.MessageBox('Акт с таким номером уже заведен,'+
@@ -523,14 +523,14 @@ begin
   //----------------
 
 
-l:=sql.FindNextInteger('Ident','AktTek','',MaxLongint);
+l:=sql.FindNextInteger('Ident',EntrySec.akttek_table {'AktTek'},'',MaxLongint);
 str:=IntToStr(l);
 str:=str+','+sql.MakeStr(FormatDateTime('yyyy-mm-dd',StrToDate(Dat)));
 str:=str+','+IntToStr(Ident);
 str:=Str+','+sql.MakeStr(StrTo00(FloatToStr(SumNDS)))  ;
 str:=str+','+IntToStr(0);
 control:
-if sql.SelectString('AktTek','Number','Number='+sql.MakeStr(Number))<>''
+if sql.SelectString(EntrySec.akttek_table {'AktTek'},'Number','Number='+sql.MakeStr(Number))<>''
 then begin
      if NumberChange<>'' then
      begin
@@ -686,7 +686,7 @@ if not erExitTest then begin
 eNumber.SetFocus;
 exit;
 end;
-if sql.SelectString('AktTek','Number','Number='+sql.MakeStr(NumberChange)+
+if sql.SelectString(EntrySec.akttek_table {'AktTek'},'Number','Number='+sql.MakeStr(NumberChange)+
                       ' and Ident <> '+IntToStr(IdInv))<>'' then
      begin
       Application.MessageBox('Акт с таким номером уже заведена,'+
