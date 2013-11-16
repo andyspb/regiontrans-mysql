@@ -41,6 +41,7 @@ type
 
 var
   EntrySecurity: TEntrySecurity;
+  version: string;
   bAllData: boolean;
   period: string;
   // krutogolov
@@ -253,6 +254,7 @@ begin
   FMenu.CurrentUserRoles:=q.FieldByName('Roles_Ident').AsInteger;
   FMenu.CurrentUserName:=eShortName.text;
   bAllData := ChBoxAll.Checked;
+  version:= '2.0.16.11.13';
   period:=iff(bAllData, 'ÂÑÅ ÂÐÅÌß', '6 Måñÿöåâ');
   // other tables
   account_table_other:=iff(not bAllData, 'account_all', 'account');

@@ -197,7 +197,7 @@ begin    {перерегестрация}
   N29.Caption := 'ОПЛАТА ( ' + EntrySec.period +' )';
   N37.Caption := 'АКТЫ-ТЭК ( ' + EntrySec.period +' )';
   N38.Caption := 'СЧЕТА-ТЭК ( ' + EntrySec.period +' )';
-  Caption := 'РегионТранс 2.0 ( Данные за период: ' + EntrySec.period + ' )';
+  Caption := 'РегионТранс ' + EntrySec.version + ' ( Данные за период: ' + EntrySec.period + ' )';
   //------------
   N44.Enabled := iff(EntrySec.bAllData, False, True);
   N44.Caption := iff(EntrySec.bAllData, '', '  + Создать Отправку');
