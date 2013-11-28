@@ -1,0 +1,1 @@
+load data local infile 'd:\\send-fix-17-11-2013.txt' replace into table `send_all`;

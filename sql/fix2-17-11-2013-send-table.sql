@@ -1,0 +1,1 @@
+load data local infile 'd:\\send-fix-17-11-2013-for-send-teable.txt' replace into table `send`;
