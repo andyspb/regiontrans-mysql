@@ -67,7 +67,8 @@ var
 begin
 // krutogolov
   fsection:='FormSends';
-  sqlGrid1.Section:='Sends';
+//  sqlGrid1.Section:='Sends';
+  sqlGrid1.Section:=EntrySec.sends_view;
 
   Caption := 'Картотека отправок ( ' + EntrySec.period + ' )';
   all:=EntrySec.bAllData;
@@ -76,7 +77,7 @@ begin
   akttek_table := iff(all, '`akttek_all`', '`akttek`');
   invoice_table := iff(all, '`invoice_all`', '`invoice`');
   // Карточку создавать только если 6М период
-  eCreate.Enabled := iff(all,False,True);
+  // eCreate.Enabled := iff(all,False,True);
   // удалять можно отвсюду
   // eDelete.Enabled := iff(all, False, true);
 

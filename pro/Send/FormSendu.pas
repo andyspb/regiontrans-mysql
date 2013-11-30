@@ -243,7 +243,7 @@ begin
 
   Caption:='Карточка отправки ( ' + EntrySec.period + ' )';
   all := EntrySec.bAllData;
-  btOk.Enabled := Iff(all, False, True);
+  // btOk.Enabled := Iff(all, False, True);
   sends_view := iff(all, '`sends_all`', '`sends`');
   send_table := iff(all, '`send_all`', '`send`');
   sends_view_other := iff(not all, '`sends_all`', '`sends`');

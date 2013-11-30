@@ -40,7 +40,8 @@ procedure TFormPaysheetBox.FormCreate(Sender: TObject);
 var
   all: boolean;
 begin
-  SQLGrid1.Section:='PaySheetView' ;
+//  SQLGrid1.Section:='PaySheetView' ;
+  SQLGrid1.Section:=EntrySec.paysheetview_view;
   Caption:='Платежки ( '+ EntrySec.period+ ' )';
   // BAdd.Enabled:= iff (EntrySec.bAllData, False, True);
 

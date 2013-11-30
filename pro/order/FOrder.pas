@@ -39,9 +39,10 @@ uses OrderBox,Menu;
 
 procedure TFormOrder.FormCreate(Sender: TObject);
 begin
-  SQLGrid1.Section:='Orders' ;
+//  SQLGrid1.Section:='Orders' ;
+  SQLGrid1.Section:=EntrySec.orders_view;
   Caption:='Приходные кассоввые ордера ( ' + EntrySec.period + ' )';
-  BAdd.Enabled:=iff(EntrySec.bAllData, False, True);
+// BAdd.Enabled:=iff(EntrySec.bAllData, False, True);
   SQLGrid1.ExecTable(EntrySec.orders_view{'Orders'});
 
   if SQLGrid1.Query.eof then

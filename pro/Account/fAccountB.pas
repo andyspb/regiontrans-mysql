@@ -40,8 +40,9 @@ uses FAccount;
 procedure TFormAccountBox.FormCreate(Sender: TObject);
 begin
   Caption:='—чета (' + EntrySec.period + ' )';
-  SQLGrid1.Section:='Account';
-  BAdd.Enabled:=iff (EntrySec.bAllData, False, True);
+//  SQLGrid1.Section:='Account';
+  SQLGrid1.Section:=iff (EntrySec.bAllData,'Account_all','Account');
+//  BAdd.Enabled:=iff (EntrySec.bAllData, False, True);
 
   SQLGrid1.ExecTable(EntrySec.accountview_view);
   if SQLGrid1.Query.eof then

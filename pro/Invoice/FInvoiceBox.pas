@@ -78,7 +78,8 @@ end;
 
 procedure TFormInvoiceBox.FormCreate(Sender: TObject);
 begin
-  SQLGrid1.Section:='InvoiceView' ;
+//  SQLGrid1.Section:='InvoiceView' ;
+  SQLGrid1.Section:=EntrySec.invoiceview_view ;
   // krutogolov
   Caption:='—чет-‘актуры ( ' + EntrySec.period + ' )';
   // BAdd.Enabled:= iff(EntrySec.bAllData, False, True);

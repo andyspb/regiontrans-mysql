@@ -39,7 +39,8 @@ uses FAccount, FAccountTek;
 
 procedure TFormAccountTekBox.FormCreate(Sender: TObject);
 begin
-  SQLGrid1.Section:='AccountTEKView' ;
+//  SQLGrid1.Section:='AccountTEKView' ;
+  SQLGrid1.Section:=iff (EntrySec.bAllData, 'AccountTEKView_all','AccountTEKView') ;
   Caption:='Счета-ТЭК ( ' + EntrySec.period + ' )';
   accounttekvew_view:= iff (EntrySec.bAllData, 'AccountTEKView_all', 'AccountTEKView');
   // BAdd.Enabled:=iff (EntrySec.bAllData,  False, True);

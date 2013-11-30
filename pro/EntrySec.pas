@@ -254,7 +254,7 @@ begin
   FMenu.CurrentUserRoles:=q.FieldByName('Roles_Ident').AsInteger;
   FMenu.CurrentUserName:=eShortName.text;
   bAllData := ChBoxAll.Checked;
-  version:= '2.0.16.11.13';
+  version:= '2.0.30.11.13';
   period:=iff(bAllData, 'ÂÑÅ ÂÐÅÌß', '6 Måñÿöåâ');
   // other tables
   account_table_other:=iff(not bAllData, 'account_all', 'account');
@@ -264,7 +264,7 @@ begin
   order_table_other:=iff(not bAllData, 'order_all', '`order`');
   paysheet_table_other:=iff(not bAllData, 'paysheet_all', 'paysheet');
   send_table_other:=iff(not bAllData, 'send_all', 'send');
-  // strings for views
+  // strings for other views
   accountview_view_other:=iff(not bAllData, 'accountview_all', 'accountview');
   accounttekview_view_other:=iff(not bAllData, 'accounttekview_all', 'accounttekview');
   akttekview_view_other:=iff(not bAllData, 'akttekview_all', 'akttekview');

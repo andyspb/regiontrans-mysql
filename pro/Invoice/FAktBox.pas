@@ -37,7 +37,8 @@ procedure TFormAktBox.FormCreate(Sender: TObject);
 begin
   Caption:='Àêòû-ÒÝÊ ( ' + EntrySec.period + ' )';
   // BAdd.Enabled:= iff(EntrySec.bAllData, False, True);
-  SQLGrid1.Section:='AktTekView';
+  //SQLGrid1.Section:='AktTekView';
+  SQLGrid1.Section:=EntrySec.akttekview_view;
   SQLGrid1.ExecTable(EntrySec.akttekview_view);
   if SQLGrid1.Query.eof then
   begin
