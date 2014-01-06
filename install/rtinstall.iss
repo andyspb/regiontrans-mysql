@@ -5,7 +5,7 @@
 #define MyAppBuildNumber GetEnv("BUILD_NUMBER")
 
 #if MyAppBuildNumber == ""
-#define MyAppBuildNumber "1"
+#define MyAppBuildNumber "2"
 #endif
 
 #define MyAppVersion "0.0.2." + MyAppBuildNumber
@@ -19,6 +19,10 @@
 #define BinarySourceDir "d:\work\severtrans_mysql\"
 ;--------------
 
+[LangOptions]
+LanguageName=Russian
+LanguageID=$0419
+LanguageCodePage=1251
 
 [Setup]
 ; Disable set
@@ -51,9 +55,9 @@ SolidCompression=yes
 
 CloseApplications=no
 
-;[Languages]
+[Languages]
 ;Name: "english"; MessagesFile: "compiler:Default.isl"
-;Name: "russian"; MessagesFile: "compiler:Languages\Russian.isl"
+Name: "russian"; MessagesFile: "compiler:Languages\Russian.isl"
 
 ;[Tasks]
 ;Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked

@@ -2269,6 +2269,7 @@ sendrtf:string;
 clientName: string;
 Num,mach:string;
 cuttarstring: string;
+cur_year: string;
 f:real;
 i,Nprint:integer;
 label T;
@@ -2367,6 +2368,11 @@ begin
     ReportMakerWP.AddParam('32='+'”паковка груза не соответствует услови€м перевозки.'+
                                  ' Ѕез ответственности за механические повреждени€.' )
   else  ReportMakerWP.AddParam('32='+'' );
+
+  // add current year
+  cur_year:=IntToStr(YearOf(Now));
+  ReportMakerWP.AddParam('33='+cur_year );
+
  sendrtf := 'send\sendU.rtf';   //печать дл€ юр лиц
  clientName := sql.SelectString('Clients','Acronym','Ident='+ IntToStr(cbZak.GetData));
  clientName := trim(clientName);

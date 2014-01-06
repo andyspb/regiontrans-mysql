@@ -56,7 +56,8 @@ uses
   DLoad in 'DataLoad\DLoad.pas',
   FormUnload in 'DataLoad\FormUnload.pas' {FUnload},
   DataChangeLoad in 'DataLoad\DataChangeLoad.pas',
-  FSaldo in 'Inform\FSaldo.pas' {FormSaldo};
+  FSaldo in 'Inform\FSaldo.pas' {FormSaldo},
+  Logger in 'Logger.pas';
 
 {$R *.res}
 

@@ -4,9 +4,9 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, BMPBtn,toolbtn,tsqlcls, ToolWin, ComCtrls,Tadjform, SqlGrid,
-  StdCtrls, Buttons,OleServer,DBTables, Word2000, LblEdtDt, Sqlctrls,
-  Lbsqlcmb, ExtCtrls, EntrySec;
+  Dialogs, BMPBtn, toolbtn, tsqlcls, ToolWin, ComCtrls,Tadjform, SqlGrid,
+  StdCtrls, Buttons, OleServer, DBTables, Word2000, LblEdtDt, Sqlctrls,
+  Lbsqlcmb, ExtCtrls, EntrySec, DateUtils;
 
 type
   TFormSendBox = class(TadjusTForm)
@@ -198,6 +198,7 @@ var
   dateDel: string;
   sendrtf: string;
   clientName:string;
+  cur_year: string;
   label T;
 begin
   try
@@ -309,7 +310,9 @@ begin
                                  ' Без ответственности за механические повреждения.' )
     else
       ReportMakerWP.AddParam('32='+'' );
-
+    // -- add current year
+    cur_year:=IntToStr(YearOf(Now));
+    ReportMakerWP.AddParam('33='+cur_year );
     sendrtf := 'send\sendU.rtf'; //печать для юр лиц
     if Pos('"', clientName) = 1 then
       sendrtf := 'send\sendCh.rtf'; //печать для частных лиц "ТЭК"
