@@ -425,13 +425,13 @@ begin
       i:=0;
       while (not q.Eof) do
       begin
-      j:=q.FieldByName('CountInvoice').AsInteger;
-      if (i+j<24) then
-      begin
-        i:=i+j;
-        strIdSend:=strIdSend+','+q.FieldByName('Ident').AsString;
-      end
-      else
+        j:=q.FieldByName('CountInvoice').AsInteger;
+        if (i+j<24) then
+        begin
+          i:=i+j;
+          strIdSend:=strIdSend+','+q.FieldByName('Ident').AsString;
+        end
+        else
         if (I+J=24) then
         begin
           if (Pos(',',strIdSend)=1) then
@@ -509,24 +509,24 @@ end;}
           StrIdSend:='';
           //    i:=0;
         end;
-        end
-        else
-          if ((i>21)and (i>0))or test then
-          begin
-            if (Pos(',',strIdSend)=1) then
-              Delete(strIdSend,1,1);
-            InvoiceCount(Ident,StrIdSend,NewN);
-            //----------------------------
-            if (NumberChange<>'') then
-              number:=NumberChange
-            else
-              Number:=Num;
-            //-----------------------------
-            SaveInvoice;
-            Print;
-            sql.Delete('PrintInvoice','Send_Ident in ('+StrIdSend+')');
-            StrIdSend:='';
-            //     i:=0;
+      end
+      else
+        if ((i>21)and (i>0))or test then
+        begin
+          if (Pos(',',strIdSend)=1) then
+            Delete(strIdSend,1,1);
+          InvoiceCount(Ident,StrIdSend,NewN);
+          //----------------------------
+          if (NumberChange<>'') then
+            number:=NumberChange
+          else
+            Number:=Num;
+          //-----------------------------
+          SaveInvoice;
+          Print;
+          sql.Delete('PrintInvoice','Send_Ident in ('+StrIdSend+')');
+          StrIdSend:='';
+          //     i:=0;
         end;
         q.Free;
       end;
@@ -725,7 +725,7 @@ begin
     begin
       // report failed
       ReportMakerWP.Free;
-      Logger.LogError(EntrySec.version + '[FInvoice] ReportMakerWP.DoMakeReport() failed.');
+      Logger.LogError(EntrySec.version + '[FInvoice] (invoice) ReportMakerWP.DoMakeReport() failed.');
       // application.messagebox('Закройте выходной документ в WINWORD!',
       // 'Совет!',0);
       // goto T;
@@ -762,7 +762,7 @@ begin
     w3:=sql.SelectString('Printer','ComNameA4','ComputerName='+sql.MakeStr(mach));
     if ((VarToStr(w2)='') or (VarToStr(w3)='')) then
     begin
-      Logger.LogError(EntrySec.version + '[FInvoice] (invoice)Missed printers info');
+      Logger.LogError(EntrySec.version + '[FInvoice] (invoice) Missed printers info');
       application.MessageBox('Информация о принтерах не внесена в базу для данной машины'+
                        ' или в параметрах WinWord не верно указано имя машины!','Ошибка!',0);
       goto T;
@@ -852,7 +852,7 @@ T:  WordApplication1.Documents.Close(EmptyParam,EmptyParam,
     if (result<>0) then
     begin
       ReportMakerWP.Free;
-      Logger.LogError(EntrySec.version + '[FInvoice] ReportMakerWP.DoMakeReport() (Certificate) failed.');
+      Logger.LogError(EntrySec.version + '[FInvoice] (certificate) ReportMakerWP.DoMakeReport() (Certificate) failed.');
       // application.messagebox('Закройте выходной документ в WINWORD!',
       //     'Warning!',0);
       // goto T1;

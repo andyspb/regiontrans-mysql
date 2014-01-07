@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, Tadjform, Menus,DBTables, Sqlctrls, TSQLCLS, ComObj, DB;
+  Dialogs, Tadjform, Menus, DBTables, Sqlctrls, TSQLCLS, ComObj, DB, Logger;
 
 type
   TFMenu = class(tform)
@@ -283,6 +283,7 @@ begin
   try
     Word := GetActiveOleObject('Word.Application');
   except
+    Logger.LogError('[Menu.pas] [TFMenu.FormCreate] Failed to open MS Word.');
     try
       Word := CreateOleObject('Word.Application');
       if Word.Visible = False then
