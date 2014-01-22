@@ -156,7 +156,7 @@ procedure TTestThread.Execute;
 var
   sql_str: TStringList;
 begin
-  if not Terminated then
+  if (not Terminated) then
   begin
     sql_str:=TStringList.Create;
     // krutogolov
@@ -182,7 +182,7 @@ var
   sql_str: TStringList;
   temp_str: string;
 begin
-  if not Terminated then
+  if (not Terminated) then
   begin
     sql_str:=TStringList.Create;
     temp_str:='delete from ' + table + ' where `Ident` = ' + ident;
@@ -206,7 +206,7 @@ end;
 
 procedure TInsertThread.Execute;
 begin
-  if not Terminated then
+  if (not Terminated) then
   begin
     sql.InsertString(table, field, value);
   end;
@@ -243,7 +243,7 @@ begin
   str:='(ShortName='''+eShortName.text +''') and (Password='''+ePassword.text+''')';
   q:=sql.select('Inspector','Ident,Roles_Ident',str ,  '' );
 
-  if q.eof then
+  if (q.eof) then
   begin
     Application.MessageBox('Неправильное имя или пароль!','Ошибка',0);
     eShortName.setfocus;
@@ -254,7 +254,7 @@ begin
   FMenu.CurrentUserRoles:=q.FieldByName('Roles_Ident').AsInteger;
   FMenu.CurrentUserName:=eShortName.text;
   bAllData := ChBoxAll.Checked;
-  version:= '2.0.07.01.14';
+  version:= '2.0.01.02.14';
   period:=iff(bAllData, 'ВСЕ ВРЕМЯ', '6 Mесяцев');
   // other tables
   account_table_other:=iff(not bAllData, 'account_all', 'account');
@@ -327,7 +327,7 @@ end;
 
 procedure TEntrySecurity.FormActivate(Sender: TObject);
 begin
-  if FMenu.CurrentUser<>0 then
+  if (FMenu.CurrentUser <> 0) then
   begin
     btCancel.Caption:='Отменить';
     eShortName.Edit.SetFocus;          //btOk.setfocus;
@@ -337,7 +337,7 @@ end;
 procedure TEntrySecurity.FormKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
-  if key = VK_Return then
+  if (key = VK_Return) then
     btOKClick(Sender)
 end;
 
