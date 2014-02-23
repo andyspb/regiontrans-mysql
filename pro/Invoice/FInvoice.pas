@@ -370,14 +370,15 @@ var q:TQUery;
     test:boolean;
     NewN:integer;
 begin
-  if (cbClient.GetData=0) then
+  Logger.LogInfo(EntrySec.version + '[FInvoice] (TFormInvoice.btPrintClick()) ');
+  if (cbClient.GetData = 0) then
   begin
     Application.MessageBox('Выберите заказчика!','Ошибка!',0);
     cbClient.SetFocus;
     exit;
   end;
 
-  if (LabelEditDate1.text='  .  .    ') then
+  if (LabelEditDate1.text = '  .  .    ') then
   begin
     Application.MessageBox('Введите дату формирования счет фактуры!','Ошибка!',0);
     LabelEditDate1.SetFocus;
@@ -386,9 +387,9 @@ begin
 
   NewN:=1;    //Подоходный налог 18% с 01.01.2004 года
   //------------------------------------------------------
-  if NumberChange<>'' then
-    if sql.SelectString(EntrySec.invoice_table {'Invoice'},'Number','Number='+sql.MakeStr(NumberChange)+
-                      ' and Ident <> '+IntToStr(IdInv))<>'' then
+  if (NumberChange <> '') then
+    if (sql.SelectString(EntrySec.invoice_table {'Invoice'},'Number','Number='+sql.MakeStr(NumberChange)+
+                      ' and Ident <> '+IntToStr(IdInv))<>'') then
     begin
       Application.MessageBox('Счет фактура с таким номером уже заведена,'+
                               'введите другой номер!','Ошибка!',0);
@@ -732,6 +733,7 @@ begin
       exit
     end;
     ReportMakerWP.Free;
+    Logger.LogInfo(EntrySec.version + '[FInvoice] (print()) TWordApplication.Create');
     WordApplication1:=TWordApplication.Create(Application);
     p := systemdir+'Invoice\out.rtf';
     w1:=2;
@@ -786,6 +788,7 @@ T:  WordApplication1.Documents.Close(EmptyParam,EmptyParam,
         EmptyParam);
         WordApplication1.WindowState:=2;
     WordApplication1.Free;
+    Logger.LogInfo(EntrySec.version + '[FInvoice] (print()) after T: WordApplication1.Free');
 
     ReportMakerWP:=TReportMakerWP.Create(Application);
     ReportMakerWP.ClearParam;

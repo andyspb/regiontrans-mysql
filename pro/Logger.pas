@@ -25,6 +25,7 @@ begin
     system.close(f);
   end;
 end;
+
 procedure LogInfo(s:string);
 var f:text;
   curr_date: string;
