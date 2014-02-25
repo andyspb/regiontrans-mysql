@@ -16,7 +16,7 @@
 #define MyAppBelowVersion "0.0.1"
 
 ;--------------
-#define BinarySourceDir "d:\work\severtrans_mysql\"
+#define BinarySourceDir "d:\work\regiontrans-mysql\"
 ;--------------
 
 [LangOptions]
