@@ -1,0 +1,14 @@
+DELETE FROM send;
+DELETE FROM send_all;
+DELETE FROM account;
+DELETE FROM account_all;
+DELETE FROM accounttek;
+DELETE FROM accounttek_all;
+DELETE FROM akttek;
+DELETE FROM akttek_all;
+DELETE FROM invoice;
+DELETE FROM invoice_all;
+DELETE FROM `order`;
+DELETE FROM order_all;
+DELETE FROM `paysheet`;
+DELETE FROM paysheet_all;

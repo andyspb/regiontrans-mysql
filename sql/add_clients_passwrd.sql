@@ -1,1 +1,1 @@
-alter table `clients` add `password` text;
+alter table `clients` add `password` varchar(15);

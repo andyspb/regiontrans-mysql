@@ -11685,7 +11685,7 @@ object CardBox: TCardBox
       OnClick = eCardClick
       NumGlyphs = 3
       ToolBarButton = True
-      FileName = 'F:\SeverTrans\Icon\IconSelekt_ico'#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0
+      FileName = 'F:\SeverTrans\Icon\IconSelekt_ico'#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0
     end
     object eADD: TToolbarButton
       Left = 100
@@ -11763,7 +11763,9 @@ object CardBox: TCardBox
       OnClick = ToolbarButton1Click
       NumGlyphs = 3
       ToolBarButton = True
-      FileName = 'F:\SeverTrans\Icon\IconSelekt_ico'#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0
+      FileName = 
+        'F:\SeverTrans\Icon\IconSelekt_ico'#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0 +
+        #0
     end
   end
   object SQLGrid1: TSQLGrid

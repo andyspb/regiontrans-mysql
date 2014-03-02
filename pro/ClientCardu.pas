@@ -46,6 +46,7 @@ type
     LabeledEdit18: TLabeledEdit;
     eSalePersent: TLabelInteger;
     LabelEdit1: TLabelEdit;
+    LabelEditPassword: TLabeledEdit;
     procedure eFullNameChange(Sender: TObject);
     procedure LabeledEdit1Change(Sender: TObject);
     procedure LabeledEdit2Change(Sender: TObject);
@@ -83,6 +84,7 @@ type
       Shift: TShiftState);
     procedure LabeledEdit18Exit(Sender: TObject);
     procedure LabelEdit1Exit(Sender: TObject);
+    procedure LabelEditPasswordChange(Sender: TObject);
   private
     { Private declarations }
   public
@@ -117,7 +119,7 @@ var
   ContactName:string;
   Id:longint;
   kreditTek:string;
-
+  password:string;
 
 
 implementation
@@ -184,6 +186,7 @@ PersTypeId:=1;
   ClTypeId:=1;
   InPers:='';
   PersTypeId:=1;
+  password:='';
   LabelSQLComboBox2.SetActive(CountryId);
   LabelSQLComboBox6.Focused;
   Id:=sql.FindNextInteger('Ident','Clients','',MaxLongint);
@@ -191,7 +194,7 @@ PersTypeId:=1;
   s:=intToStr(Id)+',(Null),(Null),(Null),(Null),(Null),(Null),(Null)'+
       ',(Null),(Null),(Null),(Null),(Null),(Null),'+
       '(Null),(Null),(Null),(NULL),(Null),(Null),(Null),'+
-      '(Null),(Null),(Null),(NULL),(NULL),(NULL),(Null)'  ;
+      '(Null),(Null),(Null),(NULL),(NULL),(NULL),(Null),(Null)';
 
  sql.ExecOneSql('Insert into Clients Values('+s+'); ');
 
@@ -299,6 +302,12 @@ begin
  if eSalePersent.Text<>'' then
   s:=s+', SalePersent='+eSalePersent.text
    else  s:=s+', SalePersent=0';
+
+  // password
+  if (password<>'') then
+    s:='password='+sql.MakeStr(password)
+  else
+    s:='password=NULL';
 
   if  sql.ExecOneSql('Update Clients set '+s+' where Ident='+IntToStr(Id)+'; ')<>0
   then begin
@@ -410,7 +419,8 @@ LabeledEdit13.EditLabel.Enabled:=true;
   ReasId:=sql.SelectInteger('Clients','OnReason_Ident','Ident='+intToStr(l));
   ClTypeId:=sql.SelectInteger('Clients','ClientType_Ident','Ident='+intToStr(l));
   eSalePersent.Text:=sql.SelectString('Clients','SalePersent','Ident='+intToStr(l));
-  
+  LabelEditPassword.Text:=sql.SelectString('Clients','password','Ident='+intToStr(l));
+
   if IntToStr(ClTypeId)='' then
   begin
    LabeledEdit16.visible:=false;
@@ -614,6 +624,12 @@ if ShotName<>'' then
   s:=s+', SalePersent='+eSalePersent.text
    else  s:=s+', SalePersent=0';
 
+  // password
+  if (password<>'') then
+    s:='password='+sql.MakeStr(password)
+  else
+    s:='password=NULL';
+
 if  sql.ExecOneSql('Update Clients set '+s+' where Ident='+IntToStr(Id))<>0
 then begin
           editRecord:=0;
@@ -748,7 +764,7 @@ begin
  end
   else
   begin
-  ShotName:=trim(LabeledEdit1.text);  
+  ShotName:=trim(LabeledEdit1.text);
   end;
 end;
 
@@ -757,7 +773,7 @@ begin
   if  Length(LabeledEdit2.text)>25 then
  begin
  Application.MessageBox
-      ('Укароченное название клиента не должно превышать 25 символов!','Ошибка',0);
+      ('Укороченное название клиента не должно превышать 25 символов!','Ошибка',0);
   LabeledEdit2.SetFocus ;
   //AcrName:=trim(LabeledEdit2.text);
  end
@@ -1220,7 +1236,7 @@ var q:TQuery;
     l:longint;
 begin
   q:=sql.Select('Country','*','','');
-  
+
   FormAE:=TFormAE.Create(Application);
   l:=FormAE.AddRecord (q,'Country',1);
   if l<>0 then
@@ -1300,6 +1316,21 @@ begin
     LabelEdit5.Text:= SendStr.StrTo00(SendStr.CreditUpdate(id,kreditTek));
   end;
 end;
+end;
+
+procedure Tcard.LabelEditPasswordChange(Sender: TObject);
+begin
+  if (Length(LabelEditPassword.text)>11) then
+  begin
+    Application.MessageBox
+      ('Длина пароля не более 11 символов!','Ошибка',0);
+    LabelEditPassword.SetFocus ;
+  end
+  else
+  begin
+    password:=trim(LabelEditPassword.text);
+  end;
+
 end;
 
 end.

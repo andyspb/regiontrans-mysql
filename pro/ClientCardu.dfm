@@ -1,8 +1,8 @@
 object card: Tcard
   Left = 344
   Top = 67
-  Width = 700
-  Height = 718
+  Width = 698
+  Height = 727
   Hint = #1050#1072#1088#1090#1086#1095#1082#1072' '#1082#1083#1080#1077#1085#1090#1072
   HorzScrollBar.ButtonSize = 100
   Caption = #1050#1072#1088#1090#1086#1095#1082#1072' '#1082#1083#1080#1077#1085#1090#1072
@@ -11665,7 +11665,7 @@ object card: Tcard
   object HeaderControl1: THeaderControl
     Left = 0
     Top = 0
-    Width = 684
+    Width = 682
     Height = 33
     DragReorder = False
     Sections = <>
@@ -12144,9 +12144,9 @@ object card: Tcard
     TabOrder = 23
   end
   object LabeledEdit13: TLabeledEdit
-    Left = 32
+    Left = 8
     Top = 656
-    Width = 145
+    Width = 169
     Height = 24
     Hint = #1044#1072#1090#1072' '#1089#1086#1079#1076#1072#1085#1080#1103' '#1082#1072#1088#1090#1086#1095#1082#1080' '#1082#1083#1080#1077#1085#1090#1072' ('#1074' '#1088#1091#1095#1085#1091#1102' '#1085#1077' '#1080#1079#1084#1077#1085#1103#1077#1090#1089#1103')'
     EditLabel.Width = 114
@@ -12172,9 +12172,9 @@ object card: Tcard
     OnChange = LabeledEdit2Change
   end
   object LabeledEdit14: TLabeledEdit
-    Left = 264
+    Left = 192
     Top = 656
-    Width = 145
+    Width = 177
     Height = 24
     Hint = 
       #1044#1072#1090#1072' '#1074#1085#1077#1089#1077#1085#1080#1103' '#1080#1079#1084#1077#1085#1077#1085#1080#1081' '#1074' '#1082#1072#1088#1090#1086#1095#1082#1091' '#1082#1083#1080#1077#1085#1090#1072' ('#1074' '#1088#1091#1095#1085#1091#1102' '#1085#1077' '#1080#1079#1084#1077#1085#1103#1077#1090 +
@@ -12494,5 +12494,34 @@ object card: Tcard
     MaxLength = 0
     TabOrder = 31
     OnExit = LabelEdit1Exit
+  end
+  object LabelEditPassword: TLabeledEdit
+    Left = 376
+    Top = 656
+    Width = 225
+    Height = 24
+    Hint = 
+      #1042#1074#1077#1076#1080#1090#1077' '#1082#1086#1088#1086#1090#1082#1086#1077' '#1085#1072#1079#1074#1072#1085#1080#1077' '#1082#1083#1080#1077#1085#1090#1072' ('#1085#1077' '#1076#1086#1083#1078#1077#1085#1086' '#1087#1088#1077#1074#1099#1096#1072#1090#1100' 25 '#1089#1080#1084#1074#1086 +
+      #1083#1086#1074')'
+    EditLabel.Width = 109
+    EditLabel.Height = 16
+    EditLabel.Caption = #1055#1072#1088#1086#1083#1100' '#1085#1072' '#1089#1072#1081#1090#1077
+    EditLabel.Font.Charset = DEFAULT_CHARSET
+    EditLabel.Font.Color = clWindowText
+    EditLabel.Font.Height = -13
+    EditLabel.Font.Name = 'MS Sans Serif'
+    EditLabel.Font.Style = []
+    EditLabel.ParentFont = False
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'MS Sans Serif'
+    Font.Style = []
+    LabelPosition = lpAbove
+    LabelSpacing = 3
+    MaxLength = 25
+    ParentFont = False
+    TabOrder = 37
+    OnChange = LabelEditPasswordChange
   end
 end
