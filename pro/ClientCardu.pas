@@ -305,9 +305,9 @@ begin
 
   // password
   if (password<>'') then
-    s:='password='+sql.MakeStr(password)
+    s:=s+', password='+sql.MakeStr(password)
   else
-    s:='password=NULL';
+    s:=s+', password=NULL';
 
   if  sql.ExecOneSql('Update Clients set '+s+' where Ident='+IntToStr(Id)+'; ')<>0
   then begin
@@ -626,9 +626,9 @@ if ShotName<>'' then
 
   // password
   if (password<>'') then
-    s:='password='+sql.MakeStr(password)
+    s:=s+', password='+sql.MakeStr(password)
   else
-    s:='password=NULL';
+    s:=s+', password=NULL';
 
 if  sql.ExecOneSql('Update Clients set '+s+' where Ident='+IntToStr(Id))<>0
 then begin

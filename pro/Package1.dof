@@ -44,7 +44,7 @@ ExeDescription=
 OutputDir=
 UnitOutputDir=
 PackageDLLOutputDir=D:\work\regiontrans-mysql\pro
-PackageDCPOutputDir=
+PackageDCPOutputDir=D:\work\regiontrans-mysql\pro
 SearchPath=
 Packages=
 Conditionals=
@@ -92,5 +92,8 @@ Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
 Count=1
 Item0=E:\Lanit\library
 [HistoryLists\hlBPLOutput]
+Count=1
+Item0=D:\work\regiontrans-mysql\pro
+[HistoryLists\hlDCPOutput]
 Count=1
 Item0=D:\work\regiontrans-mysql\pro

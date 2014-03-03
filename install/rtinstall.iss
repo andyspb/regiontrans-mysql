@@ -65,6 +65,7 @@ Name: "russian"; MessagesFile: "compiler:Languages\Russian.isl"
 
 [Files]
 Source: "{#BinarySourceDir}\pro\RegionTrans.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#BinarySourceDir}\pro\Package1.bpl"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#BinarySourceDir}\pro\*.ini"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "{#BinarySourceDir}\pro\*.rtf"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
