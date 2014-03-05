@@ -225,3 +225,9 @@ pip-log.txt
 
 #Mr Developer
 .mr.developer.cfg
+script/clients.sql
+script/clients.txt
+script/clients.txt
+script/regiontrans_backup_19h.sql
+script/clients.xml
+script/file.xml
