@@ -31,8 +31,7 @@ rem --execute="select `Ident`, `Acronym` , `Inn`, `KPP`, `Email`, `password`, `S
 
 set clients_data=d:\work\regiontrans-mysql\script\clients_data.txt
 
-mysql --user=dba --password=sql --host=%host% --port=%rport% --database=severtrans < "D:\work\regiontrans-mysql\script\get_clients_data.sql" ^
-> %clients_file%
+mysql --user=dba --password=sql --host=%host% --port=%rport% --database=severtrans < "D:\work\regiontrans-mysql\script\get_clients_data.sql" > %clients_file%
 
 python d:\work\regiontrans-mysql\script\regiontrans.py
 

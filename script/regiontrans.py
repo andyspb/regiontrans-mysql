@@ -6,6 +6,7 @@ def changeFirstLine():
     f = open('d:/work/regiontrans-mysql/script/clients.txt','r')
     new_file = open('d:/work/regiontrans-mysql/script/clients1.txt','w')
     for line in f:
+        line = line.replace('AdrName', 'address')
         line = line.replace('Ident', 'id')
         line = line.replace('Acronym', 'alias')
         line = line.replace('Inn', 'inn')
@@ -14,7 +15,6 @@ def changeFirstLine():
         line = line.replace('Saldo', 'saldo')
         line = line.replace('Kredit', 'kredit')
         line = line.replace('Name', 'city')
-        line = line.replace('AdrName', 'address')
         new_file.write(line)
 
 if __name__ == '__main__':
