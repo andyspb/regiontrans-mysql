@@ -1,0 +1,1 @@
+ALTER TABLE `severtrans`.`clients` CHANGE COLUMN `Email` `Email` VARCHAR(50) NULL DEFAULT NULL;

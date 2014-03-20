@@ -231,3 +231,4 @@ script/clients.txt
 script/regiontrans_backup_19h.sql
 script/clients.xml
 script/file.xml
+*.txt

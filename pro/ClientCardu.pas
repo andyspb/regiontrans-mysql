@@ -835,10 +835,10 @@ end;
 
 procedure Tcard.LabeledEdit7Change(Sender: TObject);
 begin
-if  Length(LabeledEdit7.text)>25 then
+if  Length(LabeledEdit7.text)>50 then
  begin
  Application.MessageBox
-      ('E-mail клиента не должн превышать 25 символов!','Ошибка',0);
+      ('E-mail клиента не должн превышать 50 символов!','Ошибка',0);
   LabeledEdit7.SetFocus ;
   //Email:=trim(LabeledEdit7.text);
  end
