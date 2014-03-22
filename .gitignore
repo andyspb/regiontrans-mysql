@@ -232,3 +232,6 @@ script/regiontrans_backup_19h.sql
 script/clients.xml
 script/file.xml
 *.txt
+script/regiontrans_backup_19h.sql
+script/severtrans_backup_19h.sql
+script/clients.txt
