@@ -263,3 +263,5 @@ script/06-04-2014/get_max_tek_contracts.sql
 script/06-04-2014/update_contract_severtrans.sql
 script/06-04-2014/update_contract_severtrans_via_temp.sql
 script/06-04-2014/update_tek_contracts.cmd
+script/severtrans_backup_19h.sql
+script/severtrans_backup_19h.sql
