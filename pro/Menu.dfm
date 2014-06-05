@@ -1,6 +1,6 @@
 object FMenu: TFMenu
-  Left = 437
-  Top = 33
+  Left = 459
+  Top = 29
   Width = 825
   Height = 60
   HorzScrollBar.Color = clBlue
@@ -11857,6 +11857,10 @@ object FMenu: TFMenu
         Caption = #1086#1073#1085#1086#1074#1083#1077#1085#1080#1077' '#1089#1077#1088#1074#1077#1088#1072
         Visible = False
         OnClick = N43Click
+      end
+      object updateClientsKredit1: TMenuItem
+        Caption = 'updateClientsKredit'
+        OnClick = updateClientsKredit1Click
       end
     end
     object N7: TMenuItem
