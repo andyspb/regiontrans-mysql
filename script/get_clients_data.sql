@@ -1,5 +1,6 @@
 select 
 `clients`.`Ident`, 
+`clients`.`Name` , 
 `clients`.`Acronym` , 
 `clients`.`Inn`, 
 `clients`.`KPP`, 
