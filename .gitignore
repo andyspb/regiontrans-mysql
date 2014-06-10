@@ -265,3 +265,5 @@ script/06-04-2014/update_contract_severtrans_via_temp.sql
 script/06-04-2014/update_tek_contracts.cmd
 script/severtrans_backup_19h.sql
 script/severtrans_backup_19h.sql
+script/regiontrans_backup_19h.sql
+script/severtrans_backup_19h.sql
