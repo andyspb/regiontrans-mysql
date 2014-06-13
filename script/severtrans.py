@@ -1,6 +1,7 @@
 
 """
 script reads first line of file and changes column names
+a.krutogolov
 """
 import mysql.connector
 
