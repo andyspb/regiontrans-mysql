@@ -102,7 +102,7 @@ def rfind2thTab(line):
     return t
 
 
-def updateLines():
+def updateClients():
     f = open('d:/work/regiontrans-mysql/script/clients_severtrans.txt','r')
     #new_file = open('d:/work/regiontrans-mysql/script/clients1_severtrans_test.txt','w')
     new_file = open('d:/work/regiontrans-mysql/script/clients1_severtrans.txt','w')
@@ -139,5 +139,5 @@ def updateLines():
 #         print line
 if __name__ == '__main__':
     print "Updating lines in sql backup "
-    updateLines()
+    updateClients()
 

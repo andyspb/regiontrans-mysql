@@ -10,5 +10,7 @@ SELECT
 `send_all`.`Volume`,
 `send_all`.`PackCount`,
 `send_all`.`SumCount`,
-`send_all`.`DateSend`
+`send_all`.`DateSend`,
+`send_all`.`Invoice_Ident`,
+`send_all`.`Akttek_Ident`
 FROM `severtrans`.`send_all`;

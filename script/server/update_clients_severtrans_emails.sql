@@ -1,0 +1,1 @@
+UPDATE `clients_severtrans` SET `email`='natic78@yandex.ru' WHERE id>0;

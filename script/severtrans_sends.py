@@ -63,8 +63,28 @@ def getCity(ident):
     cnx.close()
     return res
 
+def getInvoiceNumber(ident):
+    cnx = mysql.connector.connect(**config)
+    cursor=cnx.cursor(buffered=True)
+    query = ("SELECT `Number` from `invoice_all`  WHERE `Ident`=%s")
+    cursor.execute(query, (str(ident),))
+    res = str(cursor.fetchone()[0].encode('utf-8'))
+    cursor.close()
+    cnx.close()
+    return res
 
-def updateLines():
+def getAkttekNumber(ident):
+    cnx = mysql.connector.connect(**config)
+    cursor=cnx.cursor(buffered=True)
+    query = ("SELECT `Number` from `akttek_all`  WHERE `IDENT`=%s")
+    cursor.execute(query, (str(ident),))
+    res = str(cursor.fetchone()[0].encode('utf-8'))
+    cursor.close()
+    cnx.close()
+    return res
+
+
+def updateSends():
     f = open('d:/work/regiontrans-mysql/script/sends_severtrans.txt','r')
     #new_file = open('d:/work/regiontrans-mysql/script/clients1_severtrans_test.txt','w')
     new_file = open('d:/work/regiontrans-mysql/script/sends1_severtrans.txt','w')
@@ -81,10 +101,10 @@ def updateLines():
             line = line.replace('Volume', 'volume', 1)
             line = line.replace('PackCount', 'seats', 1)
             line = line.replace('SumCount', 'total', 1)
-    
-            
-            line = line.replace('City_Ident', 'destination')
-            line = line.replace('DateSend', 'send_date')
+            line = line.replace('City_Ident', 'destination',1)
+            line = line.replace('DateSend', 'send_date',1)
+            line = line.replace('Invoice_Ident', 'invoice_ident',1)
+            line = line.replace('Akttek_Ident', 'invoice_number',1)
             
             new_file.write(line)
 #        print line
@@ -111,16 +131,28 @@ def updateLines():
             p = split_line[10]
             d = split_line[11]
 
+            invoice_ident = 'NULL'
+            invoice = split_line[12].rstrip();
+            akttek = split_line[13].rstrip();
+            invoice_number='NULL'        
+            if invoice.isdigit():
+                invoice_ident=str(invoice);
+                invoice_number=getInvoiceNumber(invoice)
+            elif akttek.isdigit():
+                invoice_ident=str(akttek)
+                invoice_number=getAkttekNumber(akttek)
+
             line = "\t".join([str(i), ident, number, date, client_name, client_alias, 
-                                  sender, receiver, city, w, v, s, p, d])
+                                  sender, receiver, city, w, v, s, p, d, 
+                                  invoice_ident, invoice_number])
 #             print line
-            new_file.write(line)
+            new_file.write(line+'\n')
         i = i + 1
 #         if i>=10:
 #             break
-#         print line
+#        print line
 if __name__ == '__main__':
     print "Updating lines in sends"
-    updateLines()
+    updateSends()
     print "Finish"
 
