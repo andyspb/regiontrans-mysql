@@ -21,7 +21,10 @@ def getClientName(ident):
     query = ("SELECT `name` from `clients` WHERE `Ident`=%s")
 #     print query
     cursor.execute(query, (str(ident),))
-    res = str(cursor.fetchone()[0].encode('utf-8'))
+    res = 'NULL'
+    cursor_value = cursor.fetchone()[0]
+    if not cursor_value is None:
+        res = str( cursor_value.encode( 'utf-8' ) )
     cursor.close()
     cnx.close()
     return res
@@ -33,7 +36,11 @@ def getClientAcronym(ident):
     query = ("SELECT `acronym` from `clients` WHERE `Ident`=%s")
 #     print query
     cursor.execute(query, (str(ident),))
-    res = str(cursor.fetchone()[0].encode('utf-8'))
+#    res = str(cursor.fetchone()[0].encode('utf-8'))
+    res = 'NULL'
+    cursor_value = cursor.fetchone()[0]
+    if not cursor_value is None:
+        res = str( cursor_value.encode( 'utf-8' ) )
     cursor.close()
     cnx.close()
     return res
@@ -45,7 +52,11 @@ def getAcceptor(ident):
     query = ("SELECT `name` from `acceptor` WHERE `Ident`=%s")
 #     print query
     cursor.execute(query, (str(ident),))
-    res = str(cursor.fetchone()[0].encode('utf-8'))
+#    res = str(cursor.fetchone()[0].encode('utf-8'))
+    res = 'NULL'
+    cursor_value = cursor.fetchone()[0]
+    if not cursor_value is None:
+        res = str( cursor_value.encode( 'utf-8' ) )
     cursor.close()
     cnx.close()
     return res
@@ -58,7 +69,11 @@ def getCity(ident):
     query = ("SELECT `name` from `city` WHERE `Ident`=%s")
 #     print query
     cursor.execute(query, (str(ident),))
-    res = str(cursor.fetchone()[0].encode('utf-8'))
+#    res = str(cursor.fetchone()[0].encode('utf-8'))
+    res = 'NULL'
+    cursor_value = cursor.fetchone()[0]
+    if not cursor_value is None:
+        res = str( cursor_value.encode( 'utf-8' ) )
     cursor.close()
     cnx.close()
     return res
@@ -68,7 +83,11 @@ def getInvoiceNumber(ident):
     cursor=cnx.cursor(buffered=True)
     query = ("SELECT `Number` from `invoice_all`  WHERE `Ident`=%s")
     cursor.execute(query, (str(ident),))
-    res = str(cursor.fetchone()[0].encode('utf-8'))
+#    res = str(cursor.fetchone()[0].encode('utf-8'))
+    res = 'NULL'
+    cursor_value = cursor.fetchone()[0]
+    if not cursor_value is None:
+        res = str( cursor_value.encode( 'utf-8' ) )
     cursor.close()
     cnx.close()
     return res
@@ -78,7 +97,11 @@ def getAkttekNumber(ident):
     cursor=cnx.cursor(buffered=True)
     query = ("SELECT `Number` from `akttek_all`  WHERE `IDENT`=%s")
     cursor.execute(query, (str(ident),))
-    res = str(cursor.fetchone()[0].encode('utf-8'))
+#    res = str(cursor.fetchone()[0].encode('utf-8'))
+    res = 'NULL'
+    cursor_value = cursor.fetchone()[0]
+    if not cursor_value is None:
+        res = str( cursor_value.encode( 'utf-8' ) )
     cursor.close()
     cnx.close()
     return res
