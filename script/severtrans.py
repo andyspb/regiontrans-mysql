@@ -4,11 +4,16 @@ script reads first line of file and changes column names
 a.krutogolov
 """
 import mysql.connector
+import os, inspect
+
+cwd = os.path.dirname( os.path.abspath( inspect.getfile( inspect.currentframe() ) ) )
+host = os.getenv( 'MYSQL_IP_ADDRESS', '192.168.1.99' )
+print 'host ' + host
 
 config = {
   'user': 'dba',
   'password': 'sql',
-  'host': '192.168.1.40',
+  'host': host,
   'port': '3307',
   'database': 'severtrans',
   'raise_on_warnings': True,
@@ -103,9 +108,9 @@ def rfind2thTab(line):
 
 
 def updateClients():
-    f = open('d:/work/regiontrans-mysql/script/clients_severtrans.txt','r')
+    f = open( cwd + '/clients_severtrans.txt', 'r' )
     #new_file = open('d:/work/regiontrans-mysql/script/clients1_severtrans_test.txt','w')
-    new_file = open('d:/work/regiontrans-mysql/script/clients1_severtrans.txt','w')
+    new_file = open( cwd + '/clients1_severtrans.txt', 'w' )
     i = 0;
     for line in f:
         line = line.replace('AdrName', 'address')

@@ -2,10 +2,18 @@
 """
 script reads first line of file and changes column names
 """
+
+import os
+import inspect
+
+cwd = os.path.dirname( os.path.abspath( inspect.getfile( inspect.currentframe() ) ) )
+print 'cwd: ' + cwd
+
+
 def updateAccounts():
-    f = open( 'd:/work/regiontrans-mysql/script/accounts_severtrans.txt', 'r' )
+    f = open( cwd + '/accounts_severtrans.txt', 'r' )
     # new_file = open('d:/work/regiontrans-mysql/script/clients1_severtrans_test.txt','w')
-    new_file = open( 'd:/work/regiontrans-mysql/script/accounts1_severtrans.txt', 'w' )
+    new_file = open( cwd + '/accounts1_severtrans.txt', 'w' )
     i = 0;
     for line in f:
         if i == 0:
@@ -45,7 +53,7 @@ def updateAccounts():
 
         i = i + 1
     # TEK
-    ft = open( 'd:/work/regiontrans-mysql/script/accountstek_severtrans.txt', 'r' )
+    ft = open( cwd + '/accountstek_severtrans.txt', 'r' )
     it = 0;
     for line in ft:
         it = it + 1
