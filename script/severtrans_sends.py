@@ -137,14 +137,17 @@ def updateSends():
 #        print line
 #        line = line.lstrip('\n')
         if i >= 1:
-#             print 'line: ' + str(i)
+#             print 'line: ' + str(i) + ' ' + line
             split_line = line.split('\t')
 #             print "split_line="+str(split_line)
             ident = split_line[0]
             number = split_line[1].decode('cp1251').encode('utf-8')
             date = split_line[2]
-            client_name = getClientName(int(split_line[3]))
-            client_alias = getClientAcronym(int(split_line[3]))
+            if split_line[3].isdigit():
+                client_name = getClientName(int(split_line[3]))
+                client_alias = getClientAcronym(int(split_line[3]))
+            else:
+                continue    
             sender = 'NULL'
             if split_line[4].isdigit():
                 sender = getClientName(int(split_line[4]))
